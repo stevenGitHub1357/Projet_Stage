@@ -1,0 +1,7 @@
+Globale
+git config --global user.email "user@example.com"
+git config --global user.name "Default User"
+
+Project
+git config user.email "stevenratovoson@gmail.com"
+git config user.name "Steven"
