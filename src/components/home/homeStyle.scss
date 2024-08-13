@@ -1,0 +1,27 @@
+
+.table-scroll {
+  height: 400px;
+  overflow-y: auto;
+}
+
+.bg-luminess{
+  background-color: #7ee2a6;
+}
+
+.bg-gray{
+  background-color: rgb(212, 209, 209);
+}
+
+@import "~bootstrap/scss/bootstrap-utilities";
+
+$utilities: map-merge(
+  $utilities,
+  (
+    "cursor": (
+      property: cursor,
+      values: auto default pointer wait text move help not-allowed
+    ),
+  )
+);
+
+@import '~bootstrap/scss/bootstrap';
