@@ -1,7 +1,7 @@
 const pool = require("../config/default.config");
 
 const getMenu = (req,res,next) =>{
-    pool.query("SELECT * FROM reactjs.menus ORDER BY range ASC",[],function(err,result){
+    pool.query("SELECT * FROM public.menus ORDER BY range ASC",[],function(err,result){
       if (err) {
         res.status(400).send(err);
       }
@@ -17,7 +17,7 @@ const getMenu = (req,res,next) =>{
 const getMenuByRole = (req,res,next) =>{
   let role = req.body.role_react
   console.log(req.body)
-  pool.query("SELECT * FROM reactjs.menus WHERE role = $1 ORDER BY range ASC",[role],function(err,result){
+  pool.query("SELECT * FROM public.menus WHERE role = $1 ORDER BY range ASC",[role],function(err,result){
     if (err) {
       res.status(400).send(err);
     }

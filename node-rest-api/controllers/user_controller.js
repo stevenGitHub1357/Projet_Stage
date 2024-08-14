@@ -19,7 +19,7 @@ const getUserFromGpao = (req,res,next) =>{
 
 
 const getUsers = (req,res,next) =>{
-    pool.query("SELECT * FROM reactjs.users",[],function(err,result){
+    pool.query("SELECT * FROM public.users",[],function(err,result){
       if (err) {
         res.status(400).send(err);
       }
@@ -34,7 +34,7 @@ const getUsers = (req,res,next) =>{
 
 const insertUsers = (req,res,next) =>{
   const {matricule,nom,prenom,mot_de_passe,id_role} = req.body
-    pool.query("INSERT INTO reactjs.users (matricule,nom,prenom,mot_de_passe,id_role,default_mdp) VALUES ($1,$2,$3,$4,$5,'lum123')",[matricule,nom,prenom,mot_de_passe,id_role],function(err,result){
+    pool.query("INSERT INTO public.users (matricule,nom,prenom,mot_de_passe,id_role,default_mdp) VALUES ($1,$2,$3,$4,$5,'lum123')",[matricule,nom,prenom,mot_de_passe,id_role],function(err,result){
       if (err) {
         res.status(400).send(err);
       }
@@ -45,7 +45,7 @@ const insertUsers = (req,res,next) =>{
 
 const getLog = (req,res,next) =>{
   const {matricule,mot_de_passe} = req.body
-  pool.query("SELECT COUNT(*) FROM reactjs.users WHERE matricule=$1 AND mot_de_passe = $2 OR default_mdp = $3",[matricule,mot_de_passe,mot_de_passe],function(err,Result){
+  pool.query("SELECT COUNT(*) FROM public.users WHERE matricule=$1 AND mot_de_passe = $2 OR default_mdp = $3",[matricule,mot_de_passe,mot_de_passe],function(err,Result){
     if (err) {
       res.status(400).send(err);
     }
@@ -58,7 +58,7 @@ const getLog = (req,res,next) =>{
 
 const getInfoLog = (req,res,next) =>{
   let matricule = req.body.matricule;
-  pool.query("SELECT * FROM reactjs.users WHERE matricule=$1",[matricule],function(err,Result){
+  pool.query("SELECT * FROM public.users WHERE matricule=$1",[matricule],function(err,Result){
     if (err) {
       res.status(400).send(err);
     }
@@ -71,7 +71,7 @@ const getInfoLog = (req,res,next) =>{
 
 const deleteUser = (req,res,next) =>{
   let id = req.body.id_user;
-  pool.query("DELETE FROM reactjs.users WHERE id_user = $1",[id],function(err){
+  pool.query("DELETE FROM public.users WHERE id_user = $1",[id],function(err){
     if (err) {
       res.status(400).send(err);
     }
@@ -80,7 +80,7 @@ const deleteUser = (req,res,next) =>{
 
 const UpdateUser = (req,res,next) =>{
   let {id_user,matricule,nom,prenom,id_role,mot_de_passe} = req.body;
-  pool.query("Update reactjs.users SET matricule=$1 , nom=$2, prenom=$3,id_role=$4,mot_de_passe=$5 WHERE id_user = $6",[matricule,nom,prenom,id_role,mot_de_passe,id_user],function(err){
+  pool.query("Update public.users SET matricule=$1 , nom=$2, prenom=$3,id_role=$4,mot_de_passe=$5 WHERE id_user = $6",[matricule,nom,prenom,id_role,mot_de_passe,id_user],function(err){
     if (err) {
       res.status(400).send(err);
     }

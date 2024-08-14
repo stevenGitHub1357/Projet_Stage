@@ -22,6 +22,7 @@ const Login =()=>{
     const [countAcces, setCountAcces] = useState(0)
 
     const handleSubmit = (e)=>{
+        console.log("login");
         e.preventDefault()
         let user = {
             matricule:matricule.current == undefined ? '' : matricule.current.value ,

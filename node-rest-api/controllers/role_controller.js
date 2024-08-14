@@ -1,6 +1,6 @@
 const pool = require("../config/default.config");
 const getRole = (req,res,next) =>{
-    pool.query("SELECT * FROM reactjs.role",[],function(err,result){
+    pool.query("SELECT * FROM public.role",[],function(err,result){
       if (err) {
         res.status(400).send(err);
       }
