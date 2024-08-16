@@ -21,7 +21,14 @@ git config user.name "Steven"
 
 ### Installation
 
-[Insérer les instructions d'installation]
+#### Node
+npm install nodemon;
+npm install sequelize; 
+npm install sequelize
+
+#### React
+
+
 
 ## Utilisation
 

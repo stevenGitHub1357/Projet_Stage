@@ -1,9 +1,9 @@
-const processModel = require("../models/Role")
-const Role = processModel.Role;
+const processModel = require("../models/Processus")
+const Processus = processModel.Processus;
 
 
-const getRole = (req,res) => {
-    Role.findAll()
+const getProcessus = (req,res) => {
+    Processus.findAll()
     .then(function(results) {
       if (results.length > 0) {
         res.status(200).json(results);
@@ -18,11 +18,13 @@ const getRole = (req,res) => {
 };
 
 
-const insertRole = (req,res) => {
-  const {type_Role} = req.body
-  Role.create(
+const insertProcessus = (req,res) => {
+  const {libelle_processus,num_processus,abbrv} = req.body
+  Processus.create(
     { 
-      type_Role : type_Role,
+      libelle_processus : libelle_processus,
+      num_processus : num_processus,  
+      abbrv : abbrv,
     }
   )
   .then(function(results) {
@@ -35,12 +37,12 @@ const insertRole = (req,res) => {
 };
 
 
-const deleteRole = (req,res) => {
-  let id_role = req.body.id_role
-  Role.destroy(
+const deleteProcessus = (req,res) => {
+  let id = req.body.id
+  Processus.destroy(
     {
       where: {
-        id_role : id_role,
+        id: id,
       },
     }
   )
@@ -54,16 +56,18 @@ const deleteRole = (req,res) => {
 };
 
 
-const updateRole = (req,res) => {
-  const {id_role,type_Role} = req.body
-  Role.update(
+const updateProcessus = (req,res) => {
+  const {id,libelle_processus,num_processus,abbrv} = req.body
+  Processus.update(
     { 
-      type_Role : type_Role
+      libelle_processus : libelle_processus,
+      num_processus : num_processus,  
+      abbrv : abbrv,
     },
     {
       where : 
       {
-        id_role : id_role
+        id : id
       }
     }
   )
@@ -79,7 +83,7 @@ const updateRole = (req,res) => {
 
 
 
- module.exports = {getRole,insertRole,deleteRole,updateRole};
+ module.exports = {getProcessus,insertProcessus,deleteProcessus,updateProcessus};
 
 
 

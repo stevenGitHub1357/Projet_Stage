@@ -1,5 +1,93 @@
-const pool = require("../config/default.config")
+const bd_pool = require("../config/default.config")
+const pool = bd_pool.pool
 const gpao = require("../config/dbGpao.config")
+const userModel = require("../models/Users")
+const User = userModel.User;
+
+
+const getUsers = (req,res) => {
+    User.findAll()
+    .then(function(results) {
+      if (results.length > 0) {
+        res.status(200).json(results);
+      } else {
+        res.status(200).json();
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+};
+
+
+const insertUsers = (req,res) => {
+  const {matricule,nom,prenom,mot_de_passe} = req.body
+  User.create(
+    { 
+      matricule : matricule,
+      nom : nom,  
+      prenom : prenom,
+      mot_de_passe : mot_de_passe,
+    }
+  )
+  .then(function(results) {
+    res.status(200).send(results);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+
+const deleteUser = (req,res) => {
+  let id = req.body.id_user
+  User.destroy(
+    {
+      where: {
+        id_user: id,
+      },
+    }
+  )
+  .then(function(deleted) {
+    res.status(200).send(deleted[0]);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+
+const UpdateUser = (req,res) => {
+  const {id_user,matricule,nom,prenom,mot_de_passe} = req.body
+  User.update(
+    { 
+      matricule : matricule,
+      nom : nom,  
+      prenom : prenom,
+      mot_de_passe : mot_de_passe,
+    },
+    {
+      where : 
+      {
+        id_user : id_user
+      }
+    }
+  )
+  .then(function(results) {
+    res.status(200).send(results);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+  
+
+
+
 
 const getUserFromGpao = (req,res,next) =>{
   const {matricule} = req.body
@@ -14,33 +102,6 @@ const getUserFromGpao = (req,res,next) =>{
   }
     
   })
-}
-
-
-
-const getUsers = (req,res,next) =>{
-    pool.query("SELECT * FROM public.users",[],function(err,result){
-      if (err) {
-        res.status(400).send(err);
-      }
-      if (Object.keys(result).length > 0) {
-          res.status(200).send(result.rows);
-      } else {
-          res.status(200).send();
-      }
-      })
-};
-
-
-const insertUsers = (req,res,next) =>{
-  const {matricule,nom,prenom,mot_de_passe,id_role} = req.body
-    pool.query("INSERT INTO public.users (matricule,nom,prenom,mot_de_passe,id_role,default_mdp) VALUES ($1,$2,$3,$4,$5,'lum123')",[matricule,nom,prenom,mot_de_passe,id_role],function(err,result){
-      if (err) {
-        res.status(400).send(err);
-      }
-      
-      })
-
 };
 
 const getLog = (req,res,next) =>{
@@ -54,7 +115,7 @@ const getLog = (req,res,next) =>{
       res.status(200).send(Result.rows);
     } 
   })
-}
+};
 
 const getInfoLog = (req,res,next) =>{
   let matricule = req.body.matricule;
@@ -67,26 +128,7 @@ const getInfoLog = (req,res,next) =>{
     } 
     
   })
-}
-
-const deleteUser = (req,res,next) =>{
-  let id = req.body.id_user;
-  pool.query("DELETE FROM public.users WHERE id_user = $1",[id],function(err){
-    if (err) {
-      res.status(400).send(err);
-    }
-  })
-}
-
-const UpdateUser = (req,res,next) =>{
-  let {id_user,matricule,nom,prenom,id_role,mot_de_passe} = req.body;
-  pool.query("Update public.users SET matricule=$1 , nom=$2, prenom=$3,id_role=$4,mot_de_passe=$5 WHERE id_user = $6",[matricule,nom,prenom,id_role,mot_de_passe,id_user],function(err){
-    if (err) {
-      res.status(400).send(err);
-    }
-  
-  })
-}
+};
 
 const getNb_echec = (req,res,next)=>{
   let matricule = req.body.matricule
@@ -94,7 +136,7 @@ const getNb_echec = (req,res,next)=>{
     // console.log(result.rows)
       res.status(200).send(result.rows)
   })
-}
+};
 
 const VerificationOperateurSecuriter = (req,res,next)=>{
   let matricule = req.body.matricule
@@ -120,7 +162,7 @@ const VerificationOperateurSecuriter = (req,res,next)=>{
       }
     }
   })
-}
+};
 
 
  module.exports = {getUsers,insertUsers,getLog,deleteUser,getInfoLog,UpdateUser,getUserFromGpao,VerificationOperateurSecuriter,getNb_echec};

@@ -1,18 +1,91 @@
 const pool = require("../config/default.config");
+const menuModel = require("../models/Menus")
+const Menu = menuModel.Menu;
 
 const getMenu = (req,res,next) =>{
-    pool.query("SELECT * FROM public.menus ORDER BY range ASC",[],function(err,result){
-      if (err) {
-        res.status(400).send(err);
-      }
-      if (Object.keys(result).length > 0) {
-        res.status(200).send(result.rows);
+  Menu.findAll()
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
     } else {
-        res.status(200).send();
+      res.status(200).json();
     }
-      
-      })
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
 };
+
+
+const insertMenu = (req,res,next) =>{
+  const {labelle_menu,icon,route,position,rang,base} = req.body
+  Menu.create(
+    { 
+      labelle_menu : labelle_menu,
+      icon : icon,  
+      route : route,
+      position : position,
+      rang : rang,
+      base : base,
+    }
+  )
+  .then(function(results) {
+    res.status(200).send(results);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+
+const deleteMenu = (req,res,next) =>{
+  let id = req.body.id_menu
+  Menu.destroy(
+    {
+      where: {
+        id_menu: id,
+      },
+    }
+  )
+  .then(function(deleted) {
+    res.status(200).send(deleted[0]);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+
+const updateMenu = (req,res,next) =>{
+  const {id_menu,labelle_menu,icon,route,position,rang,base} = req.body
+  Menu.update(
+    { 
+      labelle_menu : labelle_menu,
+      icon : icon,  
+      route : route,
+      position : position,
+      rang : rang,
+      base : base,
+    },
+    {
+      where : 
+      {
+        id_menu : id_menu
+      }
+    }
+  )
+  .then(function(results) {
+    res.status(200).send(results);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+}
+
 
 const getMenuByRole = (req,res,next) =>{
   let role = req.body.role_react
@@ -30,35 +103,6 @@ const getMenuByRole = (req,res,next) =>{
     })
 };
 
-const insertMenu = (req,res,next) =>{
-  console.log(req.body);
-  let {icon,labelle_menu,route,role} = req.body
-
-  pool.query("INSERT INTO reactjs.menus (icon,labelle_menu,route,sous_menus,role) VALUES ($1,$2,$3,$4,$5)",[icon,labelle_menu,route,'[]',JSON.stringify(role)],function(err,result){
-    if (err) {
-      res.status(400).send(err);
-    }
-  })
-};
-
-const deleteMenu = (req,res,next) =>{
-  let id = req.body.id_menu;
-  pool.query("DELETE FROM reactjs.menus WHERE id_menu = $1",[id],function(err){
-    if (err) {
-      res.status(400).send(err);
-    }
-  })
-}
-
-const updateMenu = (req,res,next) =>{
-  let {id_menu,icon,labelle_menu,route,role} = req.body
-  pool.query("UPDATE reactjs.menus SET  icon = $1, labelle_menu = $2, route = $3, role = $4  WHERE id_menu = $5",[icon,labelle_menu,route,JSON.stringify(role),id_menu],function(err){
-    if (err) {
-      res.status(400).send(err);
-    }
-   
-  })
-}
 
 const updateSousMenu = (req,res,next) =>{
   let {id_menu,sous_menus} = req.body
