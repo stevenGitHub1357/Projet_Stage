@@ -4,7 +4,7 @@ import { IconList } from "./icon";
 import './style/style.css'
 import { Success, Warning } from "../service/service-alert";
 import { useDispatch, useSelector } from "react-redux/es/exports";
-import { addMenu,AddSousMenu,deleteMenu,DeletesousMenu,setMenusData,setUpdatemenus,UpdateMenu, UpdateSousMenu } from "../feature/menus.slice";
+import { addMenu,deleteMenu,setMenusData,updateMenu } from "../feature/menus.slice";
 import 'reactjs-popup/dist/index.css';
 import Global_url from "../../global_url";
 import Modal from "react-modal"
@@ -90,56 +90,12 @@ const Gestion_menu =({theme})=>{
         setChecked(item.role)
     }
 
-    const SelectSousMenu = (menu,index) =>{
-        //console.log(menu)
-        setNomSousMenu(menu.sous_menus[index].nom_sous_menu)
-        setRouteSousMenu(menu.sous_menus[index].route_sous_menu)
-        setBtnIcon(menu.sous_menus[index].icon_sous_menu)
-        setIconSousMenu(menu.sous_menus[index].icon_sous_menu)
-        setIdSousMenu(index)
-        setEtatModal(true)
-        setChecked(menu.sous_menus[index].role_sous_menu)
-
-
-    }
-
     const DeleteMenu = (menu)=>{
         dispatch(deleteMenu(menu.id_menu))
 
         axios.post(Url+"/deleteMenu",menu).then(res =>{
         });
         Success()
-    }
-
-    const DeleteMenuSousMenus = (menu,index)=>{
-
-        let obj = {
-            id_menu:menu.id_menu,
-            index_sous_menu: index
-        }
-        dispatch(DeletesousMenu(obj))
-        let resultat
-
-        axios.get(Url+"/getMenus").then(res =>{
-            for(let i = 0; i < res.data.length; i++){
-                res.data[i].sous_menus = JSON.parse(res.data[i].sous_menus)
-                for(let j = 0; j < res.data[i].sous_menus.length ; j++){
-                    if(res.data[i].id_menu == menu.id_menu){
-                        if(j == index){
-                            res.data[i].sous_menus.splice(index , 1)
-                        }
-                    }
-                }
-                res.data[i].sous_menus = JSON.stringify(res.data[i].sous_menus) 
-                resultat = res.data[i]
-                
-            }
-            axios.post(Url + "/update-sous-menus",resultat).then(res=>{
-            })
-        })
-        Success()
-        
-
     }
 
     const AddMenu = () =>{
@@ -160,7 +116,7 @@ const Gestion_menu =({theme})=>{
             return
         }
         if(id_menu.current.value != ""){
-            dispatch(UpdateMenu(objMenu))
+            dispatch(updateMenu(objMenu))
             axios.post(Url+"/Update-Menu",objMenu).then(res=>{
             }) 
             Success('Mise à jour effectué avec succès !')
@@ -175,70 +131,7 @@ const Gestion_menu =({theme})=>{
         reset()
     }
 
-    const AjousSousMenu = (menu) =>{
-
-        let dataObj = {
-            icon_sous_menu: icon_sous_menu,
-            nom_sous_menu: nom_sous_menu,
-            route_sous_menu:route_sous_menu,
-            role_sous_menu:checked
-        }
-        console.log(dataObj)
-        
-
-        let obj = {
-            id_menu:menu.id_menu,
-            sous_menu: dataObj
-        }
-        dispatch(AddSousMenu(obj))
-       
-        let resultat
-        axios.get(Url+"/getMenus").then(res =>{
-            for(let i = 0; i < res.data.length; i++){
-                res.data[i].sous_menus = JSON.parse(res.data[i].sous_menus)
-                if(res.data[i].id_menu == menu.id_menu){
-                    res.data[i].sous_menus.push(dataObj)
-                    res.data[i].sous_menus = JSON.stringify(res.data[i].sous_menus)
-                        resultat = res.data[i]
-                }
-            }
-            axios.post(Url + "/update-sous-menus",resultat).then(res=>{
-
-            })
-        })
-        setNomSousMenu("")
-        setRouteSousMenu("")
-        setIconSousMenu("")   
-        Success()
-    }
-    const MajSousMenu = (menu)=>{
-        let updateSousMenu = {icon_sous_menu:icon_sous_menu,nom_sous_menu:nom_sous_menu,route_sous_menu:route_sous_menu}
-        let obj = {
-            index: id_sous_menu,
-            id_menu: menu.id_menu,
-            sous_menus: updateSousMenu
-        }
-        dispatch(UpdateSousMenu(obj))
-        let resultat
-        axios.get(Url+"/getMenus").then(res =>{
-            for(let i = 0; i < res.data.length; i++){
-                res.data[i].sous_menus = JSON.parse(res.data[i].sous_menus)
-                if(res.data[i].id_menu == menu.id_menu){
-                    for(let j = 0; j < res.data[i].sous_menus.length; j++){
-                        if(j == id_sous_menu){
-                            res.data[i].sous_menus.splice(j,1,updateSousMenu)
-
-                        }
-                    }
-                }
-                res.data[i].sous_menus = JSON.stringify(res.data[i].sous_menus)
-                resultat = res.data[i]
-            }
-            axios.post(Url + "/update-sous-menus",resultat).then(res=>{})
-            Success()
-            Initialisation() 
-        })
-    }
+    
     const BtnIcon = (e,icon) =>{
         e.preventDefault()
         setBtnIcon("bi bi-"+icon)
@@ -504,8 +397,8 @@ const Gestion_menu =({theme})=>{
                                                     </div>
                                                     </td>
                                                     <td>
-                                                        <button className="btn btn-sm btn-success ms-2" type="button" onClick={()=>SelectSousMenu(menu,i)} data-bs-toggle="tooltip" data-bs-placement="top" title="Modifier"><i className="bi bi-pen"></i></button>
-                                                        <button className="btn btn-sm btn-danger ms-2" type="button" onClick={()=>DeleteMenuSousMenus(menu,i)} data-bs-toggle="tooltip" disabled={sousMenu.route_sous_menu == 'menu' || sousMenu.route_sous_menu == 'utilisateur' ? true : false} data-bs-placement="top" title="Supprimer"><i className="bi bi-trash"></i></button>
+                                                        {/* <button className="btn btn-sm btn-success ms-2" type="button" onClick={()=>SelectSousMenu(menu,i)} data-bs-toggle="tooltip" data-bs-placement="top" title="Modifier"><i className="bi bi-pen"></i></button>
+                                                        <button className="btn btn-sm btn-danger ms-2" type="button" onClick={()=>DeleteMenuSousMenus(menu,i)} data-bs-toggle="tooltip" disabled={sousMenu.route_sous_menu == 'menu' || sousMenu.route_sous_menu == 'utilisateur' ? true : false} data-bs-placement="top" title="Supprimer"><i className="bi bi-trash"></i></button> */}
                                                     </td>
                                                     <td></td>
 
@@ -531,11 +424,11 @@ const Gestion_menu =({theme})=>{
                                             <button className="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target={etat_modal == true ? "#role_list_modif" : "#role_list"}>Role</button>
                                         </td>
                                         <td>
-                                            {id_sous_menu === '' ? 
+                                            {/* {id_sous_menu === '' ? 
                                                 <button className="btn btn-sm btn-primary ms-2" type="button" onClick={()=>AjousSousMenu(menu)} ><i className="bi bi-save"></i></button>
                                                 :
                                                 <button  className="btn btn-sm btn-primary ms-2" type="button" onClick={()=>MajSousMenu(menu)}><i className="bi bi-save"></i></button>
-                                            }
+                                            } */}
                                             <button className={!theme ? "btn btn-sm btn-dark ms-2" : "btn btn-sm btn-secondary ms-2"} onClick={()=>Initialisation()}><i className="bi bi-x-lg"></i></button>
                                         </td>
                                         <td></td>

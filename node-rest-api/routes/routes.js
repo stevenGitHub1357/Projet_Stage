@@ -19,6 +19,7 @@ router.get("/getMenus",menus.getMenu)
 router.post("/insertMenu",menus.insertMenu)
 router.post("/deleteMenu",menus.deleteMenu)
 router.post("/Update-Menu",menus.updateMenu)
+
 router.post("/updateRange",menus.updateRange)
 router.post("/update-sous-menus",menus.updateSousMenu)
 router.post("/get-Menu-Role",menus.getMenuByRole)

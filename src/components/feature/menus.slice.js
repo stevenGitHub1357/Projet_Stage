@@ -7,12 +7,6 @@ const menusSlice = createSlice({
         roles:[{id_role:null,type_role:""}]
     },
     reducers:{
-        setRolesData:(state,{payload})=>{
-            state.roles = payload
-        },
-        checkedRole:(state,{payload})=>{
-            state.roles = payload
-        },
         setMenusData:(state,{payload})=>{
             state.menus = payload
         },
@@ -25,10 +19,10 @@ const menusSlice = createSlice({
         deleteMenu: (state,{payload})=>{
             state.menus = state.menus.filter( (menu) => menu.id_menu !== payload)
         },
-        setUpdatemenus:(state,{payload}) =>{
+        updateMenu:(state,{payload}) =>{
             state.updatemenus = payload
         },
-        UpdateMenu:(state,{payload}) =>{
+        updateMenuData:(state,{payload}) =>{
             state.menus = state.menus.map((menu) =>{
                 if(menu.id_menu == payload.id_menu){
                     return{
@@ -44,46 +38,9 @@ const menusSlice = createSlice({
             })
         },
 
-        AddSousMenu:(state,{payload}) =>{
-            console.log(payload)
-            state.menus = state.menus.map((menu)=>{
-                if(menu.id_menu == payload.id_menu){
-                    menu.sous_menus.push(payload.sous_menu)
-                }
-                return menu
-            })
-        },
-
-        DeletesousMenu:(state,{payload})=>{
-            state.menus = state.menus.map((menu)=>{
-                if(menu.id_menu == payload.id_menu){
-                    menu.sous_menus = menu.sous_menus.filter((Smenu,index) => index !== payload.index_sous_menu)
-                }
-                return menu
-            })
-        },
-
-        UpdateSousMenu:(state,{payload}) =>{
-            state.menus = state.menus.map((menu)=>{
-                if(menu.id_menu == payload.id_menu){
-                    menu.sous_menus = menu.sous_menus.map((SMenu,index)=>{
-                        if(index == payload.index){
-                            return{
-                                ...SMenu,
-                                icon_sous_menu: payload.sous_menus.icon_sous_menu,
-                                nom_sous_menu: payload.sous_menus.nom_sous_menu,
-                                route_sous_menu:payload.sous_menus.route_sous_menu
-                            }
-                        }else{
-                            return SMenu
-                        }
-                    })
-                }
-                return menu
-            })
-        }
+        
     }
 })
 
-export const {setMenusData,addMenu,deleteMenu,setUpdatemenus,UpdateMenu,AddSousMenu,DeletesousMenu,UpdateSousMenu,setRolesData} = menusSlice.actions
+export const {setMenusData,addMenu,deleteMenu,updateMenuData,updateMenu} = menusSlice.actions
 export default menusSlice.reducer

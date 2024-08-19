@@ -27,46 +27,27 @@ const Menu =()=>{
         getAllMenu()
         // GetUsers()
     },[])
+
     function getAllMenu(){
-            axios.get(Url+"/getMenus").then(res =>{
-                for(let i=0; i<res.data.length; i++){
-                    if(typeof res.data[i].role == "string"){
-                        res.data[i].role = JSON.parse(res.data[i].role)    
-                    }
-                    if(res.data[i].sous_menus != null){
-                        res.data[i].sous_menus = JSON.parse(res.data[i].sous_menus)
-                    }
-                }
-                dispatch(setMenusData(res.data))
-            })
-        }
-        
-        function handleLogout(){
-            setCookie("islogged_react","false")
-            removeCookie("matricule_react")
-            removeCookie("role_react")
-            window.location.pathname = '/react_app/home'
-        }
+        axios.get(Url+"/getMenus").then(res =>{
+            
+            dispatch(setMenusData(res.data))
+        })
+    }
+    
+    function handleLogout(){
+        setCookie("islogged_react","false")
+        removeCookie("matricule_react")
+        removeCookie("role_react")
+        window.location.pathname = '/react_app/home'
+    }
         
         
         let matricule = cookies.matricule_react
         let role = cookies.role_react
         let nom_complet = cookies.nom_complet_react
         let roles = GetRole()
-    //     function GetUsers(){
-    //         axios.get(Url+"/getUsers").then(res =>{
-    //             for(let i=0; i<res.data.length;i++){
-    //                 for(let j=0; j<roles.length; j++){
-    //                     if(res.data[i].id_role == roles[j].id_role){
-    //                         res.data[i].id_role = roles[j].type_role
-    //                 }
-    //             }
-    //         }
-    //         dispatch(setUsersData(res.data))
-    //     })
-    // }
-
-    //class for menu
+    
     const darkMode = () =>{
         if(theme == true){
             setTheme(false)
@@ -128,16 +109,16 @@ const Menu =()=>{
                     </div> */}
                     
                     <ul className="nav d-block mt-3 scroller" >{
-                        listMenuSlice.filter(menu => menu.role.includes(role)).map((menu,index)=>
+                        listMenuSlice.map((menu,index)=>
                             menu != undefined ?
-                            menu.route == "" && menu.sous_menus.length != 0 ?
+                            menu.route == "" ?
                             <li className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>
                                 <NavLink className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  to="Test" data-bs-toggle="collapse" data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample" > 
                                     {!MenuCollapse ? <span className="titleMenu "> {menu.labelle_menu}</span>:<></>}
                                     <i className={menu.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu}></i>
                                 </NavLink>
                                 
-                                <div className="collapse" id={"collapseMenu"+index}>
+                                {/* <div className="collapse" id={"collapseMenu"+index}>
                                     <div className={!MenuCollapse ? background + " card card-body " :background+" card p-0 pt-1 text-center " }>
                                         {
                                             menu.sous_menus.filter(sous_menus => sous_menus.role_sous_menu.includes(role)).map((sous_menus,index)=>
@@ -149,7 +130,7 @@ const Menu =()=>{
                                         }
                                         
                                     </div>
-                                </div>
+                                </div> */}
                             </li>
                             :
                             <li className="nav-item bg-dark "  data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>

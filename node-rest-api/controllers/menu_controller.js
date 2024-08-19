@@ -1,5 +1,6 @@
 const pool = require("../config/default.config");
-const menuModel = require("../models/Menus")
+const menuModel = require("../models/Menus");
+const {Op} = require("sequelize");
 const Menu = menuModel.Menu;
 
 const getMenu = (req,res,next) =>{
