@@ -2,9 +2,8 @@ import { createSlice } from "@reduxjs/toolkit"
 const menusSlice = createSlice({
     name:"menus",
     initialState:{
-        menus:[{id_menu:null, labelle_menu:"", icon:"", route:"", range:"", sous_menus:[],role:[]}],
-        updatemenus:{id_menu:null, labelle_menu:"", icon:"", route:"", range:null, sous_menus:[]},
-        roles:[{id_role:null,type_role:""}]
+        menus:[{id_menu:null, labelle_menu:"", icon:"", route:"", range:"", position:"", base:""}],
+        updatemenus:{id_menu:null, labelle_menu:"", icon:"", route:"", range:null, position:"", base:""},
     },
     reducers:{
         setMenusData:(state,{payload})=>{
@@ -30,7 +29,8 @@ const menusSlice = createSlice({
                         labelle_menu: payload.labelle_menu,
                         route:payload.route,
                         icon:payload.icon,
-                        role:payload.role
+                        position:payload.position,
+                        base:payload.base
                     }
                 }else{
                     return menu

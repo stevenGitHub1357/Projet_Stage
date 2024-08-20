@@ -230,7 +230,6 @@ const Gestion_menu =({theme})=>{
                                                         <td><input type="checkbox" value={role.id_role}  onChange={handleCheckedRole} /></td>
                                                     </tr>
                                                 )
-
                                             }
                                         </tbody>
                                     </table>

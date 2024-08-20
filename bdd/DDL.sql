@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS menus(
   icon VARCHAR(500) NOT NULL DEFAULT 'bi bi-file-earmark-plus',
   route VARCHAR(200) NOT NULL DEFAULT 'global',
   position INTEGER DEFAULT 1,
-  rang INTEGER NOT NULL,
+  rang INTEGER DEFAULT 1,
   base INTEGER DEFAULT 0
 );
 

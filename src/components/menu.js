@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { NavLink,Route,Routes,BrowserRouter as Router} from "react-router-dom"
+import { NavLink,Route,Routes,BrowserRouter as Router, useNavigate} from "react-router-dom"
 import Route_menu from "./route/route"
 import { useCookies } from "react-cookie"
 import axios from "axios"
@@ -22,15 +22,15 @@ const Menu =()=>{
     const [background, setBackground] = useState("bg-dark");
     const dispatch = useDispatch()
     const listMenuSlice = useSelector((state) => state.menus.menus)
+    const urlReact = "Luminess_KPI/";
+    // let navigate = useNavigate();
 
     useEffect(()=>{
         getAllMenu()
-        // GetUsers()
     },[])
 
     function getAllMenu(){
         axios.get(Url+"/getMenus").then(res =>{
-            
             dispatch(setMenusData(res.data))
         })
     }
@@ -41,6 +41,10 @@ const Menu =()=>{
         removeCookie("role_react")
         window.location.pathname = '/react_app/home'
     }
+
+    // function handelQuick(urls){    
+    //     navigate(urls)
+    // }
         
         
         let matricule = cookies.matricule_react
@@ -74,12 +78,6 @@ const Menu =()=>{
             transition: "0.5s",
             width: "250px",
             height: "100vh",
-            transition: "0.5s",
-            // '@media screen and (max-width:1000px)' : {
-            //     transition: "0.5s",
-            //     width: "70px",
-            //     height: "100vh"
-            // }
     }
 
     const styleMenuMinim = {
@@ -102,48 +100,92 @@ const Menu =()=>{
 
                     </div>
                     <hr className="text-success"></hr>
-                    {/* <div className="Profil text-center ">
-                        <img width={!MenuCollapse ? "30%" : "50%"} className="rounded-5 border-success border border-2" src={"http://192.168.12.238:81/badge_jouve/photo/"+matricule+".jpg"}></img>
-                        <div className={!MenuCollapse ? "mt-2 bg-dark p-2 rounded-2 mx-2 text-white" : "d-none"}>{nom_complet}</div>
-
-                    </div> */}
                     
-                    <ul className="nav d-block mt-3 scroller" >{
-                        listMenuSlice.map((menu,index)=>
-                            menu != undefined ?
-                            menu.route == "" ?
+                    <ul className="nav d-block mt-3 scroller" >
+                        {
+                        listMenuSlice.filter(menu => menu.base===0).length>0 &&
+                        listMenuSlice.filter(menu => menu.base===0).map((menu, index)  => (
                             <li className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>
-                                <NavLink className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  to="Test" data-bs-toggle="collapse" data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample" > 
-                                    {!MenuCollapse ? <span className="titleMenu "> {menu.labelle_menu}</span>:<></>}
+                                <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
+                                            to={urlReact+menu.route} >
+                                    <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample">
+                                        {!MenuCollapse ? <span className="titleMenu "> {menu.labelle_menu}</span>:<></>}
+                                    </div>
                                     <i className={menu.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu}></i>
                                 </NavLink>
-                                
-                                {/* <div className="collapse" id={"collapseMenu"+index}>
-                                    <div className={!MenuCollapse ? background + " card card-body " :background+" card p-0 pt-1 text-center " }>
-                                        {
-                                            menu.sous_menus.filter(sous_menus => sous_menus.role_sous_menu.includes(role)).map((sous_menus,index)=>
-                                                <NavLink className="nav-link  lien rounded-1 mb-2 d-flex justify-content-between" to={"react_app/"+sous_menus.route_sous_menu} style={({ isActive }) => ({ background: isActive ? "#00000078" : "" , color: isActive ? "#7ee2a6" : "#ffffff" })} > 
-                                                    {!MenuCollapse ? <span className= "titleMenu ms-2 d-inline" > {sous_menus.nom_sous_menu}</span>:<></>}
-                                                    <i className={sous_menus.icon_sous_menu }></i>
-                                                </NavLink>
-                                            )
-                                        }
-                                        
-                                    </div>
-                                </div> */}
+                                <div className="collapse" id={"collapseMenu"+index}>
+                                    { listMenuSlice.filter(subMenu1 => subMenu1.base=== menu.id_menu).length > 0 && (
+                                        <div className={!MenuCollapse ? background + " card card-body " :background+" card p-0 pt-1 text-center " }>
+                                            {
+                                            listMenuSlice.filter(subMenu1=> subMenu1.base === menu.id_menu).map((subMenu1, subIndex) => (
+                                                <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu1.labelle_menu} key={subIndex}>
+                                                    <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
+                                                                to={urlReact+subMenu1.route} >
+                                                        <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+subIndex} aria-expanded="false" aria-controls="collapseExample">
+                                                            {!MenuCollapse ? <span className="titleMenu "> {subMenu1.labelle_menu}</span>:<></>}
+                                                        </div>
+                                                        <i className={subMenu1.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu1.labelle_menu}></i>
+                                                    </NavLink>
+                                                    <div className="collapse" id={"collapseMenu2"+subIndex}>
+                                                        {listMenuSlice.filter(subMenu2 => subMenu2.base=== subMenu1.id_menu).length > 0 &&  (
+                                                            <div className={!MenuCollapse ? background + " card card-body " :background+" card p-0 pt-1 text-center " }>
+                                                                {listMenuSlice.filter(subMenu2=> subMenu2.base === subMenu1.id_menu).map((subMenu2, subIndex2) => (
+                                                                    <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu2.labelle_menu} key={subIndex2}>
+                                                                        <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
+                                                                                    to={urlReact+subMenu2.route} >
+                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample">
+                                                                                {!MenuCollapse ? <span className="titleMenu "> {subMenu2.labelle_menu}</span>:<></>}
+                                                                            </div>
+                                                                            <i className={subMenu2.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu2.labelle_menu}></i>
+                                                                        </NavLink>
+                                                                        <div className="collapse" id={"collapseMenu3"+subIndex2}>
+                                                                        {listMenuSlice.filter(subMenu3 => subMenu3.base=== subMenu2.id_menu).length > 0 && (
+                                                                                <div className={!MenuCollapse ? background + " card card-body " :background+" card p-0 pt-1 text-center " }>
+                                                                                {listMenuSlice.filter(subMenu3=> subMenu3.base === subMenu2.id_menu).map((subMenu3, subIndex3) => (
+                                                                                    <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu3.labelle_menu} key={subIndex3}>
+                                                                                        <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
+                                                                                                    to={urlReact+subMenu3.route} >
+                                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu4"+subIndex3} aria-expanded="false" aria-controls="collapseExample">
+                                                                                                {!MenuCollapse ? <span className="titleMenu "> {subMenu3.labelle_menu}</span>:<></>}
+                                                                                            </div>
+                                                                                            <i className={subMenu3.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu3.labelle_menu}></i>
+                                                                                        </NavLink>
+                                                                                        <div className="collapse" id={"collapseMenu4"+subIndex3}>
+                                                                                        {listMenuSlice.filter(subMenu4 => subMenu4.base=== subMenu3.id_menu).length > 0 &&(
+                                                                                            <div className={!MenuCollapse ? background + " card card-body " :background+" card p-0 pt-1 text-center " }>
+                                                                                            {listMenuSlice.filter(subMenu4=> subMenu4.base === subMenu3.id_menu).map((subMenu4, subIndex4) => (
+                                                                                                <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu4.labelle_menu} key={subIndex4}>
+                                                                                                    <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
+                                                                                                                to={urlReact+subMenu4.route} >
+                                                                                                        <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu5"+subIndex4} aria-expanded="false" aria-controls="collapseExample">
+                                                                                                            {!MenuCollapse ? <span className="titleMenu "> {subMenu4.labelle_menu}</span>:<></>}
+                                                                                                        </div>
+                                                                                                        <i className={subMenu4.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu4.labelle_menu}></i>
+                                                                                                    </NavLink>
+                                                                                                </span>
+                                                                                            ))}
+                                                                                            </div>
+                                                                                        )}
+                                                                                        </div>
+                                                                                    </span>
+                                                                                ))}
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </li>
-                            :
-                            <li className="nav-item bg-dark "  data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>
-                                <NavLink className="nav-link lien rounded-1 d-flex justify-content-between"  style={({ isActive }) => ({ background: isActive ? "#00000078" : "", color: isActive ? "#7ee2a6" : "#ffffff"})} to={"react_app/"+menu.route}> 
-                                    {!MenuCollapse ? <span className="titleMenu d-inline">{menu.labelle_menu}</span> : <></>}
-                                    <i className={menu.icon } data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu}></i>
-                                </NavLink>
-                            </li>
-                            :
-                            <></>
-                        )
-                    }   
-                        <li className="nav-item nav-sousmenu ">
+                        ))}
+                     
+                            <li className="nav-item nav-sousmenu ">
                                 <button className="btn btn-dark nav-link lien rounded-1 w-100 text-white d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#theme" aria-expanded="false" aria-controls="collapseExample" > 
                                     {!MenuCollapse ? <span className= "titleMenu" > Thèmes</span> : <></>}
                                     <i className="bi bi-brush d-inline"></i>

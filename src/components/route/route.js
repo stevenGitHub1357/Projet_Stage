@@ -8,7 +8,7 @@ import Module from "../module/module";
 import Test from "../test/test";
 
 const Route_menu =({MenuCollapse,theme,logo})=>{
-    const Route_Server = "react_app/"
+    const Route_Server = "Luminess_KPI/"
     return(
         <Routes>
             <Route path={Route_Server + "acceuil"} element={<Home MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
