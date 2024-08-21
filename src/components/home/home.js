@@ -198,14 +198,14 @@ const Home =({MenuCollapse,theme,logo})=>{
                                 </tbody>
                             </table>
                             <div className="table-scroll">
-                                <table className="table ">
+                                <table className="table">
                                     <tbody className="text-center " >
                                     
                                         {
                                             todoSlice.filter((tache) => 
                                                 filtreFini == true ? tache.statut == 'Fini' : filtreEncours == true ? tache.statut == 'En cours' : filtreFini == false && filtreEncours == false ? tache.statut : ""
                                             ).map((tache,index) =>
-                                                <tr style={{background: tache.statut == 'Fini' ? '#7ee2a6' : '', transition: tache.statut == 'Fini' || tache.statut == 'En cours' ? "0.5s" : ""}} className={tache.statut == 'Fini' ? "fw-bolder": ""}>
+                                                <tr style={{background: tache.statut == 'Fini' ? '#7ee2a6' : "", transition: tache.statut == 'Fini' || tache.statut == 'En cours' ? "0.5s" : ""}} className={tache.statut == 'Fini' ? "fw-bolder": ""} key={index}>
                                                     <td>{tache.tache}</td>
                                                     <td>
                                                         {

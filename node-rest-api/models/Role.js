@@ -20,4 +20,25 @@ const Role = defautl_db.defaultSequelize.define('role', {
         updatedAt: false,
     });
 
-module.exports = {Role};
+
+    const Detail_user_role = defautl_db.defaultSequelize.define('detai_user_role', {
+        id_u_role: {
+              type: Sequelize.INTEGER,
+              autoIncrement: true,
+              primaryKey: true,
+              allowNull: false,
+          },
+        id_user: Sequelize.INTEGER,
+        id_role: Sequelize.INTEGER,
+        type_role: Sequelize.STRING(200),
+        date_create: Sequelize.DATE,
+          
+      
+        },{
+          tableName: "detail_user_role",
+          freezeTableName: true,
+          timestamps: false,
+          noPrimaryKey: true, 
+        });
+
+module.exports = {Role, Detail_user_role};
