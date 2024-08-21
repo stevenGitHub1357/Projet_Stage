@@ -1,7 +1,8 @@
 const bd_pool = require("../config/default.config")
 const pool = bd_pool.pool
 const gpao = require("../config/dbGpao.config")
-const userModel = require("../models/Users")
+const userModel = require("../models/Users");
+const { id } = require("date-fns/locale");
 const User = userModel.User;
 
 
@@ -18,6 +19,28 @@ const getUsers = (req,res) => {
       console.error(error);
       res.status(400).json({ error });
     })
+};
+
+const getUserByMatricule = (req,res) => {
+  User.findAll(
+    { 
+      where :
+      {
+        matricule : req.body.matricule
+      } 
+    }
+  )
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
 };
 
 
@@ -165,7 +188,7 @@ const VerificationOperateurSecuriter = (req,res,next)=>{
 };
 
 
- module.exports = {getUsers,insertUsers,getLog,deleteUser,getInfoLog,UpdateUser,getUserFromGpao,VerificationOperateurSecuriter,getNb_echec};
+ module.exports = {getUsers,getUserByMatricule,insertUsers,getLog,deleteUser,getInfoLog,UpdateUser,getUserFromGpao,VerificationOperateurSecuriter,getNb_echec};
 
 
 

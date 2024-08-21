@@ -1,6 +1,8 @@
 const pool = require("../config/default.config");
-const menuModel = require("../models/Menus")
+const menuModel = require("../models/Menus");
+const {Op} = require("sequelize");
 const Menu = menuModel.Menu;
+const Menu_role_processus = menuModel.Menu_role_processus;
 
 const getMenu = (req,res,next) =>{
   Menu.findAll()
@@ -87,47 +89,35 @@ const updateMenu = (req,res,next) =>{
 }
 
 
-const getMenuByRole = (req,res,next) =>{
-  let role = req.body.role_react
-  console.log(req.body)
-  pool.query("SELECT * FROM public.menus WHERE role = $1 ORDER BY range ASC",[role],function(err,result){
-    if (err) {
-      res.status(400).send(err);
+const getMenuByUser = (req,res,next) =>{
+  let roles = req.body.role;
+  let processus = req.body.processus;
+  const ids_role = roles.map(obj => obj.id)
+  const ids_processus = processus.map(obj => obj.id)
+  Menu_role_processus.findAll(
+    {
+      where : {
+        id_processus:{
+          [Op.in] : ids_processus
+        },
+        id_role:{
+          [Op.in] : ids_role
+        }
+      }
     }
-    if (Object.keys(result).length > 0) {
-      res.status(200).send(result.rows);
-  } else {
-      res.status(200).send();
-  }
-    
-    })
+  )
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
 };
 
 
-const updateSousMenu = (req,res,next) =>{
-  let {id_menu,sous_menus} = req.body
-  pool.query("UPDATE reactjs.menus SET  sous_menus = $1  WHERE id_menu = $2",[sous_menus,id_menu],function(err){
-    if (err) {
-      res.status(400).send(err);
-    }
-   
-  })
-}
-
-const updateRange = (req,res,next) =>{
-  console.log(req.body)
-  let resultArray = req.body
-  for(let i = 0; i < resultArray.length; i++){
-    let id = resultArray[i].id_menu
-    let range = i
-    pool.query("UPDATE reactjs.menus SET range = $1 WHERE id_menu = $2",[range,id],function(err){
-      if (err) {
-        res.status(400).send(err);
-      } 
-      
-    })
-  }
-}
-
-
-module.exports = {getMenu,insertMenu,deleteMenu,updateMenu,updateRange,updateSousMenu,getMenuByRole};
+module.exports = {getMenu,insertMenu,deleteMenu,updateMenu,getMenuByUser};

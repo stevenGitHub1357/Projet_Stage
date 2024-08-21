@@ -2,22 +2,14 @@ import React, { useEffect, useState } from "react";
 import Gestion_menu from "./gestion_menu";
 import { useDispatch } from "react-redux/es/exports";
 import axios from "axios";
-import { setMenusData, setRolesData } from "../feature/menus.slice";
+import { setMenusData } from "../feature/menus.slice";
 import Global_url from "../../global_url";
 import { TitlePage } from "../templates/templates";
 var Url = Global_url
 
 const Index_menu =({MenuCollapse,theme,logo})=>{
     const dispatch = useDispatch()
-    useEffect(()=>{
-        axios.get(Url+"/getRole").then(res =>{
-            for(let i =0; i< res.data.length; i++){
-                res.data[i].checked = false
-            }
-            dispatch(setRolesData(res.data))
-        })
-
-    },[])
+    
     
     return(
         <div className={!MenuCollapse ? "content" : "contentCollapse"}>
