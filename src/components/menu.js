@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react"
-import { NavLink,Route,Routes,BrowserRouter as Router, useNavigate} from "react-router-dom"
+import { NavLink,BrowserRouter as Router} from "react-router-dom"
 import Route_menu from "./route/route"
 import { useCookies } from "react-cookie"
 import axios from "axios"
 import { GetRole } from "./service/service-role"
 import { useDispatch } from "react-redux/es/hooks/useDispatch"
-import { setUsersData } from "./feature/users.slice"
 import { useSelector } from "react-redux"
 import { setMenusData } from "./feature/menus.slice"
 import Global_url from "../global_url"
 import logo from '../images/logo-jouveTitle.png'
 import $ from 'jquery'
+import Route_Serv from './route/routeServer'
 
 var Url = Global_url
 const Menu =()=>{
@@ -22,8 +22,12 @@ const Menu =()=>{
     const [background, setBackground] = useState("bg-dark");
     const dispatch = useDispatch()
     const listMenuSlice = useSelector((state) => state.menus.menus)
-    const urlReact = "Luminess_KPI/";
-    // let navigate = useNavigate();
+    const urlReact = Route_Serv;
+
+    let matricule = cookies.matricule_react;
+    let role = cookies.role_react;
+    let nom_complet = cookies.nom_complet_react;
+    let roles = GetRole();
 
     useEffect(()=>{
         getAllMenu()
@@ -41,16 +45,6 @@ const Menu =()=>{
         removeCookie("role_react")
         window.location.pathname = '/react_app/home'
     }
-
-    // function handelQuick(urls){    
-    //     navigate(urls)
-    // }
-        
-        
-        let matricule = cookies.matricule_react
-        let role = cookies.role_react
-        let nom_complet = cookies.nom_complet_react
-        let roles = GetRole()
     
     const darkMode = () =>{
         if(theme == true){

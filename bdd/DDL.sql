@@ -1,11 +1,14 @@
--- DROP TABLE IF EXISTS menu_processus;
--- DROP TABLE IF EXISTS menu_role;
--- DROP TABLE IF EXISTS user_processus;
--- DROP TABLE IF EXISTS user_role;
--- DROP TABLE IF EXISTS processus;
--- DROP TABLE IF EXISTS role;
--- DROP TABLE IF EXISTS menus;
--- DROP TABLE IF EXISTS users;
+DROP VIEW IF EXISTS detail_user_processus;
+DROP VIEW IF EXISTS detail_user_role;
+DROP VIEW IF EXISTS menu_role_processus;
+DROP TABLE IF EXISTS menu_processus;
+DROP TABLE IF EXISTS menu_role;
+DROP TABLE IF EXISTS user_processus;
+DROP TABLE IF EXISTS user_role;
+DROP TABLE IF EXISTS processus;
+DROP TABLE IF EXISTS role;
+DROP TABLE IF EXISTS menus;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE IF NOT EXISTS users(
   id_user SERIAL PRIMARY KEY,

@@ -1,6 +1,7 @@
+const { vi } = require("date-fns/locale");
 const processModel = require("../models/Processus")
 const Processus = processModel.Processus;
-
+const View = processModel.Detail_user_processus;
 
 const getProcessus = (req,res) => {
     Processus.findAll()
@@ -79,11 +80,55 @@ const updateProcessus = (req,res) => {
     res.status(400).json({ error });
   })
 };
+
+const getProcessusByUser = (req,res) => {
+  View.findAll(
+    {
+      attributes : [
+        ['id_processus','id'],
+        'libelle_processus',
+        'num_processus', 'abbrv', 'date_create'],
+      where : 
+        {
+          id_user : req.body.id_user
+        },
+      order :
+        [
+          ['id_processus','ASC']
+        ]
+        
+    }
+  )
+  .then(function(results) {
+    if (results.length > 0) {
+      if(results[0].id === 0){
+        console.log(results)
+        Processus.findAll()
+          .then(function(resu){
+            res.status(200).json(resu);
+          })
+          .catch(function(error) {
+            console.error(error);
+            res.status(400).json({ error });
+          })
+      }
+      else{
+        res.status(200).json(results);
+      }
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
   
 
 
 
- module.exports = {getProcessus,insertProcessus,deleteProcessus,updateProcessus};
+ module.exports = {getProcessus,insertProcessus,deleteProcessus,updateProcessus,getProcessusByUser};
 
 
 

@@ -1,5 +1,6 @@
-const processModel = require("../models/Role")
-const Role = processModel.Role;
+const roleModel = require("../models/Role")
+const Role = roleModel.Role;
+const View = roleModel.Detail_user_role;
 
 
 const getRole = (req,res) => {
@@ -75,11 +76,38 @@ const updateRole = (req,res) => {
     res.status(400).json({ error });
   })
 };
+
+const getRoleByUser = (req,res) => {
+  View.findAll(
+    {
+      attributes: ['id_role', 'type_role', 'date_create'],
+      where : 
+        {
+          id_user : req.body.id_user
+        },
+      order :
+        [
+          ['id_role','ASC']
+        ]
+    }
+  )
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
   
 
 
 
- module.exports = {getRole,insertRole,deleteRole,updateRole};
+ module.exports = {getRole,insertRole,deleteRole,updateRole,getRoleByUser};
 
 
 
