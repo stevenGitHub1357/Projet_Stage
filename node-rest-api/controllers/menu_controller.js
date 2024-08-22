@@ -92,7 +92,7 @@ const updateMenu = (req,res,next) =>{
 const getMenuByUser = (req,res,next) =>{
   let roles = req.body.role;
   let processus = req.body.processus;
-  const ids_role = roles.map(obj => obj.id)
+  const ids_role = roles.map(obj => obj.id_role)
   const ids_processus = processus.map(obj => obj.id)
   Menu_role_processus.findAll(
     {

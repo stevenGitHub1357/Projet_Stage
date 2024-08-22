@@ -3,16 +3,15 @@ import React, { useEffect, useRef, useState } from "react"
 import logo from './../../images/logo-jouveTitle.png'
 import { useCookies } from 'react-cookie'
 import Menu from "./../menu"
+import App from "../../App"
 import { Danger, Success, Warning } from "../service/service-alert"
 import Global_url from "../../global_url"
-import { useDispatch } from "react-redux"
-import { setMenusData } from "../feature/menus.slice"
-import { secretKey,iv } from "../service/service-securite"
-import CryptoJS from "crypto-js"
+import { useDispatch } from "react-redux/es/hooks/useDispatch"
+import { setUsersData } from "../feature/users.slice"
 var Url = Global_url
 
 const Login =()=>{
-    const [cookies, setCookie, removeCookie] = useCookies(['islogged_react','matricule_react','role_react','nom_complet_react'])
+    const [cookies, setCookie, removeCookie] = useCookies(['islogged_react','matricule_react','id_user'])
     const dispatch = useDispatch()
     setCookie("islogged_react",false)
     const matricule = useRef()
@@ -20,6 +19,7 @@ const Login =()=>{
     const formLogin = useRef()
     const [countLog, setCountlog] = useState("")
     const [countAcces, setCountAcces] = useState(0)
+    
 
     const handleSubmit = (e)=>{
         console.log("login");
@@ -29,7 +29,7 @@ const Login =()=>{
             mot_de_passe:mot_de_passe.current == undefined ? '': mot_de_passe.current.value
         }
         axios.post(Url+"/getNb-echec",user).then(res=>{
-            console.log(res)
+            // console.log(res)
             if(res.data.lenght > 0){
                 setCountAcces(res.data[0].nb_echec)
             }
@@ -40,6 +40,11 @@ const Login =()=>{
                 Danger("Vérifiez le matricule et le mot de passe")
             }
         })
+        axios.post(Url+"/getUserByMatricule",{matricule:matricule.current.value}).then(res=>{
+            dispatch(setUsersData(res.data));
+            // console.log(res.data[0].id_user);
+            setCookie('id_user',res.data[0].id_user);
+        })
 
         if(user.matricule == '' || user.mot_de_passe == ''){
             Warning('Veuillez remplir les champs!')
@@ -49,18 +54,18 @@ const Login =()=>{
     
     if(countLog > 0 && countAcces < 3){
             axios.post(Url+"/get-info-log",{matricule:matricule.current.value}).then(res=>{
-                var resRole = res.data[0].id_role.toString()
-                setCookie('role_react',resRole )
+                var resRole = res.data[0].id_role
+                setCookie('role_react',""+resRole )
                 var resNom = res.data[0].nom +" "+res.data[0].prenom
-
-                setCookie('nom_complet_react',resNom)
-                
+                setCookie('nom_complet_react',resNom)   
             })
             
+           
             setCookie('islogged_react',true)
             var resMatricule = matricule.current.value
             setCookie('matricule_react',resMatricule)
             Success('Connecté avec succès !')
+            
 
             return(<Menu/>)
         

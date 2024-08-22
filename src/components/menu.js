@@ -7,6 +7,9 @@ import { GetRole } from "./service/service-role"
 import { useDispatch } from "react-redux/es/hooks/useDispatch"
 import { useSelector } from "react-redux"
 import { setMenusData } from "./feature/menus.slice"
+import { setRolesData } from "./feature/roles.slice"
+import { setProcessusData } from "./feature/processus.slice"
+import { setUsersData } from "./feature/users.slice"
 import Global_url from "../global_url"
 import logo from '../images/logo-jouveTitle.png'
 import $ from 'jquery'
@@ -14,36 +17,65 @@ import Route_Serv from './route/routeServer'
 
 var Url = Global_url
 const Menu =()=>{
-    // window.location.pathname = '/react_app/home'
+    
 
-    const [cookies, setCookie, removeCookie] = useCookies(['islogged_react','matricule_react','role_react','nom_complet_react'])
+    const [cookies, setCookie, removeCookie] = useCookies(['islogged_react','matricule_react','role_react','nom_complet_react','id_user'])
     const [MenuCollapse, setMenuCollapse] = useState(false)
     const [theme, setTheme] = useState(false);
     const [background, setBackground] = useState("bg-dark");
     const dispatch = useDispatch()
+    const userSlice = useSelector((state) => state.users.users)
     const listMenuSlice = useSelector((state) => state.menus.menus)
+    const listRoleSlice = useSelector((state) => state.role.role)
+    const listProcessusSlice = useSelector((state) => state.processus.processus)
     const urlReact = Route_Serv;
+
 
     let matricule = cookies.matricule_react;
     let role = cookies.role_react;
     let nom_complet = cookies.nom_complet_react;
     let roles = GetRole();
+    let id_user = cookies.id_user;
 
     useEffect(()=>{
-        getAllMenu()
+        // getAllData();
+        getAllMenu();
     },[])
 
+    function getAllData(){
+        console.log(id_user);
+        axios.post(Url+"/getUserByMatricule",{matricule:matricule}).then(res=>{
+            dispatch(setUsersData(res.data));
+        })
+        
+        axios.post(Url+"/getRoleByUser",{id_user:id_user}).then(res=>{
+            dispatch(setRolesData(res.data));
+        })
+        
+        axios.post(Url+"/getProcessusByUser",{id_user:id_user}).then(res=>{
+            dispatch(setProcessusData(res.data));
+        })
+       
+        
+    }
     function getAllMenu(){
         axios.get(Url+"/getMenus").then(res =>{
             dispatch(setMenusData(res.data))
-        })
+        });
+        getAllData();
+        console.log(listRoleSlice)
+        console.log(listProcessusSlice)
+        // axios.post(Url+"/getMenuByUser",{role: listRoleSlice, processus: listProcessusSlice}).then(res=>{
+        //     dispatch(setMenusData(res.data));
+        //     console.log(res.data);
+        // })
     }
     
     function handleLogout(){
         setCookie("islogged_react","false")
         removeCookie("matricule_react")
         removeCookie("role_react")
-        window.location.pathname = '/react_app/home'
+        window.location.pathname = urlReact+'/home'
     }
     
     const darkMode = () =>{
@@ -80,7 +112,6 @@ const Menu =()=>{
         transition: "0.5s"
     }
     
-    
 
 
     return(
@@ -105,7 +136,9 @@ const Menu =()=>{
                                     <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample">
                                         {!MenuCollapse ? <span className="titleMenu "> {menu.labelle_menu}</span>:<></>}
                                     </div>
-                                    <i className={menu.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu}></i>
+                                    <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample">
+                                        {!MenuCollapse ? <i className={menu.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu}></i>:<></>}
+                                    </div>
                                 </NavLink>
                                 <div className="collapse" id={"collapseMenu"+index}>
                                     { listMenuSlice.filter(subMenu1 => subMenu1.base=== menu.id_menu).length > 0 && (
@@ -118,7 +151,9 @@ const Menu =()=>{
                                                         <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+subIndex} aria-expanded="false" aria-controls="collapseExample">
                                                             {!MenuCollapse ? <span className="titleMenu "> {subMenu1.labelle_menu}</span>:<></>}
                                                         </div>
-                                                        <i className={subMenu1.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu1.labelle_menu}></i>
+                                                        <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+subIndex} aria-expanded="false" aria-controls="collapseExample">
+                                                            {!MenuCollapse ? <i className={subMenu1.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu1.labelle_menu}></i>:<></>}
+                                                        </div>
                                                     </NavLink>
                                                     <div className="collapse" id={"collapseMenu2"+subIndex}>
                                                         {listMenuSlice.filter(subMenu2 => subMenu2.base=== subMenu1.id_menu).length > 0 &&  (
@@ -130,7 +165,9 @@ const Menu =()=>{
                                                                             <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample">
                                                                                 {!MenuCollapse ? <span className="titleMenu "> {subMenu2.labelle_menu}</span>:<></>}
                                                                             </div>
-                                                                            <i className={subMenu2.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu2.labelle_menu}></i>
+                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample">
+                                                                                {!MenuCollapse ? <i className={subMenu2.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu2.labelle_menu}></i>:<></>}
+                                                                            </div>
                                                                         </NavLink>
                                                                         <div className="collapse" id={"collapseMenu3"+subIndex2}>
                                                                         {listMenuSlice.filter(subMenu3 => subMenu3.base=== subMenu2.id_menu).length > 0 && (
@@ -142,25 +179,11 @@ const Menu =()=>{
                                                                                             <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu4"+subIndex3} aria-expanded="false" aria-controls="collapseExample">
                                                                                                 {!MenuCollapse ? <span className="titleMenu "> {subMenu3.labelle_menu}</span>:<></>}
                                                                                             </div>
-                                                                                            <i className={subMenu3.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu3.labelle_menu}></i>
-                                                                                        </NavLink>
-                                                                                        <div className="collapse" id={"collapseMenu4"+subIndex3}>
-                                                                                        {listMenuSlice.filter(subMenu4 => subMenu4.base=== subMenu3.id_menu).length > 0 &&(
-                                                                                            <div className={!MenuCollapse ? background + " card card-body " :background+" card p-0 pt-1 text-center " }>
-                                                                                            {listMenuSlice.filter(subMenu4=> subMenu4.base === subMenu3.id_menu).map((subMenu4, subIndex4) => (
-                                                                                                <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu4.labelle_menu} key={subIndex4}>
-                                                                                                    <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
-                                                                                                                to={urlReact+subMenu4.route} >
-                                                                                                        <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu5"+subIndex4} aria-expanded="false" aria-controls="collapseExample">
-                                                                                                            {!MenuCollapse ? <span className="titleMenu "> {subMenu4.labelle_menu}</span>:<></>}
-                                                                                                        </div>
-                                                                                                        <i className={subMenu4.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu4.labelle_menu}></i>
-                                                                                                    </NavLink>
-                                                                                                </span>
-                                                                                            ))}
+                                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu4"+subIndex3} aria-expanded="false" aria-controls="collapseExample">
+                                                                                                {!MenuCollapse ? <i className={subMenu3.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu3.labelle_menu}></i>:<></>}
                                                                                             </div>
-                                                                                        )}
-                                                                                        </div>
+                                                                                        </NavLink>
+                                                                                        {/*Si plus de 3 sous-menu ajout code ici*/} 
                                                                                     </span>
                                                                                 ))}
                                                                                 </div>

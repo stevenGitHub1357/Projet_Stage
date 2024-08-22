@@ -39,7 +39,7 @@ const getUserByMatricule = (req,res) => {
   })
   .catch(function(error) {
     console.error(error);
-    res.status(400).json({ error });
+    res.status(411).json({ error });
   })
 };
 

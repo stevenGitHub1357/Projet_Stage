@@ -13,6 +13,8 @@ router.post("/get-user-gpao",users.getUserFromGpao)
 router.post("/verif-matricule-security",users.VerificationOperateurSecuriter)
 router.post("/getNb-echec",users.getNb_echec)
 
+router.post("/getUserByMatricule",users.getUserByMatricule)
+
 
 
 const menus = require("../controllers/menu_controller.js")
@@ -21,21 +23,21 @@ router.post("/insertMenu",menus.insertMenu)
 router.post("/deleteMenu",menus.deleteMenu)
 router.post("/updateMenu",menus.updateMenu)
 
-router.get("/getMenuByUser",menus.getMenuByUser)
+router.post("/getMenuByUser",menus.getMenuByUser)
 
 
 
 const role = require("../controllers/role_controller.js")
 router.get("/getRole",role.getRole);
 
-router.get("/getRoleByUser",role.getRoleByUser);
+router.post("/getRoleByUser",role.getRoleByUser);
 
 
 
 const processus = require("../controllers/processus_controller.js")
 router.get("/getProcessus",processus.getProcessus);
 
-router.get("/getProcessusByUser",processus.getProcessusByUser);
+router.post("/getProcessusByUser",processus.getProcessusByUser);
 
 module.exports = router
 

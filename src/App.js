@@ -7,7 +7,6 @@ function App(props) {
   const [cookies, setCookie, removeCookie] = useCookies(['islogged_react','matricule_react']);
   if(cookies.islogged_react === "true" ){
     return(
-      
       <Menu/>
     )
   }
