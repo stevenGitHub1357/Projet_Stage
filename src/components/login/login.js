@@ -11,7 +11,7 @@ import { setUsersData } from "../feature/users.slice"
 var Url = Global_url
 
 const Login =()=>{
-    const [cookies, setCookie, removeCookie] = useCookies(['islogged_react','matricule_react','id_user'])
+    const [cookies, setCookie, removeCookie] = useCookies(['islogged_react','matricule_react'])
     const dispatch = useDispatch()
     setCookie("islogged_react",false)
     const matricule = useRef()
@@ -39,11 +39,6 @@ const Login =()=>{
             if(countLog == 0){
                 Danger("Vérifiez le matricule et le mot de passe")
             }
-        })
-        axios.post(Url+"/getUserByMatricule",{matricule:matricule.current.value}).then(res=>{
-            dispatch(setUsersData(res.data));
-            // console.log(res.data[0].id_user);
-            setCookie('id_user',res.data[0].id_user);
         })
 
         if(user.matricule == '' || user.mot_de_passe == ''){

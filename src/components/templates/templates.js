@@ -6,6 +6,6 @@ export const TitlePage = ({title,theme}) => {
         <div className={!theme ? " titlePage shadow-sm d-flex justify-content-between bg-white " : "bg-dark titlePage shadow-sm text-white d-flex justify-content-between"}>
           <span className="">{title}</span>
             <img src={logo} alt="" width="40" className=""></img>
-      </div>
+        </div>
     )
 }

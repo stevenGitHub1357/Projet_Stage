@@ -32,44 +32,27 @@ const Menu =()=>{
 
 
     let matricule = cookies.matricule_react;
-    let role = cookies.role_react;
-    let nom_complet = cookies.nom_complet_react;
-    let roles = GetRole();
-    let id_user = cookies.id_user;
 
     useEffect(()=>{
         // getAllData();
-        getAllMenu();
-    },[])
-
-    function getAllData(){
-        console.log(id_user);
-        axios.post(Url+"/getUserByMatricule",{matricule:matricule}).then(res=>{
-            dispatch(setUsersData(res.data));
-        })
-        
-        axios.post(Url+"/getRoleByUser",{id_user:id_user}).then(res=>{
-            dispatch(setRolesData(res.data));
-        })
-        
-        axios.post(Url+"/getProcessusByUser",{id_user:id_user}).then(res=>{
-            dispatch(setProcessusData(res.data));
-        })
-       
-        
-    }
-    function getAllMenu(){
-        axios.get(Url+"/getMenus").then(res =>{
-            dispatch(setMenusData(res.data))
-        });
         getAllData();
-        console.log(listRoleSlice)
-        console.log(listProcessusSlice)
-        // axios.post(Url+"/getMenuByUser",{role: listRoleSlice, processus: listProcessusSlice}).then(res=>{
-        //     dispatch(setMenusData(res.data));
-        //     console.log(res.data);
-        // })
+    },[])
+    
+
+    async function getAllData(){
+        // console.log(id_user);
+        const user = await axios.post(Url+"/getUserByMatricule",{matricule:matricule})
+        dispatch(setUsersData(user.data))
+        const role = await axios.post(Url+"/getRoleByUser",{id_user:user.data[0].id_user})
+        dispatch(setRolesData(role.data))
+        const processus = await axios.post(Url+"/getProcessusByUser",{id_user:user.data[0].id_user})
+        dispatch(setProcessusData(processus.data))
+        axios.post(Url+"/getMenuByUser",{role: role.data, processus: processus.data}).then(res=>{
+            dispatch(setMenusData(res.data))  
+        })
     }
+
+    
     
     function handleLogout(){
         setCookie("islogged_react","false")
@@ -131,14 +114,10 @@ const Menu =()=>{
                         listMenuSlice.filter(menu => menu.base===0).length>0 &&
                         listMenuSlice.filter(menu => menu.base===0).map((menu, index)  => (
                             <li className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>
-                                <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
-                                            to={urlReact+menu.route} >
-                                    <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample">
-                                        {!MenuCollapse ? <span className="titleMenu "> {menu.labelle_menu}</span>:<></>}
-                                    </div>
-                                    <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample">
-                                        {!MenuCollapse ? <i className={menu.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu}></i>:<></>}
-                                    </div>
+                                <NavLink className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  to="Test" data-bs-toggle="collapse" 
+                                        data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample" > 
+                                    {!MenuCollapse ? <span className="titleMenu "> {menu.labelle_menu}</span>:<></>}
+                                    <i className={menu.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu}></i>
                                 </NavLink>
                                 <div className="collapse" id={"collapseMenu"+index}>
                                     { listMenuSlice.filter(subMenu1 => subMenu1.base=== menu.id_menu).length > 0 && (
@@ -224,6 +203,18 @@ const Menu =()=>{
                     </button>
                 </div>
             
+            </div>
+            <div className={!theme ? " titlePage shadow-sm d-flex justify-content-between bg-white " : "bg-dark titlePage shadow-sm text-white d-flex justify-content-between"}>
+                {/* <ul>
+                    {
+                        listProcessusSlice.map((process, index) => (
+                            <li>
+                                {process.libelle_processus}
+                            </li>                        
+                    ))}
+                </ul> */}
+                
+                <img src={logo} alt="" width="40" className=""></img>
             </div>
             <Route_menu  MenuCollapse={MenuCollapse} theme={theme} logo={logo}/>
         </Router>
