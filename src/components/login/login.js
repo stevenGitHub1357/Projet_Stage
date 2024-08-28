@@ -62,7 +62,7 @@ const Login =()=>{
             Success('Connecté avec succès !')
             
 
-            return(<Menu/>)
+            // return(<Menu/>)
         
 
     }else{
@@ -82,12 +82,12 @@ const Login =()=>{
                                 <img src={logo} alt="logo" id="logoReact" className="logo w-50" />
                             </div>
                             <div className="text-center">
-                                <h2>React App</h2>
+                                <h2>KPI</h2>
                             </div>
                             <form className="mx-3 mt-4" onSubmit={(e) => handleSubmit(e)} ref={formLogin}>
                             <div className="form-floating mb-3">
-                                <input className="form-control form-control-dark" ref={matricule} placeholder="Leave a comment here" id="floatingTextarea2"/>
-                                <label htmlFor="floatingTextarea2">Matricule</label>
+                                <input className="form-control form-control-dark" ref={matricule} placeholder="Leave a comment here" id="floatingTextarea1"/>
+                                <label htmlFor="floatingTextarea1">Matricule</label>
                             </div>
                             <div className="form-floating  mb-3">
                                 <input className="form-control form-control-danger" ref={mot_de_passe} type="password" placeholder="Leave a comment here" id="floatingTextarea2"/>

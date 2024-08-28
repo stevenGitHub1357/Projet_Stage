@@ -58,6 +58,7 @@ const Home =({MenuCollapse,theme,logo})=>{
         width:"65px",
         height:"65px",
         buttom:"200px",
+        color:"black"
     }
     const classCard = !theme ? "px-3 shadow-sm relative rounded-2 bg-white " : "px-3 shadow-sm relative rounded-2 bg-dark bg-gradient text-white "
     /*  todo*/
@@ -124,9 +125,9 @@ const Home =({MenuCollapse,theme,logo})=>{
     }
     return(
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
-            <TitlePage title="Tableau de bord" theme={theme}/>
+            <TitlePage title="Tableau de bord" process={true} theme={theme}/>
             <div className="CountBoard mt-5">
-                <div className="row text-white">
+                {/* <div className="row text-white">
                     <div className="col-sm-3 mb-3">
                         <div  className={classCard}>
                             <div className={!theme ? "bg-dark bg-gradient rounded-4 absolute shadow  text-center " : "bg-info bg-gradient rounded-4 absolute shadow  text-center"} style={cardIcon}>
@@ -144,7 +145,7 @@ const Home =({MenuCollapse,theme,logo})=>{
                     <div className="col-sm-3 mb-3">
                         <div  className={classCard}>
                             <div className="bg-success bg-gradient rounded-4 absolute shadow text-center " style={cardIcon}>
-                                <i className="bi bi-person"></i>
+                                <i className="bi bi-person col-mt-3">Personneeeeee</i>
                             </div>
                         </div>
                     </div>
@@ -155,7 +156,7 @@ const Home =({MenuCollapse,theme,logo})=>{
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <div className="row">
                     <div className="col-sm-8 ">
                         <div className={!theme ? " bg-white rounded-2 shadow-sm p-4" : "bg-dark rounded-2 shadow-sm text-white p-4"}>

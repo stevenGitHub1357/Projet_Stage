@@ -8,9 +8,9 @@ import Module from "../module/module";
 import Test from "../test/test";
 import Route_Serv from "./routeServer"
 
-let Route_Server = Route_Serv;
+
 const Route_menu =({MenuCollapse,theme,logo})=>{
-    
+    let Route_Server = Route_Serv;
     return(
         <Routes>
             <Route path={Route_Server + "acceuil"} element={<Home MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
