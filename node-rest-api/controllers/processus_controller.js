@@ -1,5 +1,6 @@
 const { vi } = require("date-fns/locale");
 const processModel = require("../models/Processus")
+const {Op} = require("sequelize");
 const Processus = processModel.Processus;
 const View = processModel.Detail_user_processus;
 
@@ -105,7 +106,7 @@ const getProcessusByUser = (req,res) => {
         console.log(results)
         Processus.findAll()
           .then(function(resu){
-            res.status(200).json(resu);
+            getProcessus(req,res)
           })
           .catch(function(error) {
             console.error(error);

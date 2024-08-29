@@ -96,6 +96,9 @@ const getMenuByUser = (req,res,next) =>{
   const ids_processus = processus.map(obj => obj.id)
   Menu_role_processus.findAll(
     {
+      attributes : [
+        "id_menu", "labelle_menu", "icon", "route", "position", "rang", "base"
+      ],
       where : {
         id_processus:{
           [Op.in] : ids_processus
@@ -103,7 +106,12 @@ const getMenuByUser = (req,res,next) =>{
         id_role:{
           [Op.in] : ids_role
         }
-      }
+      },
+      group : 
+      [
+        "id_menu", "labelle_menu", "icon", "route", "position", "rang", "base"
+      ]
+
     }
   )
   .then(function(results) {

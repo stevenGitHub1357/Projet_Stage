@@ -20,11 +20,16 @@ INSERT INTO public.users (id_user,matricule,nom,prenom,mot_de_passe,default_mdp)
 -- menus
 INSERT INTO public.menus (id_menu,labelle_menu,icon,route,position,"rang",base) VALUES
 	(1,'Parametrage','bi bi-bookmark-heart-fill','parametrage2',1,0,0),
-		(101,'Menu','bi bi-list','menu',0,1,1),
-		(102,'Utilisateur','bi bi-person-circle','utilisateur',0,2,1),	
-	(2,'Vue global','bi bi-file-earmark-plus','global',1,2,0),
-	(3,'Profils','bi bi-person-circle','global',2,1,0),
-	(4,'Only developpement','bi bi-file-earmark-plus','global',1,3,0);
+		(111,'Utilisateur','bi bi-person-circle','utilisateurP',1,2,1),	
+			(112,'Ajout Utilisateur','bi bi-person-circle','AjoutP',1,2,111),
+	(2,'Vue global','bi bi-file-earmark-plus','global',2,2,0),
+		(122,'Utilisateur','bi bi-person-circle','utilisateurV',2,2,2),	
+			(123,'Ajout Utilisateur','bi bi-person-circle','AjoutV',2,2,122),
+	(3,'Profils','bi bi-person-circle','Profils',3,1,0),
+		(133,'Utilisateur','bi bi-person-circle','utilisateurProf',3,2,3),	
+			(134,'Ajout Utilisateur','bi bi-person-circle','AjoutProf',3,2,133),
+	(4,'Only developpement','bi bi-file-earmark-plus','Only',1,3,0),
+	(5,'Menu','bi bi-list','menu',3,3,0);
 
 
 -- role
@@ -47,7 +52,8 @@ INSERT INTO public.processus (id,libelle_processus,num_processus,abbrv) VALUES
 	(4,'Infra-tech','4','INF'),
 	(5,'Service généraux','5','SER'),
 	(6,'Ressources humaines','6','RES'),
-	(7,'Administration','7','ADM');
+	(7,'Administration','7','ADM'),
+	(8,'Generale','8','GEN');
 
 
 -- user_role
@@ -72,16 +78,27 @@ INSERT INTO public.user_processus (id_user, id_processus) VALUES
 -- menu_role
 INSERT INTO public.menu_role (id_menu, id_role) VALUES
 	(1, 1), (1, 2), (1, 3), (1, 4),
+	(111,1),
+	(112,1),
 	(2, 0),
+	(122,0),
+	(123,0),
 	(3, 0),
-	(101, 1),
-	(102, 1), (102, 2), (102, 3), (102, 4);
+	(133,0), 
+	(134,1), (134, 2), (134, 3),
+	(4, 1),
+	(5, 1);
 
 -- menu_process
 INSERT INTO public.menu_processus (id_menu, id_processus) VALUES
-	(1, 0),
-	(2, 0), 
+	(1, 8), (1, 3),
+	(111,1),
+	(112,1),
+	(2, 0),
+	(122,0),
+	(123,0),
 	(3, 0),
-	(101, 0),
-	(102, 0),
-	(4, 1);
+	(133,0), 
+	(134,0), (134, 0), (134, 0),
+	(4, 0),
+	(5, 8), (5, 2), (5, 3);
