@@ -110,8 +110,11 @@ const getMenuByUser = (req,res,next) =>{
       group : 
       [
         "id_menu", "labelle_menu", "icon", "route", "position", "rang", "base"
+      ],
+      order :
+      [
+        ["rang", "ASC"]
       ]
-
     }
   )
   .then(function(results) {

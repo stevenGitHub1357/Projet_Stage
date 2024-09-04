@@ -127,36 +127,6 @@ const Home =({MenuCollapse,theme,logo})=>{
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
             <TitlePage title="Tableau de bord" process={true} theme={theme}/>
             <div className="CountBoard mt-5">
-                {/* <div className="row text-white">
-                    <div className="col-sm-3 mb-3">
-                        <div  className={classCard}>
-                            <div className={!theme ? "bg-dark bg-gradient rounded-4 absolute shadow  text-center " : "bg-info bg-gradient rounded-4 absolute shadow  text-center"} style={cardIcon}>
-                                <i className="bi bi-inbox mt-5"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-sm-3 mb-3">
-                        <div  className={classCard}>
-                            <div className="bg-danger bg-gradient rounded-4 absolute shadow text-center " style={cardIcon}>
-                                <i className="bi bi-person-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-sm-3 mb-3">
-                        <div  className={classCard}>
-                            <div className="bg-success bg-gradient rounded-4 absolute shadow text-center " style={cardIcon}>
-                                <i className="bi bi-person col-mt-3">Personneeeeee</i>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-sm-3 mb-3">
-                        <div  className={classCard}>
-                            <div className="bg-primary bg-gradient rounded-4 absolute shadow  text-center " style={cardIcon}>
-                                <i className="bi bi-inbox-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
                 <div className="row">
                     <div className="col-sm-8 ">
                         <div className={!theme ? " bg-white rounded-2 shadow-sm p-4" : "bg-dark rounded-2 shadow-sm text-white p-4"}>

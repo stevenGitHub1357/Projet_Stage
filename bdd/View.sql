@@ -24,5 +24,6 @@ join menu_role mr on m.id_menu = mp.id_menu
 	group by m.id_menu , m.labelle_menu , m.icon ,
 		m.route , m."position" , m.rang ,m.base ,
 		mp.id_processus , mr.id_role 
+	order by m.rang ASC
 		
 --Detaile

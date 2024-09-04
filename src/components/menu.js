@@ -3,13 +3,19 @@ import { NavLink,BrowserRouter as Router} from "react-router-dom"
 import Route_menu from "./route/route"
 import { useCookies } from "react-cookie"
 import axios from "axios"
-import 'bootstrap/dist/css/bootstrap.css';
-import { GetRole } from "./service/service-role"
 import { useSelector, useDispatch } from "react-redux"
+
+
+import 'bootstrap/dist/css/bootstrap.css';
+import {styleMenuDefault,styleMenuMinim,styleImg} from './menu/style/styleMenu'
+
 import { setMenusData } from "./feature/menus.slice"
 import { setRolesData } from "./feature/roles.slice"
 import { setProcessusData } from "./feature/processus.slice"
 import { setUsersData } from "./feature/users.slice"
+
+
+import { GetRole } from "./service/service-role"
 import Global_url from "../global_url"
 import logo from '../images/logo-jouveTitle.png'
 import $ from 'jquery'
@@ -49,14 +55,13 @@ const Menu =()=>{
             dispatch(setMenusData(res.data))  
         })
     }
-
-    
     
     function handleLogout(){
         setCookie("islogged_react","false")
         removeCookie("matricule_react")
         removeCookie("role_react")
-        window.location.pathname = urlReact+'/home'
+        removeCookie("id_processus")
+        window.location.pathname = urlReact+'/login'
     }
     
     const darkMode = () =>{
@@ -70,7 +75,6 @@ const Menu =()=>{
             $('body').attr("class","darkMode")
         }
     }
-
     
     const CollapseMenu = () =>{
         if(MenuCollapse == false){
@@ -80,27 +84,6 @@ const Menu =()=>{
             setMenuCollapse(false)
         }
     }
-
-    const styleMenuDefault = {
-            transition: "0.5s",
-            width: "250px",
-            height: "100vh",
-    }
-
-    const styleMenuMinim = {
-        width: "70px",
-        height: "100vh",
-        transition: "0.5s"
-    }
-
-    const styleImg = {
-        width: "9vh",
-        height: "7vh",
-    }
-
-    
-    
-
 
     return(
         <Router>

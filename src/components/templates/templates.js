@@ -10,7 +10,7 @@ export const TitlePage = ({title,theme,process}) => {
     var Url = Global_url
     const listProcessusSlice = useSelector((state) => state.processus.processus)
     const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus'])
-    const [processActuel,setProcessusActuel] = useState(listProcessusSlice[0]);
+    const [processActuel,setProcessusActuel] = useState(0);
      
     useEffect(()=>{
         initialisation();
@@ -18,7 +18,7 @@ export const TitlePage = ({title,theme,process}) => {
     
     async function initialisation(){
         const processus = await axios.post(Url+"/getProcessusByUser",{id_user:cookies.id_user})
-        setProcessusActuel(processus.data[0]) 
+        setProcessusActuel(processus.data[processus.data.length-1]) 
     }
 
     function changeProcessus(id){
@@ -41,7 +41,7 @@ export const TitlePage = ({title,theme,process}) => {
     return(
         <div className="mt-3 row">
         <div className={!theme ? " titlePage shadow-sm d-flex justify-content-between bg-white " : "bg-dark titlePage shadow-sm text-white d-flex justify-content-between"}>
-          <span className="text-center">{title+" - "+processActuel.abbrv}</span>
+          <span className="text-center">{title+" - "+processActuel.libelle_processus+" ("+processActuel.abbrv+")"}</span>
             {/* <img src={logo} alt="" width="40" className=""></img> */}
             
         </div>

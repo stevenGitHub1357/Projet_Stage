@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { IconList } from "./icon";
-import './style/style.css'
+// import './style/styleMenu.css'
 import { Success, Warning } from "../service/service-alert";
 import { useDispatch, useSelector } from "react-redux/es/exports";
 import { addMenu,deleteMenu,setMenusData,updateMenu } from "../feature/menus.slice";
@@ -25,7 +25,8 @@ const Gestion_menu =({theme})=>{
     const [modalIsOpen, setIsOpen] = useState(false)
     const dispatch = useDispatch()
     const menusSlice = useSelector((state) => state.menus.menus)
-    const rolesSlice = useSelector((state)=> state.menus.roles )
+    const rolesSlice = useSelector((state)=> state.role.role)
+    const processusSlice = useSelector((state)=> state.processus.processus)
     const  [btnIcon, setBtnIcon] = useState("bi bi-emoji-smile")
     const [listIcon,setListIcon] = useState(IconList)
     const [etat_modal, setEtatModal] = useState(false)
@@ -237,6 +238,30 @@ const Gestion_menu =({theme})=>{
                             </div>
                         </div>
                     </div>
+                    <button className="btn btn-outline-success form-control" data-bs-toggle="modal" data-bs-target={etat_modal == true ? "#processus_list_modif" : "#processus_list"}>Role</button>
+                    <div className="modal fade" id="processus_list">
+                        <div className="modal-dialog modal-sm modal-dialog-centered">
+                            <div className={!theme ? "modal-content" : "modal-content bg-dark"}>
+                                <div className="modal-header">
+                                    <h5 className="modal-title" id="exampleModalLabel">Listes des processuss</h5>
+                                </div>
+                                <div className="modal-body">
+                                    <table className={!theme ? "table table-striped" : "table text-white"}>
+                                        <tbody>
+                                            {
+                                                processusSlice.map((processus,index)=>
+                                                    <tr key={index}>
+                                                        <td>{processus.type_processus}</td>
+                                                        <td><input type="checkbox" value={processus.id_processus}  onChange={handleCheckedRole} /></td>
+                                                    </tr>
+                                                )
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div className="modal fade" id="role_list_modif">
                         <div className="modal-dialog modal-sm modal-dialog-centered">
                             <div className={!theme ? "modal-content":"modal-content bg-dark"}>
@@ -261,7 +286,7 @@ const Gestion_menu =({theme})=>{
                                             {
                                                 checked.map((role,index)=>
                                                     <tr key={index}>
-                                                        <td>{role == '1' ? "Administrateur" : role == '2' ? "Manageur" : role == '3' ? "Simple Utilisateur" : role == '4' ? "Developpeur" : role}</td>
+                                                        <td>{role === role.id_role}</td>
                                                         <td><button className="btn btn-danger btn-sm" onClick={()=>RemoveRoleModif(index)} ><i className="bi bi-dash"></i> </button></td>
                                                     </tr>
                                                 )
@@ -335,9 +360,9 @@ const Gestion_menu =({theme})=>{
                                         </div>
                                         <div className="modal-body">
                                            {
-                                                menu.role.map((roles,id)=>{
+                                                rolesSlice.map((roles,id)=>{
                                                     return(
-                                                        <div key={id} className="p-2">{roles == '1' ? "Administrateur" : roles == '2' ? "Manageur" : roles == '3' ? "Simple Utilisateur" : roles == '4' ? "Developpeur" : roles}</div>
+                                                        <div key={id} className="p-2">{roles.type_role}</div>
                                                     )
                                                 })
                                            }
@@ -358,7 +383,6 @@ const Gestion_menu =({theme})=>{
                                 <thead className="">
                                         <tr>
                                             <th>Icon</th>
-                                            <th>Sous Menu</th>
                                             <th>Route</th>
                                             <th>Role</th>
                                             <th>Actions</th>
@@ -367,15 +391,12 @@ const Gestion_menu =({theme})=>{
                                 </thead>
                                 <tbody>{
                                         
-                                        menu.sous_menus.map((sousMenu,i) =>{
+                                        menusSlice.map((sousMenu,i) =>{
                                             return(
                                                 <tr  key={i}>
-                                                    <td><button className={!theme ? "btn btn-sm btn-dark":"btn btn-sm btn-outline-warning"}> <i className={sousMenu.icon_sous_menu}></i> </button></td>
-                                                    <td>{sousMenu.nom_sous_menu}</td>
-
-                                                    <td>{sousMenu.route_sous_menu}</td>
+                                                    <td><button className={!theme ? "btn btn-sm btn-dark":"btn btn-sm btn-outline-warning"}> <i className={sousMenu.icon}></i> </button></td>
+                                                   
                                                     <td>
-                                                    <button className="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target={"#listRoleSousMenu_"+i + "_"+index}>Role</button>
                                                     <div className="modal fade" id={"listRoleSousMenu_"+i + "_"+index}>
                                                         <div className="modal-dialog modal-sm modal-dialog-centered">
                                                             <div className={!theme ? "modal-content" : "modal-content bg-dark"}>
@@ -384,9 +405,9 @@ const Gestion_menu =({theme})=>{
                                                                 </div>
                                                                 <div className="modal-body">
                                                                 {
-                                                                        sousMenu.role_sous_menu.map((roles,id)=>{
+                                                                        rolesSlice.map((roles,id)=>{
                                                                             return(
-                                                                                <div key={id} className="p-2">{roles == '1' ? "Administrateur" : roles == '2' ? "Manageur" : roles == '3' ? "Simple Utilisateur" : roles == '4' ? "Developpeur" : roles}</div>
+                                                                                <div key={id} className="p-2">{roles.type_role}</div>
                                                                             )
                                                                         })
                                                                 }
@@ -399,6 +420,7 @@ const Gestion_menu =({theme})=>{
                                                         {/* <button className="btn btn-sm btn-success ms-2" type="button" onClick={()=>SelectSousMenu(menu,i)} data-bs-toggle="tooltip" data-bs-placement="top" title="Modifier"><i className="bi bi-pen"></i></button>
                                                         <button className="btn btn-sm btn-danger ms-2" type="button" onClick={()=>DeleteMenuSousMenus(menu,i)} data-bs-toggle="tooltip" disabled={sousMenu.route_sous_menu == 'menu' || sousMenu.route_sous_menu == 'utilisateur' ? true : false} data-bs-placement="top" title="Supprimer"><i className="bi bi-trash"></i></button> */}
                                                     </td>
+                                                    <td></td>
                                                     <td></td>
 
                                                 </tr>
@@ -421,6 +443,9 @@ const Gestion_menu =({theme})=>{
                                         </td>
                                         <td>
                                             <button className="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target={etat_modal == true ? "#role_list_modif" : "#role_list"}>Role</button>
+                                        </td>
+                                        <td>
+                                            <button className="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target={etat_modal == true ? "#processus_list_modif" : "#processus_list"}>Processus</button>
                                         </td>
                                         <td>
                                             {/* {id_sous_menu === '' ? 

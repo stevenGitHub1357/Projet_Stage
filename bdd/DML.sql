@@ -1,3 +1,7 @@
+----Data Manipulation Language
+
+DELETE FROM param_obj.parametrage_objectif;
+DELETE FROM param_obj.unite;
 DELETE FROM menu_processus;
 DELETE FROM menu_role;
 DELETE FROM user_processus;
@@ -19,17 +23,20 @@ INSERT INTO public.users (id_user,matricule,nom,prenom,mot_de_passe,default_mdp)
 
 -- menus
 INSERT INTO public.menus (id_menu,labelle_menu,icon,route,position,"rang",base) VALUES
-	(1,'Parametrage','bi bi-bookmark-heart-fill','parametrage2',1,0,0),
-		(111,'Utilisateur','bi bi-person-circle','utilisateurP',1,2,1),	
-			(112,'Ajout Utilisateur','bi bi-person-circle','AjoutP',1,2,111),
+	(0,'Accueil','bi bi-bookmark-heart-fill','accueil',1,0,0),
+	(1,'Parametrage','bi bi-bookmark-heart-fill','parametrage',3,0,0),
+		(111,'Utilisateur','bi bi-person-circle','utilisateur',3,2,1),	
+			(1111,'Ajout','bi bi-file-earmark-plus','ajoutU',3,2,111),
+			(1112,'Liste','bi bi-list','listeU',3,2,111),	
+		(112,'Menu','bi bi-list','menu',3,2,1),
+			(1121,'Ajout','bi bi-file-earmark-plus','ajoutU',3,2,112),
+			(1122,'Liste','bi bi-list','listeU',3,2,112),	
 	(2,'Vue global','bi bi-file-earmark-plus','global',2,2,0),
-		(122,'Utilisateur','bi bi-person-circle','utilisateurV',2,2,2),	
-			(123,'Ajout Utilisateur','bi bi-person-circle','AjoutV',2,2,122),
-	(3,'Profils','bi bi-person-circle','Profils',3,1,0),
-		(133,'Utilisateur','bi bi-person-circle','utilisateurProf',3,2,3),	
-			(134,'Ajout Utilisateur','bi bi-person-circle','AjoutProf',3,2,133),
-	(4,'Only developpement','bi bi-file-earmark-plus','Only',1,3,0),
-	(5,'Menu','bi bi-list','menu',3,3,0);
+	(3,'Profils','bi bi-person-circle','profils',3,1,0),
+	(4,'Graphique','bi bi-calendar2-range','graphe',2,2,0),
+	(5,'Parametrage objectifs','bi bi-calendar2-range','paramObj',1,1,0),
+		(151,'Liste','bi bi-calendar2-range','paramObj',1,2,5),
+		(152,'Ajout','bi bi-calendar2-range','paramObjAjout',1,2,5);
 
 
 -- role
@@ -77,28 +84,47 @@ INSERT INTO public.user_processus (id_user, id_processus) VALUES
 
 -- menu_role
 INSERT INTO public.menu_role (id_menu, id_role) VALUES
-	(1, 1), (1, 2), (1, 3), (1, 4),
-	(111,1),
-	(112,1),
-	(2, 0),
-	(122,0),
-	(123,0),
+	(0, 0),
+	(1, 0),
+		(111,0),
+			(1111,1),(1111,2),(1111,3),(1111,4),
+			(1111,1),(1111,2),
+		(112,0),
+			(1121,1), (1121,2),
+			(1122,1), (1122,2),
+	(2, 1),
 	(3, 0),
-	(133,0), 
-	(134,1), (134, 2), (134, 3),
-	(4, 1),
-	(5, 1);
+	(4, 0),
+	(5, 0),
+		(151, 0),
+		(152, 0);
 
 -- menu_process
 INSERT INTO public.menu_processus (id_menu, id_processus) VALUES
-	(1, 8), (1, 3),
-	(111,1),
-	(112,1),
+	(0, 0),
+	(1, 0),
+		(111,0),
+			(1111,0),
+			(1112,0),
+		(112,0),
+			(1121,0), 
+			(1122,0),
 	(2, 0),
-	(122,0),
-	(123,0),
 	(3, 0),
-	(133,0), 
-	(134,0), (134, 0), (134, 0),
 	(4, 0),
-	(5, 8), (5, 2), (5, 3);
+	(5, 0),
+		(151, 0),
+		(152, 0);
+
+
+INSERT INTO param_obj.unite VALUES
+	(1,'aucun',''),
+	(2,'pourcentage','%');
+
+INSERT INTO param_obj.parametrage_objectif VALUES
+	(1, 1,	'Prospect de nouveaux clients',	0.1, 1, 1, 1),
+	(2, 1,	'Seuil de sous-activité à 1%',	0.05, 1, 1, 2),
+	(3, 1,	'97% des projets respectent le taux qualité en interne', 0.25, 97, 1, 2),
+	(4, 1,	'10% de gains minimum pour les nouveaux projets', 0.25, 10, 1, 2),
+	(5, 1,	'5% de gains minimum par rapport à l ''année dernières', 0.25, 5, 1, 2),
+	(6, 1,	'KHD à 91%', 0.1, 91, 1, 2);
