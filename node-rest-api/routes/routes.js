@@ -45,6 +45,7 @@ router.post("/insertParametrageObjectif", parametrageObjectif.insertParametrageO
 router.post("/deleteParametrageObjectif",parametrageObjectif.deleteParametrageObjectif)
 router.post("/updateParametrageObjectif",parametrageObjectif.updateParametrageObjectif)
 router.get("/getParamObjUnite",parametrageObjectif.getUnite)
+router.post("/insertManyParametrageObjectif", parametrageObjectif.insertManyParametrageObjectif)
 
 module.exports = router
 

@@ -63,6 +63,25 @@ const insertParametrageObjectif = (req,res,next) =>{
   })
 };
 
+const insertManyParametrageObjectif = (req,res,next) =>{
+  const items = req.body
+  console.log(items)
+  ParametrageObjectif.bulkCreate(items.items,
+    {
+      ignoreDuplicates:true,
+      validate:true,
+      returning:true
+    }
+  )
+  .then(function(results) {
+    res.status(200).send(results);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
 
 const deleteParametrageObjectif = (req,res,next) =>{
   let id = req.body.id
@@ -114,4 +133,4 @@ const updateParametrageObjectif = (req,res,next) =>{
 
 
 
-module.exports = {getUnite,getParametrageObjectif,insertParametrageObjectif,deleteParametrageObjectif,updateParametrageObjectif};
+module.exports = {getUnite,getParametrageObjectif,insertParametrageObjectif,deleteParametrageObjectif,updateParametrageObjectif,insertManyParametrageObjectif};
