@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-const Success = (title) =>{
+const Success = (theme,title) =>{
     Swal.fire({
         toast: true,
         icon: 'success',
@@ -9,6 +9,7 @@ const Success = (title) =>{
         position: 'top-right',
         showConfirmButton: false,
         timer: 3000, 
+        background: theme ? "#000000" : "#ffffff"
     })
 }
 const Warning = (title) =>{
@@ -35,4 +36,16 @@ const Danger = (title) =>{
     })
 }
 
-export {Success,Warning,Danger}
+const Confirmation = (theme,title,confirmButtonText,showCancelButton) => {
+    return Swal.fire({
+      title: title ,
+      icon: "warning",
+      showCancelButton: showCancelButton,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: confirmButtonText ,
+      background: theme ? "#000000" : "#ffffff"
+    });
+  };
+
+export {Success,Warning,Danger,Confirmation}

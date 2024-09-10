@@ -41,7 +41,10 @@ export const TitlePage = ({title,theme,process}) => {
     return(
         <div className="mt-3 row">
         <div className={!theme ? " titlePage shadow-sm d-flex justify-content-between bg-white " : "bg-dark titlePage shadow-sm text-white d-flex justify-content-between"}>
-          <span className="text-center">{title+" - "+processActuel.libelle_processus+" ("+processActuel.abbrv+")"}</span>
+            <span className="text-center">
+                {title}
+                {process ? ` - ${processActuel.libelle_processus} (${processActuel.abbrv})` : null}
+            </span>
             {/* <img src={logo} alt="" width="40" className=""></img> */}
             
         </div>

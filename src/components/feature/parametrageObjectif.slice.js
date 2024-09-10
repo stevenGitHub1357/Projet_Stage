@@ -16,7 +16,10 @@ const parametrageObjectifSlice = createSlice({
             }
         },
         deleteParametrageObjectif: (state,{payload})=>{
-            state.parametrageObjectif = state.parametrageObjectif.filter( (parametrageObjectif) => parametrageObjectif.id !== payload)
+            console.log(payload.objectifs)
+            state.parametrageObjectif = state.parametrageObjectif.filter( (parametrageObjectif) =>        
+                        parametrageObjectif.objectifs !== payload.objectifs     
+                )
         },
         updateParametrageObjectif:(state,{payload}) =>{
             state.updateparametrageObjectif = payload
