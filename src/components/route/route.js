@@ -7,8 +7,7 @@ import User from "../utilisateur/index_user";
 import Module from "../module/module";
 import Test from "../test/test";
 import Route_Serv from "./routeServer"
-import ListParamObj from "../parametrageObjectif/listeParamObj";
-import AjoutParamObj from "../parametrageObjectif/ajoutParamObj";
+import GestionObjectif from "../Objectif/GestionObjectif";
 
 
 const Route_menu =({MenuCollapse,theme,logo})=>{
@@ -23,8 +22,7 @@ const Route_menu =({MenuCollapse,theme,logo})=>{
             <Route path={Route_Server + "module"} element = {<Module MenuCollapse={MenuCollapse} theme={theme} logo={logo}/>}></Route>
             <Route path={Route_Server + "test"} element = {<Test MenuCollapse={MenuCollapse} theme={theme} logo={logo}/>}></Route>
 
-            <Route path={Route_Server + "paramObj"} element = {<ListParamObj MenuCollapse={MenuCollapse} theme={theme} logo={logo}/>}></Route>
-            <Route path={Route_Server + "paramObjAjout"} element = {<AjoutParamObj MenuCollapse={MenuCollapse} theme={theme} logo={logo}/>}></Route>
+            <Route path={Route_Server + "objectif"} element = {<GestionObjectif MenuCollapse={MenuCollapse} theme={theme} logo={logo}/>}></Route>
         </Routes>
     )
 }

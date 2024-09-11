@@ -13,6 +13,7 @@ import { setMenusData } from "./feature/menus.slice"
 import { setRolesData } from "./feature/roles.slice"
 import { setProcessusData } from "./feature/processus.slice"
 import { setUsersData } from "./feature/users.slice"
+import { setObjectifData } from "./feature/Objectifs.slice"
 
 
 import { GetRole } from "./service/service-role"
@@ -84,7 +85,7 @@ const Menu =()=>{
             setMenuCollapse(false)
         }
     }
-
+    
     return(
         <Router>
     
