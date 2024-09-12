@@ -17,15 +17,15 @@ const objectifSlice = createSlice(
                 }
             },
             deleteObjectif: (state,{payload})=>{
+                console.log("delete")
                 console.log(payload.id)
-                state.objectif = state.objectif.filter( (Objectif) =>        
-                            Objectif.id !== payload.id     
+                state.objectif = state.objectif.filter( (objectif) =>        
+                            objectif.id !== payload.id
                     )
+                console.log(state.objectif)
             },
             updateObjectif:(state,{payload}) =>{
-                state.updateObjectif = payload
-            },
-            updateObjectifData:(state,{payload}) =>{
+                console.log(payload)
                 state.objectif = state.objectif.map((Objectif) =>{
                     if(Objectif.id === payload.id){
                         return{
@@ -42,6 +42,9 @@ const objectifSlice = createSlice(
                     }
                 })
             },
+            updateObjectifData:(state,{payload}) =>{
+                state.updateObjectif = payload
+            },
         }
     }
 )
@@ -51,7 +54,7 @@ const parametrageObjectifSlice = createSlice(
         name:"parametrageObjectif",
         initialState:{
             parametrageObjectif:[],
-            updateparametrageObjectif:{id:null,id_default:"", id_processus:"", objectifs:"",poids:"", cible:"",id_unite:"",recuperation:""},
+            updateparametrageObjectif:{id:null,index:"", id_processus:"", objectifs:"",poids:"", cible:"",id_unite:"",recuperation:""},
         },
         reducers:{
 
@@ -65,15 +68,13 @@ const parametrageObjectifSlice = createSlice(
                 }
             },
             deleteParametrageObjectif: (state,{payload})=>{
-                console.log(payload.id_default)
+                console.log(payload.index)
                 state.parametrageObjectif = state.parametrageObjectif.filter( (parametrageObjectif) =>        
-                            parametrageObjectif.id_default !== payload.id_default     
+                            parametrageObjectif.index !== payload.index     
                     )
             },
+            
             updateParametrageObjectif:(state,{payload}) =>{
-                state.updateparametrageObjectif = payload
-            },
-            updateParametrageObjectifData:(state,{payload}) =>{
                 state.parametrageObjectif = state.parametrageObjectif.map((parametrageObjectif) =>{
                     if(parametrageObjectif.id === payload.id){
                         return{
@@ -90,6 +91,9 @@ const parametrageObjectifSlice = createSlice(
                     }
                 })
             },
+            updateParametrageObjectifData:(state,{payload}) =>{
+                state.updateparametrageObjectif = payload
+            },
 
             
         }
@@ -104,8 +108,9 @@ export const    {
                     parametrageObjectif,setParametrageObjectifData,addParametrageObjectif,deleteParametrageObjectif,updateParametrageObjectifData,updateParametrageObjectif
                 } 
             = parametrageObjectifSlice.actions
-export const objectifReducer = objectifSlice.reducer
+
 export const parametrageObjectifReducer = parametrageObjectifSlice.reducer
+export const objectifReducer = objectifSlice.reducer
         
 
 

@@ -43,7 +43,9 @@ const getParametrageObjectif = (req,res,next) =>{
 
 
 const insertParametrageObjectif = (req,res,next) =>{
-  const {id_processus,objectifs,poids,cible,id_unite,recuperation} = req.body
+  const body = req.body
+  console.log(body)
+  const {id_processus,objectifs,poids,cible,id_unite,recuperation} = body.objectif
   ParametrageObjectif.create(
     { 
       id_processus : id_processus,
@@ -64,9 +66,9 @@ const insertParametrageObjectif = (req,res,next) =>{
 };
 
 const insertManyParametrageObjectif = (req,res,next) =>{
-  const items = req.body
-  console.log(items)
-  ParametrageObjectif.bulkCreate(items.items,
+  const body = req.body
+  console.log(body)
+  ParametrageObjectif.bulkCreate(body.objectifs,
     {
       ignoreDuplicates:true,
       validate:true,
@@ -103,7 +105,9 @@ const deleteParametrageObjectif = (req,res,next) =>{
 
 
 const updateParametrageObjectif = (req,res,next) =>{
-  const {id,id_pocessus,objectifs,poids,cible,id_unite,recuperation} = req.body
+  const body = req.body
+  console.log(body)
+  const {id,id_pocessus,objectifs,poids,cible,id_unite,recuperation} = body.objectif
   ParametrageObjectif.update(
     { 
         id_pocessus : id_pocessus,
