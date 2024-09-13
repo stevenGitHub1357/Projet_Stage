@@ -1,7 +1,7 @@
 ----Data Manipulation Language
 
-DELETE FROM param_obj.parametrage_objectif;
-DELETE FROM param_obj.unite;
+DELETE FROM objectif.parametrage;
+DELETE FROM objectif.unite;
 DELETE FROM menu_processus;
 DELETE FROM menu_role;
 DELETE FROM user_processus;
@@ -34,9 +34,9 @@ INSERT INTO public.menus (id_menu,labelle_menu,icon,route,position,"rang",base) 
 	(2,'Vue global','bi bi-file-earmark-plus','global',2,2,0),
 	(3,'Profils','bi bi-person-circle','profils',3,1,0),
 	(4,'Graphique','bi bi-calendar2-range','graphe',2,2,0),
-	(5,'Parametrage objectifs','bi bi-calendar2-range','paramObj',1,1,0),
-		(151,'Liste','bi bi-calendar2-range','paramObj',1,2,5),
-		(152,'Ajout','bi bi-calendar2-range','paramObjAjout',1,2,5);
+	(5,'Parametrage objectifs','bi bi-calendar2-range','objectif',1,1,0),
+		(151,'Liste','bi bi-calendar2-range','objectif?page=1',1,2,5),
+		(152,'Ajout','bi bi-calendar2-range','objectif?page=2',1,2,5);
 
 
 -- role
@@ -117,11 +117,11 @@ INSERT INTO public.menu_processus (id_menu, id_processus) VALUES
 		(152, 0);
 
 
-INSERT INTO param_obj.unite VALUES
+INSERT INTO objectif.unite VALUES
 	(1,'aucun',''),
 	(2,'pourcentage','%');
 
-INSERT INTO param_obj.parametrage_objectif VALUES
+INSERT INTO objectif.parametrage VALUES
 	(1, 1,	'Prospect de nouveaux clients',	0.1, 1, 1, 1),
 	(2, 1,	'Seuil de sous-activité à 1%',	0.05, 1, 1, 2),
 	(3, 1,	'97% des projets respectent le taux qualité en interne', 0.25, 97, 1, 2),

@@ -1,6 +1,6 @@
 ----Data Definition Language
 
-CREATE SCHEMA IF NOT EXISTS param_obj;
+CREATE SCHEMA IF NOT EXISTS objectif;
 
 
 DROP VIEW IF EXISTS detail_user_processus;
@@ -8,8 +8,8 @@ DROP VIEW IF EXISTS detail_user_role;
 DROP VIEW IF EXISTS menu_role_processus;
 
 
-DROP TABLE IF EXISTS param_obj.parametrage_objectif;
-DROP TABLE IF EXISTS param_obj.unite;
+DROP TABLE IF EXISTS objectif.parametrage;
+DROP TABLE IF EXISTS objectif.unite;
 DROP TABLE IF EXISTS menu_processus;
 DROP TABLE IF EXISTS menu_role;
 DROP TABLE IF EXISTS user_processus;
@@ -89,19 +89,22 @@ CREATE TABLE IF NOT EXISTS menu_processus(
 
 ---Parametrage objectif---
 
-CREATE TABLE IF NOT EXISTS param_obj.unite(
+CREATE TABLE IF NOT EXISTS objectif.unite(
   id SERIAL PRIMARY KEY,
   type_unite VARCHAR(200) not null,
   abbrv VARCHAR(100) not null
 );
 
-CREATE TABLE IF NOT EXISTS param_obj.parametrage_objectif(
+CREATE TABLE IF NOT EXISTS objectif.parametrage(
   id SERIAL PRIMARY KEY,
   id_processus INTEGER REFERENCES public.processus(id) default 1,
-  objectifs VARCHAR(2000) not null,
-  poids DOUBLE precision not null,
-  cible DOUBLE precision not null,
-  id_unite INTEGER REFERENCES param_obj.unite(id) default 1,
-  recuperation INTEGER  default 1
+  objectifs VARCHAR(2000),
+  poids DOUBLE precision default 0,
+  cible DOUBLE precision default 0,
+  id_unite INTEGER REFERENCES objectif.unite(id) default 1,
+  recuperation INTEGER default 1,
+  activate INTEGER default 1,
+  date_create TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

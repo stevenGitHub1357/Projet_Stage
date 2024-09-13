@@ -19,14 +19,14 @@ const Unite = defautl_db.defaultSequelize.define('unite', {
         },
       },{
         tableName: "unite",
-        schema: "param_obj",
+        schema: "objectif",
         freezeTableName: true,
         timestamps: false,
         noPrimaryKey: true, 
       });
 
 
-const ParametrageObjectif = defautl_db.defaultSequelize.define('paremetrage_objectif', {
+const ParametrageObjectif = defautl_db.defaultSequelize.define('paremetrage', {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -65,9 +65,23 @@ const ParametrageObjectif = defautl_db.defaultSequelize.define('paremetrage_obje
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      activate: {
+        type: Sequelize.INTEGER,
+        defaultValue : 1
+      },
+      date_create: {
+          type: Sequelize.DATE,
+          defaultValue: Sequelize.NOW,
+      },
+      date_update: {
+          type: Sequelize.DATE,
+          defaultValue: Sequelize.NOW,
+      },
+    
+
     },{
-      tableName: "parametrage_objectif",
-      schema: "param_obj",
+      tableName: "parametrage",
+      schema: "objectif",
       freezeTableName: true,
       timestamps: false,
     });

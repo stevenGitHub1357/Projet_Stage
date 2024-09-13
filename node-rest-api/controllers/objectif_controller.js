@@ -1,6 +1,6 @@
 const pool = require("../config/default.config");
 const {Op} = require("sequelize");
-const {ParametrageObjectif, Unite}= require("../models/ParametrageObjectif");
+const {ParametrageObjectif, Unite}= require("../models/Objectif");
 const { Processus } = require("../models/Processus");
 
 const getUnite = (req,res,next) =>{
@@ -103,14 +103,37 @@ const deleteParametrageObjectif = (req,res,next) =>{
   })
 };
 
+const desactiveParametrageObjectif = (req,res,next) =>{
+  let id = req.body.id
+  console.log(id)
+  ParametrageObjectif.update(
+    { 
+        activate : 0
+    },
+    {
+      where : 
+      {
+        id : id
+      }
+    }
+  )
+  .then(function(results) {
+    res.status(200).send(results);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
 
 const updateParametrageObjectif = (req,res,next) =>{
   const body = req.body
   console.log(body)
-  const {id,id_pocessus,objectifs,poids,cible,id_unite,recuperation} = body.objectif
+  const {id,id_processus,objectifs,poids,cible,id_unite,recuperation} = body.objectif
   ParametrageObjectif.update(
     { 
-        id_pocessus : id_pocessus,
+        id_processus : id_processus,
         objectifs : objectifs,
         poids : poids,  
         cible : cible,
@@ -137,4 +160,4 @@ const updateParametrageObjectif = (req,res,next) =>{
 
 
 
-module.exports = {getUnite,getParametrageObjectif,insertParametrageObjectif,deleteParametrageObjectif,updateParametrageObjectif,insertManyParametrageObjectif};
+module.exports = {getUnite,getParametrageObjectif,insertParametrageObjectif,deleteParametrageObjectif,updateParametrageObjectif,insertManyParametrageObjectif, desactiveParametrageObjectif};
