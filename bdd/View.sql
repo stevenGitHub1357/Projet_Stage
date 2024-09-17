@@ -24,6 +24,14 @@ join menu_role mr on m.id_menu = mp.id_menu
 	group by m.id_menu , m.labelle_menu , m.icon ,
 		m.route , m."position" , m.rang ,m.base ,
 		mp.id_processus , mr.id_role 
-	order by m.rang ASC
+	order by m.rang ASC;
 		
---Detaile
+--Parametrage_objectif_synthese
+CREATE or replace VIEW parametrage_objectif_synthese as
+select 	
+	id_processus as id_processus, proc.libelle_processus as libelle_processus ,
+	count(*) as nb_objectif,sum(poids) as poids  
+	from objectif.parametrage p
+join processus as proc on proc.id = p.id_processus 
+	group by id_processus , libelle_processus
+	ORDER BY poids DESC

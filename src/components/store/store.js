@@ -4,7 +4,8 @@ import menusReducer from "../feature/menus.slice"
 import roleReducer from "../feature/roles.slice"
 import processusReducer from "../feature/processus.slice"
 import todosReducer  from "../feature/todo"
-import { objectifReducer, parametrageObjectifReducer} from "../feature/Objectifs.slice"
+import { objectifReducer, parametrageObjectifReducer} from "../feature/objectifs.slice"
+import { importReducer,exportReducer} from "../feature/importExport.slice"
 
 export default configureStore({
     reducer:{
@@ -15,5 +16,7 @@ export default configureStore({
         processus: processusReducer,
         objectif: objectifReducer,
         parametrageObjectif: parametrageObjectifReducer,
+        import: importReducer,
+        export: exportReducer,
     }
 })

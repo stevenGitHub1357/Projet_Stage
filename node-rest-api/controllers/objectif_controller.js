@@ -1,10 +1,25 @@
 const pool = require("../config/default.config");
 const {Op} = require("sequelize");
-const {ParametrageObjectif, Unite}= require("../models/Objectif");
+const {ParametrageObjectif, Unite, Synthese}= require("../models/Objectif");
 const { Processus } = require("../models/Processus");
 
 const getUnite = (req,res,next) =>{
   Unite.findAll()
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+const getSynthese = (req,res,next) =>{
+  Synthese.findAll()
   .then(function(results) {
     if (results.length > 0) {
       res.status(200).json(results);
@@ -160,4 +175,4 @@ const updateParametrageObjectif = (req,res,next) =>{
 
 
 
-module.exports = {getUnite,getParametrageObjectif,insertParametrageObjectif,deleteParametrageObjectif,updateParametrageObjectif,insertManyParametrageObjectif, desactiveParametrageObjectif};
+module.exports = {getUnite, getSynthese,getParametrageObjectif,insertParametrageObjectif,deleteParametrageObjectif,updateParametrageObjectif,insertManyParametrageObjectif, desactiveParametrageObjectif};

@@ -51,16 +51,18 @@ INSERT INTO public."role" (id_role,type_role,date_create) VALUES
 
 
 -- processus
-INSERT INTO public.processus (id,libelle_processus,num_processus,abbrv) VALUES
-	(0,'All','0','ALL'),
-	(1,'Production','1','PRO'),
-	(2,'Méthode et qualité','2','MET'),
-	(3,'Développement','3','DEV'),
-	(4,'Infra-tech','4','INF'),
-	(5,'Service généraux','5','SER'),
-	(6,'Ressources humaines','6','RES'),
-	(7,'Administration','7','ADM'),
-	(8,'Generale','8','GEN');
+INSERT INTO public.processus (id,libelle_processus,num_processus,abbrv, excel) VALUES
+	(0,'All','0','ALL',NULL),
+	(1,'Production','1','PRO', 'PRODUCTION'),
+	(2,'Méthode et qualité','2','MET', 'METHODES ET QUALITE'),
+	(3,'Développement','3','DEV', 'DEVELOPPEMENT'),
+	(4,'Infra-tech','4','INF', 'INFRA-TECH'),
+	(5,'Service généraux','5','SER', 'SERVICES GENERAUX'),
+	(6,'Ressources humaines','6','RES', 'RESSOURCES HUMAINES'),
+	(7,'Administration','7','ADM', 'ADMINISTRATION'),
+	(8,'Approvisionnement','8','APPRO', 'APPROVISIONNEMENT'),
+	(9,'Facturation', '9','FACT', 'FACTURATION'),
+	(100,'Generale','8','GEN',NULL);
 
 
 -- user_role

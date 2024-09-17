@@ -15,6 +15,7 @@ const Processus = defautl_db.defaultSequelize.define('processus', {
             type: Sequelize.DATE,
             defaultValue: Sequelize.NOW,
         },
+        excel: Sequelize.STRING(300),
         
     },{
         tableName: "processus",

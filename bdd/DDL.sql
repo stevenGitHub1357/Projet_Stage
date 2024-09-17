@@ -68,7 +68,8 @@ CREATE TABLE IF NOT EXISTS processus(
   libelle_processus VARCHAR(200),
   num_processus VARCHAR(100) DEFAULT 0,
   abbrv VARCHAR(100), 
-  date_create TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  date_create TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  excel VARCHAR(200) DEFAULT null
 );
 
 CREATE TABLE IF NOT EXISTS user_processus(
@@ -100,11 +101,11 @@ CREATE TABLE IF NOT EXISTS objectif.parametrage(
   id_processus INTEGER REFERENCES public.processus(id) default 1,
   objectifs VARCHAR(2000),
   poids DOUBLE precision default 0,
-  cible DOUBLE precision default 0,
+  cible VARCHAR(100) default 0,
   id_unite INTEGER REFERENCES objectif.unite(id) default 1,
   recuperation INTEGER default 1,
   activate INTEGER default 1,
-  date_create TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  date_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

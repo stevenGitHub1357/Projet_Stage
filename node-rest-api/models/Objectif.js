@@ -50,8 +50,7 @@ const ParametrageObjectif = defautl_db.defaultSequelize.define('paremetrage', {
         allowNull: false,
       },
       cible: {
-        type: Sequelize.DECIMAL(10,5),
-        allowNull: false,
+        type: Sequelize.STRING(1000),
       },
       id_unite: {
         type: Sequelize.INTEGER,
@@ -69,27 +68,35 @@ const ParametrageObjectif = defautl_db.defaultSequelize.define('paremetrage', {
         type: Sequelize.INTEGER,
         defaultValue : 1
       },
-      date_create: {
-          type: Sequelize.DATE,
-          defaultValue: Sequelize.NOW,
-      },
-      date_update: {
-          type: Sequelize.DATE,
-          defaultValue: Sequelize.NOW,
-      },
     
 
     },{
       tableName: "parametrage",
       schema: "objectif",
       freezeTableName: true,
-      timestamps: false,
+      createdAt: "createat",
+      updatedAt: "updateat",
     });
 
-
+const Synthese = defautl_db.defaultSequelize.define('synthese', {
+      id_processus: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false,
+      },
+      libelle_processus: {type: Sequelize.STRING(1000)},
+      nb_objectif: {type: Sequelize.INTEGER},
+      poids: {type: Sequelize.INTEGER},
+    },{
+      tableName: "parametrage_objectif_synthese",
+      freezeTableName: true,
+      timestamps: false,
+      noPrimaryKey: true, 
+    });
   
 ParametrageObjectif.belongsTo(Unite, { foreignKey:"id_unite"})
 ParametrageObjectif.belongsTo(Processus, {as: 'processus',foreignKey:"id_processus"})
   
-module.exports = { ParametrageObjectif, Unite }  
+module.exports = { ParametrageObjectif, Unite, Synthese}  
   

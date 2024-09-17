@@ -2,16 +2,20 @@ import { createSlice } from "@reduxjs/toolkit"
 const processusSlice = createSlice({
     name:"processus",
     initialState:{
-        processus:[{id:null, libelle_processus:"", num_processus:"",abbrv:"",date_create:""}],
-        updateProcessus:{id:null, libelle_processus:"", num_processus:"",abbrv:"",date_create:null},
+        processus:[{id:null, libelle_processus:"", num_processus:"",abbrv:"",date_create:"",excel:""}],
+        processusUser:[{id:null, libelle_processus:"", num_processus:"",abbrv:"",date_create:"",excel:""}],
+        updateProcessus:{id:null, libelle_processus:"", num_processus:"",abbrv:"",date_create:null,excel:""},
     },
     reducers:{
         setProcessusData:(state,{payload})=>{
             state.processus = payload
         },
+        setProcessusUserData:(state,{payload})=>{
+            state.processus = payload
+        },
         addProcessus:(state,{payload})=>{
             console.log(payload)
-            if(payload != undefined){
+            if(payload !== undefined){
                 state.processus.push(payload)
             }
         },
@@ -40,5 +44,5 @@ const processusSlice = createSlice({
     }
 })
 
-export const {setProcessusData,addProcessus,deleteProcessus,updateProcessusData,updateProcessus} = processusSlice.actions
+export const {setProcessusData,addProcessus,deleteProcessus,updateProcessusData,updateProcessus, setProcessusUserData} = processusSlice.actions
 export default processusSlice.reducer
