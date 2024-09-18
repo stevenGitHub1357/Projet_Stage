@@ -41,13 +41,21 @@ router.post("/getProcessusByUser",processus.getProcessusByUser);
 
 const parametrageObjectif = require("../controllers/objectif_controller.js")
 router.get("/getParametrageObjectif", parametrageObjectif.getParametrageObjectif)
+router.get("/getAllParametrageObjectif", parametrageObjectif.getParametrageObjectif)
 router.post("/insertParametrageObjectif", parametrageObjectif.insertParametrageObjectif)
 router.post("/deleteParametrageObjectif",parametrageObjectif.deleteParametrageObjectif)
 router.post("/updateParametrageObjectif",parametrageObjectif.updateParametrageObjectif)
-router.get("/getParamObjUnite",parametrageObjectif.getUnite)
-router.get("/getParamObjSynthese",parametrageObjectif.getSynthese)
 router.post("/insertManyParametrageObjectif", parametrageObjectif.insertManyParametrageObjectif)
 router.post("/desactiveParametrageObjectif",parametrageObjectif.desactiveParametrageObjectif)
+
+router.get("/getParamObjUnite",parametrageObjectif.getUnite)
+router.post("/insertParamObjUnite", parametrageObjectif.insertUnite)
+
+router.get("/getParamObjRecuperation",parametrageObjectif.getRecuperation)
+router.post("/insertParamObjRecuperation", parametrageObjectif.insertRecuperation)
+
+router.get("/getParamObjSynthese",parametrageObjectif.getSynthese)
+
 
 module.exports = router
 

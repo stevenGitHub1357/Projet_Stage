@@ -1,6 +1,6 @@
 const pool = require("../config/default.config");
 const {Op} = require("sequelize");
-const {ParametrageObjectif, Unite, Synthese}= require("../models/Objectif");
+const {ParametrageObjectif, Unite, Synthese, Recuperation}= require("../models/Objectif");
 const { Processus } = require("../models/Processus");
 
 const getUnite = (req,res,next) =>{
@@ -11,6 +11,60 @@ const getUnite = (req,res,next) =>{
     } else {
       res.status(200).json();
     }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+const insertUnite = (req,res,next) =>{
+  const body = req.body
+  console.log(body)
+  const {type_unite,abbrv} = body.unite
+  Unite.create(
+    { 
+      type_unite : type_unite,
+      abbrv : abbrv,  
+    }
+  )
+  .then(function(results) {
+    res.status(200).send(results);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+
+const getRecuperation = (req,res,next) =>{
+  Recuperation.findAll()
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+const insertRecuperation = (req,res,next) =>{
+  const body = req.body
+  console.log(body)
+  const {id,type_recuperation} = body.recuperation
+  Recuperation.create(
+    { 
+      id : id,
+      type_recuperation : type_recuperation,
+    }
+  )
+  .then(function(results) {
+    res.status(200).send(results);
   })
   .catch(function(error) {
     console.error(error);
@@ -41,6 +95,35 @@ const getParametrageObjectif = (req,res,next) =>{
         model: Processus,
         as: "processus"
       }
+    ],
+    where: {
+      activate: {
+        [Op.ne] : 0
+      }
+    },
+    
+  })
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+const getAllParametrageObjectif = (req,res,next) =>{
+  ParametrageObjectif.findAll({
+    include: [
+      Unite,
+      {
+        model: Processus,
+        as: "processus"
+      }
     ]
   })
   .then(function(results) {
@@ -60,7 +143,7 @@ const getParametrageObjectif = (req,res,next) =>{
 const insertParametrageObjectif = (req,res,next) =>{
   const body = req.body
   console.log(body)
-  const {id_processus,objectifs,poids,cible,id_unite,recuperation} = body.objectif
+  const {id_processus,objectifs,poids,cible,id_unite,recuperation,support} = body.objectif
   ParametrageObjectif.create(
     { 
       id_processus : id_processus,
@@ -69,6 +152,7 @@ const insertParametrageObjectif = (req,res,next) =>{
       cible : cible,
       id_unite : id_unite,
       recuperation : recuperation,
+      support : support
     }
   )
   .then(function(results) {
@@ -145,7 +229,7 @@ const desactiveParametrageObjectif = (req,res,next) =>{
 const updateParametrageObjectif = (req,res,next) =>{
   const body = req.body
   console.log(body)
-  const {id,id_processus,objectifs,poids,cible,id_unite,recuperation} = body.objectif
+  const {id,id_processus,objectifs,poids,cible,id_unite,recuperation, support} = body.objectif
   ParametrageObjectif.update(
     { 
         id_processus : id_processus,
@@ -154,7 +238,7 @@ const updateParametrageObjectif = (req,res,next) =>{
         cible : cible,
         id_unite : id_unite,
         recuperation : recuperation,
-      
+        support : support      
     },
     {
       where : 
@@ -175,4 +259,5 @@ const updateParametrageObjectif = (req,res,next) =>{
 
 
 
-module.exports = {getUnite, getSynthese,getParametrageObjectif,insertParametrageObjectif,deleteParametrageObjectif,updateParametrageObjectif,insertManyParametrageObjectif, desactiveParametrageObjectif};
+module.exports = {getUnite, insertUnite, getRecuperation, insertRecuperation, getSynthese, getAllParametrageObjectif,
+                  getParametrageObjectif,insertParametrageObjectif,deleteParametrageObjectif,updateParametrageObjectif,insertManyParametrageObjectif, desactiveParametrageObjectif};

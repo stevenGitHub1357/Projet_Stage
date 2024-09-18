@@ -110,7 +110,7 @@ const Menu =()=>{
                         listMenuSlice.filter(menu => menu.base===0 && menu.position===1).map((menu, index)  => (
                             <li className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>
                                 <NavLink className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  to={urlReact+menu.route} data-bs-toggle="collapse" 
-                                        data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample" > 
+                                        data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample"> 
                                         <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample">
                                             {!MenuCollapse ? <span className="titleMenu "> {menu.labelle_menu}</span>:<></>}
                                         </div>
@@ -201,8 +201,8 @@ const Menu =()=>{
                         listMenuSlice.filter(menu => menu.base===0 && menu.position===2).length>0 && 
                         listMenuSlice.filter(menu => menu.base===0 && menu.position===2).map((menu, index)  => (
                             <ul className="col-2 float-end float-right" data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>
-                                <NavLink className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  to={urlReact+menu.route} data-bs-toggle="collapse" 
-                                        data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample" > 
+                                <NavLink className="btn btn-dark nav-link lien rounded-1 text-black d-flex justify-content-between"  to={urlReact+menu.route} data-bs-toggle="collapse" 
+                                        data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample"> 
                                         <div className="col-8" data-bs-toggle="collapse" data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample">
                                             {true ? <span className="titleMenu "> {menu.labelle_menu}</span>:<></>}
                                         </div>

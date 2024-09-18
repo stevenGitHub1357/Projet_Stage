@@ -6,10 +6,12 @@ CREATE SCHEMA IF NOT EXISTS objectif;
 DROP VIEW IF EXISTS detail_user_processus;
 DROP VIEW IF EXISTS detail_user_role;
 DROP VIEW IF EXISTS menu_role_processus;
+DROP VIEW IF EXISTS parametrage_objectif_synthese;
 
 
 DROP TABLE IF EXISTS objectif.parametrage;
 DROP TABLE IF EXISTS objectif.unite;
+DROP TABLE IF EXISTS objectif.recuperation;
 DROP TABLE IF EXISTS menu_processus;
 DROP TABLE IF EXISTS menu_role;
 DROP TABLE IF EXISTS user_processus;
@@ -96,6 +98,11 @@ CREATE TABLE IF NOT EXISTS objectif.unite(
   abbrv VARCHAR(100) not null
 );
 
+CREATE TABLE IF NOT EXISTS objectif.recuperation(
+  id SERIAL PRIMARY KEY,
+  type_recuperation VARCHAR(200) not null
+);
+
 CREATE TABLE IF NOT EXISTS objectif.parametrage(
   id SERIAL PRIMARY KEY,
   id_processus INTEGER REFERENCES public.processus(id) default 1,
@@ -103,7 +110,8 @@ CREATE TABLE IF NOT EXISTS objectif.parametrage(
   poids DOUBLE precision default 0,
   cible VARCHAR(100) default 0,
   id_unite INTEGER REFERENCES objectif.unite(id) default 1,
-  recuperation INTEGER default 1,
+  recuperation INTEGER REFERENCES objectif.recuperation(id) default 1,
+  support VARCHAR(300),
   activate INTEGER default 1,
   createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -24,6 +24,25 @@ const Unite = defautl_db.defaultSequelize.define('unite', {
         timestamps: false,
         noPrimaryKey: true, 
       });
+  
+      const Recuperation = defautl_db.defaultSequelize.define('recuperation', {
+        id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          primaryKey: true,
+          allowNull: false,
+        },
+        type_recuperation: {
+          type: Sequelize.STRING(1000),
+          allowNull: false,
+        },
+      },{
+        tableName: "recuperation",
+        schema: "objectif",
+        freezeTableName: true,
+        timestamps: false,
+        noPrimaryKey: true, 
+      });
 
 
 const ParametrageObjectif = defautl_db.defaultSequelize.define('paremetrage', {
@@ -68,6 +87,9 @@ const ParametrageObjectif = defautl_db.defaultSequelize.define('paremetrage', {
         type: Sequelize.INTEGER,
         defaultValue : 1
       },
+      support: {
+        type: Sequelize.STRING(1000),
+      },
     
 
     },{
@@ -98,5 +120,5 @@ const Synthese = defautl_db.defaultSequelize.define('synthese', {
 ParametrageObjectif.belongsTo(Unite, { foreignKey:"id_unite"})
 ParametrageObjectif.belongsTo(Processus, {as: 'processus',foreignKey:"id_processus"})
   
-module.exports = { ParametrageObjectif, Unite, Synthese}  
+module.exports = { ParametrageObjectif, Unite, Synthese, Recuperation}  
   

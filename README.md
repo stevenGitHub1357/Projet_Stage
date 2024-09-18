@@ -24,10 +24,10 @@ git config user.name "Steven"
 #### Node
 npm install nodemon;
 npm install sequelize; 
-npm install sequelize
+
 
 #### React
-
+npm install react-bootstrap bootstrap --legacy-peer-deps
 
 
 ## Utilisation

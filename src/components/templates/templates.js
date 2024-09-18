@@ -39,7 +39,7 @@ export const TitlePage = ({title,theme,process}) => {
     const classCard = !theme ? "px-2 shadow-sm relative rounded-2 bg-white " : "px-2 shadow-sm relative rounded-2 bg-dark bg-gradient text-white "
     
     return(
-        <div className="mt-3 row">
+        <div className="row">
         <div className={!theme ? " titlePage shadow-sm d-flex justify-content-between bg-white " : "bg-dark titlePage shadow-sm text-white d-flex justify-content-between"}>
             <span className="text-center">
                 {title}
@@ -48,8 +48,8 @@ export const TitlePage = ({title,theme,process}) => {
             {/* <img src={logo} alt="" width="40" className=""></img> */}
             
         </div>
-        <div className="CountBoard mt-4 ">
-        <div className="row text-white" >
+        <div className="CountBoard mt-2">
+        <div className="row text-white">
             {
             process === true &&
             listProcessusSlice.filter(process=>process.id>0).map((process,index) =>(

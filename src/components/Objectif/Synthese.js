@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Global_url from '../../global_url';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { useEffect } from 'react';
@@ -28,9 +28,11 @@ const Synthese = ({ isOpen, onClose }) => {
   
     return (
       <div className="App">
+        <OverlayTrigger placement="top" overlay={<Tooltip>Voir synthese</Tooltip>}>
         <Button variant="primary" onClick={handleShow}>
             <i className='bi bi-archive'></i>
         </Button>
+        </OverlayTrigger>
   
         <Modal show={showModal} onHide={handleClose} className='row'>
           <Modal.Header closeButton>
