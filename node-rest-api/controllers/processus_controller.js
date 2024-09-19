@@ -2,7 +2,7 @@ const { vi } = require("date-fns/locale");
 const processModel = require("../models/Processus")
 const {Op} = require("sequelize");
 const Processus = processModel.Processus;
-const View = processModel.Detail_user_processus;
+const Detail_user_processus = processModel.Detail_user_processus;
 
 const getProcessus = (req,res) => {
     Processus.findAll()
@@ -83,7 +83,7 @@ const updateProcessus = (req,res) => {
 };
 
 const getProcessusByUser = (req,res) => {
-  View.findAll(
+  Detail_user_processus.findAll(
     {
       attributes : [
         ['id_processus','id'],
@@ -125,11 +125,26 @@ const getProcessusByUser = (req,res) => {
     res.status(400).json({ error });
   })
 };
+
+const getAllProcessusUser = (req,res) => {
+  Detail_user_processus.findAll()
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
   
 
 
 
- module.exports = {getProcessus,insertProcessus,deleteProcessus,updateProcessus,getProcessusByUser};
+ module.exports = {getProcessus,insertProcessus,deleteProcessus,updateProcessus,getProcessusByUser,getAllProcessusUser};
 
 
 

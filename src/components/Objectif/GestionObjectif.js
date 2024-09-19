@@ -20,7 +20,7 @@ import { setExportData, setHeadingData } from "../feature/importExport.slice"
 import Synthese from "./Synthese"
 import Unite from "./Unite"
 import Recuperation from "./Recuperation"
-import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Button, OverlayTrigger, Tooltip, Table } from 'react-bootstrap';
 
 
 var Url = Global_url
@@ -450,7 +450,7 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
   return (
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
             <TitlePage title={page==="1" ? "Liste des objectifs" : "Parametrage objectifs"} process={false} theme={theme}/>
-            <table className="row">
+            <Table className="row">
                 <filtre>
                 { page === "1" ? 
                 <>
@@ -592,12 +592,11 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
                             
                         ))}
                     </tr>
-                </thead>
-                <tbody>
-{/* ajout */}
+                
+{/* ajout */}   
                 <tr className="row mb-3">
                             <td className="col-2">
-                                <select className="col-12" name="processus">
+                                <select className="col-12" name="processus" >
                                     {
                                         processus.map((processus, index) => (
                                             <option 
@@ -657,6 +656,10 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
                                 <button className="btn btn-warning btn-sm rounded-2 shadow" onClick={resetInputs}>Initialiser</button>
                             </td>)}
                         </tr>
+
+                        </thead>
+                
+                <tbody style={{ overflowY: 'auto', height: '450px' }}>
 {/*liste*/}
                     {
                         liste.length>0 &&
@@ -815,7 +818,7 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
 
                     
                 </tbody>
-            </table>
+            </Table>
             {page!=="1" ?
                 <div>
                 <button className="btn btn-outline-success btn-md" onClick={handleSaveAll}>Sauvegarder les données</button>

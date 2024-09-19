@@ -12,7 +12,7 @@ const Delete_User =({user})=>{
     const HandleDelete = () =>{
         dispatch(deleteUser(user.id_user))
         Success('')
-        axios.post(Url + "/deleteUser",user).then(() => {})
+        axios.post(Url + "/desactiveUser",{user}).then(() => {})
     }
     return(
         <button  className="btn btn-danger btn-sm ms-2" disabled={user.matricule == cookies.matricule_react || user.id_role == 1} onClick={()=> HandleDelete()}> <i className="bi bi-trash"></i> </button>

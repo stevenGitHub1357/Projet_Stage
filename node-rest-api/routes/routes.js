@@ -3,9 +3,14 @@ const router = express.Router()
 
 const users = require("../controllers/user_controller.js")
 router.get("/getUsers", users.getUsers)
+router.get("/getAllUsers", users.getAllUsers)
 router.post("/insertUser", users.insertUsers)
 router.post("/deleteUser",users.deleteUser)
 router.post("/updateUser",users.UpdateUser)
+router.post("/insertUserRole",users.insertUserRole)
+router.post("/insertUserProcessus",users.insertUserProcessus)
+router.post("/desactiveUser",users.desactiveUser)
+
 
 router.post("/getLog",users.getLog)
 router.post("/get-info-log",users.getInfoLog)

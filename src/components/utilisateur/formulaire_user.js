@@ -1,4 +1,4 @@
-import {React,useRef} from "react"
+import {React,useRef, useState} from "react"
 import axios from "axios"
 import { Success, Warning } from "../service/service-alert"
 import { GetRole } from "../service/service-role"
@@ -19,6 +19,9 @@ const Formulaire_User = ({theme}) =>{
     const role = useRef()
     const dispatch = useDispatch()
     const listRole = GetRole()
+    const listProcessus = useSelector(state=> state.processus.processus)
+    const [callProcess, setCallProcess] = useState(false)
+    const [processusUser, setProcessusUser] = useState([])
     if(usersUpdate.id_user != "" || usersUpdate.matricule != ""){
         id_user.current.value =  usersUpdate.id_user
         matricule.current.value = usersUpdate.matricule
@@ -33,8 +36,9 @@ const Formulaire_User = ({theme}) =>{
         })
     }
 
-    const handleSubmit = () =>{
-        let userObject = {
+    async function handleSubmit(){
+        console.log("Selected items:", selectedItems);
+        let user = {
             id_user:id_user.current.value,
             matricule:matricule.current.value,
             nom:nom.current.value,
@@ -43,27 +47,40 @@ const Formulaire_User = ({theme}) =>{
             confirm_passe: confirm_password.current.value,
             id_role:role.current.value
         }
-        if(userObject.matricule == "" || userObject.nom =="" || userObject.prenom == "" || userObject.id_role == "" || userObject.mot_de_passe == "" || userObject.confirm_passe ==""){            Warning('Information incomplete !')
+        console.log(selectedItems)
+        
+        if(user.matricule == "" || user.nom =="" || user.prenom == "" || user.id_role == "" || user.mot_de_passe == "" || user.confirm_passe =="" || selectedItems===null){            Warning('Information incomplete !')
             Warning('Information incomplète !')
            
             return
         }
-        if(userObject.mot_de_passe != userObject.confirm_passe){
+        if(user.mot_de_passe != user.confirm_passe){
             Warning('Merci de vérifier votre mot de passe de confirmation. !')
             return
         }
         if(id_user.current.value != ""){
-            dispatch(UpdateUser(userObject))
+            dispatch(UpdateUser(user))
             form.current.reset()
             Success('Mise à jour effectué avec succès ')
-            updateUser(userObject)
+            updateUser(user)
             return
         }
-        dispatch(addUser(userObject))
+
+        console.log(user)
+        await axios.post(Url+"/insertUser",user).then(res =>{})
+        let currentUser = await axios.post(Url+"/getUserByMatricule",{matricule : user.matricule})
+        console.log(currentUser.data[0].id_user)
+        let allRole = [];
+        allRole.push(user.id_role)
+        axios.post(Url+"/insertUserRole",{id_user : currentUser.data[0].id_user, role : allRole})
+        let allProcessus = Object.keys(selectedItems).filter(key=>selectedItems[key])
+        console.log(allProcessus)
+        axios.post(Url+"/insertUserProcessus",{id_user : currentUser.data[0].id_user, processus : allProcessus})
+
+        setSelectedItems([])
+        dispatch(addUser(user))
         form.current.reset()
         Success('')
-        axios.post(Url+"/insertUsers",userObject).then(res =>{})
-        
     }
 
     const Reset = () =>{
@@ -88,6 +105,23 @@ const Formulaire_User = ({theme}) =>{
             }
         })
     }
+    const handleCallProcess = () => {
+        if(callProcess){
+            setCallProcess(false)
+        }else{
+            setCallProcess(true)
+        }
+    }
+
+    const [selectedItems, setSelectedItems] = useState({});
+
+    const handleCheckboxChange = (id, value) => {
+        setSelectedItems(prevState => ({
+        ...prevState,
+        [id]: !prevState[id],
+        }));
+        
+    };
     
 
     return(
@@ -104,7 +138,15 @@ const Formulaire_User = ({theme}) =>{
                     <div className="col-lg-4">
                         <input type="text" ref={prenom} className={ !theme ? "form-control mb-2" : "form-control mb-2 darkMode border-dark text-white"} placeholder="Prénom" aria-label="firstname" aria-describedby="basic-addon3"/>
                     </div>
-                    <div className="col-lg-4">
+                    
+                    
+                    <div className="col-lg-3">
+                        <input type="password" ref={password} className={ !theme ? "form-control mb-2" : "form-control mb-2 darkMode border-dark"} placeholder="Password" aria-label="password" aria-describedby="basic-addon4"/>
+                    </div>
+                    <div className="col-lg-3">
+                        <input type="password" ref={confirm_password} className={ !theme ? "form-control mb-2" : "form-control mb-2 darkMode border-dark"} placeholder="Confirmation" aria-label="password" aria-describedby="basic-addon4"/>
+                    </div>
+                    <div className="col-lg-3">
                         <select className={ !theme ? "form-control mb-2" : "form-control mb-2 darkMode border-dark text-white"} placeholder="Role" ref={role}>
                             <option  value="">Role...</option>
                             {
@@ -114,13 +156,46 @@ const Formulaire_User = ({theme}) =>{
                         }
                         </select>
                     </div>
-                    <div className="col-lg-4">
-                        <input type="password" ref={password} className={ !theme ? "form-control mb-2" : "form-control mb-2 darkMode border-dark"} placeholder="Password" aria-label="password" aria-describedby="basic-addon4"/>
-                    </div>
-                    <div className="col-lg-4">
-                        <input type="password" ref={confirm_password} className={ !theme ? "form-control mb-2" : "form-control mb-2 darkMode border-dark"} placeholder="Confirmation" aria-label="password" aria-describedby="basic-addon4"/>
-                    </div>
-                    <div className="col-lg-12 text-center">
+                    <div className="col-lg-3">
+                        {/* <select className={ !theme ? "form-control mb-2" : "form-control mb-2 darkMode border-dark text-white"} placeholder="Role" ref={role}>
+                            <option  value="">Processus...</option>
+                            {
+                            listRole.map((item,index)=>
+                                <option key={index} value={item.id_role}>{item.type_role}</option>
+                            )
+                        }
+                        </select> */}
+                        <button type="button" onClick={()=>handleCallProcess()} className={ !theme ? "form-control mb-2" : "form-control mb-2 darkMode border-dark"}>Processus</button>
+                    </div >
+                    {
+                        callProcess ? 
+                        <>
+                        <h4 style={{textAlign:"center"}}>
+                            Choix de processus
+                        </h4>
+                        {   
+
+                            listProcessus.map((item,index)=>
+                                <div className="col-lg-3 row">
+                                    <div className="col-lg-3">
+                                    <input
+                                        type="checkbox"
+                                        name={`select_${item.id}`}
+                                        checked={!!selectedItems[item.id]}
+                                        onChange={(e) => handleCheckboxChange(item.id, e.target.checked)}
+                                        key={item.id}
+                                    />
+                                    </div>
+                                    <div className="col-lg-8">
+                                        {item.libelle_processus}
+                                    </div>
+                                </div>
+                            )
+                        }
+                        </>
+                        :<></>
+                    }
+                    <div className="col-12 text-center">
                         <button type="button" onClick={()=>handleSubmit()} className="btn btn-primary form-control w-25  mb-3 ms-2 mt-2">
                             <i className="bi bi-save"></i>
                             <span> Enregistrer</span>

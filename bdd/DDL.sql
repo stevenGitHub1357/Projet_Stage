@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS users(
   nom VARCHAR(300),
   prenom VARCHAR(300),
   mot_de_passe VARCHAR(200) DEFAULT 0000,
-  default_mdp VARCHAR(200) DEFAULT 'lum123', 
+  default_mdp VARCHAR(200) DEFAULT 'lum123',
+  activate INTEGER DEFAULT 1, 
   date_create TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

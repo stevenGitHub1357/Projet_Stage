@@ -3,11 +3,20 @@ const pool = bd_pool.pool
 const gpao = require("../config/dbGpao.config")
 const userModel = require("../models/Users");
 const { id } = require("date-fns/locale");
+const { INTEGER, where, Op } = require("sequelize");
 const User = userModel.User;
 
 
 const getUsers = (req,res) => {
-    User.findAll()
+    User.findAll(
+      {
+        where: {
+          activate: {
+            [Op.ne] : 0
+          }
+        },
+      }
+    )
     .then(function(results) {
       if (results.length > 0) {
         res.status(200).json(results);
@@ -19,6 +28,21 @@ const getUsers = (req,res) => {
       console.error(error);
       res.status(400).json({ error });
     })
+};
+
+const getAllUsers = (req,res) => {
+  User.findAll()
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
 };
 
 const getUserByMatricule = (req,res) => {
@@ -84,7 +108,7 @@ const deleteUser = (req,res) => {
 
 
 const UpdateUser = (req,res) => {
-  const {id_user,matricule,nom,prenom,mot_de_passe} = req.body
+  const {id_user,matricule,nom,prenom,mot_de_passe} = req.body.user
   User.update(
     { 
       matricule : matricule,
@@ -107,6 +131,87 @@ const UpdateUser = (req,res) => {
     res.status(400).json({ error });
   })
 };
+
+const desactiveUser = (req,res,next) =>{
+  const {id_user} = req.body.user
+  User.update(
+    { 
+        activate : 0
+    },
+    {
+      where : 
+      {
+        id_user : id_user
+      }
+    }
+  )
+  .then(function(results) {
+    res.status(200).send(results);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+const insertUserRole = (req,res,next) =>{
+  const body = req.body
+  const id_user = body.id_user
+  const role = body.role
+  const item = []
+  for(let id_role of role){
+    const object = {};
+    object.id_user = id_user;
+    object.id_role = Number(id_role);
+    item.push(object)
+  }
+  console.log(item)
+  userModel.UserRole.bulkCreate(item,
+    {
+      ignoreDuplicates:true,
+      validate:true,
+      returning:true
+    }
+  )
+  .then(function(results) {
+    res.status(200).send(results);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+const insertUserProcessus = (req,res,next) =>{
+  const body = req.body
+  const id_user = body.id_user
+  const processus = body.processus
+  const item = []
+  for(let id_processus of processus){
+    const object = {};
+    object.id_user = id_user;
+    object.id_processus = Number(id_processus);
+    item.push(object)
+  }
+  console.log(item)
+  userModel.UserProcessus.bulkCreate(item,
+    {
+      ignoreDuplicates:true,
+      validate:true,
+      returning:true
+    }
+  )
+  .then(function(results) {
+    res.status(200).send(results);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+
+
   
 
 
@@ -129,7 +234,7 @@ const getUserFromGpao = (req,res,next) =>{
 
 const getLog = (req,res,next) =>{
   const {matricule,mot_de_passe} = req.body
-  pool.query("SELECT COUNT(*) FROM public.users WHERE matricule=$1 AND mot_de_passe = $2 OR default_mdp = $3",[matricule,mot_de_passe,mot_de_passe],function(err,Result){
+  pool.query("SELECT COUNT(*) FROM public.users WHERE matricule=$1 AND mot_de_passe = $2 OR default_mdp = $3 AND activate = 1",[matricule,mot_de_passe,mot_de_passe],function(err,Result){
     if (err) {
       res.status(400).send(err);
     }
@@ -188,7 +293,8 @@ const VerificationOperateurSecuriter = (req,res,next)=>{
 };
 
 
- module.exports = {getUsers,getUserByMatricule,insertUsers,getLog,deleteUser,getInfoLog,UpdateUser,getUserFromGpao,VerificationOperateurSecuriter,getNb_echec};
+ module.exports = {getUsers,getUserByMatricule,insertUsers,getLog,deleteUser, insertUserRole, insertUserProcessus, desactiveUser, getAllUsers,
+                getInfoLog,UpdateUser,getUserFromGpao,VerificationOperateurSecuriter,getNb_echec};
 
 
 

@@ -1,7 +1,7 @@
 import React, { useReducer } from "react";
 import { useCookies } from "react-cookie";
 import { useDispatch } from "react-redux/es/hooks/useDispatch";
-import {setUpdateUsers } from "../feature/users.slice";
+import {updateUserData } from "../feature/users.slice";
 const Edit_user =({user})=>{
     const [cookies, setCookie, removeCookie] = useCookies([]);
     const dispatch = useDispatch()
@@ -14,7 +14,7 @@ const Edit_user =({user})=>{
             id_role:user.id_role,
             mot_de_passe:user.mot_de_passe
         }
-        dispatch(setUpdateUsers(obj))
+        dispatch(updateUserData(obj))
     }   
     return(
         <>
