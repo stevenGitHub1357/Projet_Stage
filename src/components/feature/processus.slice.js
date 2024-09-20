@@ -11,7 +11,7 @@ const processusSlice = createSlice({
             state.processus = payload
         },
         setProcessusUserData:(state,{payload})=>{
-            state.processus = payload
+            state.processusUser = payload
         },
         addProcessus:(state,{payload})=>{
             console.log(payload)
@@ -43,6 +43,7 @@ const processusSlice = createSlice({
         
     }
 })
+
 
 export const {setProcessusData,addProcessus,deleteProcessus,updateProcessusData,updateProcessus, setProcessusUserData} = processusSlice.actions
 export default processusSlice.reducer

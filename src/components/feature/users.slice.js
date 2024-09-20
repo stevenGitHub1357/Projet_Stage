@@ -16,19 +16,22 @@ const usersSlice = createSlice({
         deleteUser: (state,{payload})=>{
             state.users = state.users.filter( (user) => user.id_user !== payload)
         },
-        updateUser:(state,{payload}) =>{
+        updateUserData:(state,{payload}) =>{
             state.updateUsers = payload
         },
-        updateUserData:(state,{payload}) =>{
-            console.log("payload",payload)
+        updateUser:(state,{payload}) =>{
+            console.log("payload",payload.id_user)
             state.users = state.users.map((user) =>{
-                if(user.id_user == payload.id_user){
+                
+                if(user.id_user === payload.id_user){
+                    console.log(user.id_user)
                     return{
                         ...user,
                         nom: payload.nom,
                         prenom:payload.prenom,
                         matricule:payload.matricule,
-                        mot_de_passe:payload.mot_de_passe
+                        mot_de_passe:payload.mot_de_passe,
+                        id_role:payload.id_role
                     }
                 }else{
                     return user

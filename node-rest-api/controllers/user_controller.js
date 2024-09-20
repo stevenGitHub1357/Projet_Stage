@@ -106,9 +106,44 @@ const deleteUser = (req,res) => {
   })
 };
 
+const deleteUserRole = (req,res) => {
+  let id = req.body.id_user
+  userModel.UserRole.destroy(
+    {
+      where: {
+        id_user: id,
+      },
+    }
+  )
+  .then(function(deleted) {
+    res.status(200).send(deleted[0]);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+const deleteUserProcessus = (req,res) => {
+  let id = req.body.id_user
+  userModel.UserProcessus.destroy(
+    {
+      where: {
+        id_user: id,
+      },
+    }
+  )
+  .then(function(deleted) {
+    res.status(200).send(deleted[0]);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
 
 const UpdateUser = (req,res) => {
-  const {id_user,matricule,nom,prenom,mot_de_passe} = req.body.user
+  const {id_user,matricule,nom,prenom,mot_de_passe} = req.body
   User.update(
     { 
       matricule : matricule,
@@ -293,7 +328,7 @@ const VerificationOperateurSecuriter = (req,res,next)=>{
 };
 
 
- module.exports = {getUsers,getUserByMatricule,insertUsers,getLog,deleteUser, insertUserRole, insertUserProcessus, desactiveUser, getAllUsers,
+ module.exports = {getUsers,getUserByMatricule,insertUsers,getLog,deleteUser, insertUserRole, insertUserProcessus, desactiveUser, getAllUsers, deleteUserRole, deleteUserProcessus,
                 getInfoLog,UpdateUser,getUserFromGpao,VerificationOperateurSecuriter,getNb_echec};
 
 

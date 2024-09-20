@@ -32,8 +32,8 @@ const insertMenu = (req,res,next) =>{
       base : base,
     }
   )
-  .then(function(results) {
-    res.status(200).send(results);
+  .then(function(result) {
+    res.status(200).json({ id_menu: result.id_menu, ...result.dataValues });
   })
   .catch(function(error) {
     console.error(error);
@@ -131,4 +131,97 @@ const getMenuByUser = (req,res,next) =>{
 };
 
 
-module.exports = {getMenu,insertMenu,deleteMenu,updateMenu,getMenuByUser};
+const insertMenuRole = (req,res,next) =>{
+  const body = req.body
+  const id_menu = body.id_menu
+  const role = body.role
+  const item = []
+  for(let id_role of role){
+    const object = {};
+    object.id_menu = id_menu;
+    object.id_role = Number(id_role);
+    item.push(object)
+  }
+  console.log(item)
+  menuModel.MenuRole.bulkCreate(item,
+    {
+      ignoreDuplicates:true,
+      validate:true,
+      returning:true
+    }
+  )
+  .then(function(results) {
+    res.status(200).send(results);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+const insertMenuProcessus = (req,res,next) =>{
+  const body = req.body
+  const id_menu = body.id_menu
+  const processus = body.processus
+  const item = []
+  for(let id_processus of processus){
+    const object = {};
+    object.id_menu = id_menu;
+    object.id_processus = Number(id_processus);
+    item.push(object)
+  }
+  console.log(item)
+  menuModel.MenuProcessus.bulkCreate(item,
+    {
+      ignoreDuplicates:true,
+      validate:true,
+      returning:true
+    }
+  )
+  .then(function(results) {
+    res.status(200).send(results);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+const deleteMenuRole = (req,res) => {
+  let id = req.body.id_menu
+  menuModel.MenuRole.destroy(
+    {
+      where: {
+        id_menu: id,
+      },
+    }
+  )
+  .then(function(deleted) {
+    res.status(200).send(deleted[0]);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+const deleteMenuProcessus = (req,res) => {
+  let id = req.body.id_menu
+  menuModel.MenuProcessus.destroy(
+    {
+      where: {
+        id_menu: id,
+      },
+    }
+  )
+  .then(function(deleted) {
+    res.status(200).send(deleted[0]);
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+
+module.exports = {getMenu,insertMenu,deleteMenu,updateMenu,getMenuByUser, insertMenuProcessus, insertMenuRole, deleteMenuProcessus, deleteMenuRole};

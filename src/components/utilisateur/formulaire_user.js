@@ -3,7 +3,8 @@ import axios from "axios"
 import { Success, Warning } from "../service/service-alert"
 import { GetRole } from "../service/service-role"
 import { useDispatch, useSelector } from "react-redux"
-import { addUser, UpdateUser } from "../feature/users.slice"
+import { addUser, setUsersData, UpdateUser } from "../feature/users.slice"
+import { useEffect } from "react"
 import Global_url from "../../global_url"
 
 var Url = Global_url
@@ -17,11 +18,14 @@ const Formulaire_User = ({theme}) =>{
     const password = useRef()
     const confirm_password = useRef()
     const role = useRef()
+    const [idRole,setIdRole] = useState() 
     const dispatch = useDispatch()
     const listRole = GetRole()
     const listProcessus = useSelector(state=> state.processus.processus)
     const [callProcess, setCallProcess] = useState(false)
     const [processusUser, setProcessusUser] = useState([])
+    const [selectedItems, setSelectedItems] = useState([]);
+    const [controlProcess, setControlleProcess] = useState(false)
     if(usersUpdate.id_user != "" || usersUpdate.matricule != ""){
         id_user.current.value =  usersUpdate.id_user
         matricule.current.value = usersUpdate.matricule
@@ -29,11 +33,39 @@ const Formulaire_User = ({theme}) =>{
         prenom.current.value = usersUpdate.prenom
         password.current.value = usersUpdate.mot_de_passe
         confirm_password.current.value = usersUpdate.mot_de_passe
-        role.current.value = usersUpdate.id_role
+        getIdRoleUpdate(usersUpdate.id_user)   
     }
-    function updateUser(datas){
-        axios.post(Url+"/Update-User",datas).then(res =>{
-        })
+    // if(controlProcess===true){
+    //     console.log(controlProcess)
+    //     getIdProcessusUpdate(usersUpdate.id_user)
+    // }
+
+    
+
+
+    async function getIdRoleUpdate (id_user){
+        let role = await axios.post(Url+"/getRoleByUser",{id_user : id_user})
+        console.log(role.data)
+        role = role.data
+        console.log(role[0])
+        setIdRole(role[0].id_role)
+        setControlleProcess(true);
+    }
+
+    async function getIdProcessusUpdate (id_user){
+        let processus = await axios.post(Url+"/getProcessusByUser",{id_user : id_user})
+        // console.log(processus.data)
+        processus = processus.data
+        setControlleProcess(false)
+        setSelectedItems([])
+        for(let proc of processus){
+            setSelectedItems(prevState => ({
+            ...prevState,
+            [proc.id]: !prevState[proc.id],
+            }));
+            console.log(proc)
+        }
+        
     }
 
     async function handleSubmit(){
@@ -49,7 +81,7 @@ const Formulaire_User = ({theme}) =>{
         }
         console.log(selectedItems)
         
-        if(user.matricule == "" || user.nom =="" || user.prenom == "" || user.id_role == "" || user.mot_de_passe == "" || user.confirm_passe =="" || selectedItems===null){            Warning('Information incomplete !')
+        if(user.matricule == "" || user.nom =="" || user.prenom == "" || user.id_role == "" || user.mot_de_passe == "" || user.confirm_passe =="" || selectedItems===null){           
             Warning('Information incomplète !')
            
             return
@@ -58,29 +90,41 @@ const Formulaire_User = ({theme}) =>{
             Warning('Merci de vérifier votre mot de passe de confirmation. !')
             return
         }
-        if(id_user.current.value != ""){
-            dispatch(UpdateUser(user))
-            form.current.reset()
-            Success('Mise à jour effectué avec succès ')
-            updateUser(user)
-            return
-        }
 
-        console.log(user)
-        await axios.post(Url+"/insertUser",user).then(res =>{})
         let currentUser = await axios.post(Url+"/getUserByMatricule",{matricule : user.matricule})
-        console.log(currentUser.data[0].id_user)
-        let allRole = [];
-        allRole.push(user.id_role)
-        axios.post(Url+"/insertUserRole",{id_user : currentUser.data[0].id_user, role : allRole})
-        let allProcessus = Object.keys(selectedItems).filter(key=>selectedItems[key])
-        console.log(allProcessus)
-        axios.post(Url+"/insertUserProcessus",{id_user : currentUser.data[0].id_user, processus : allProcessus})
-
+        console.log(currentUser.data.length)
+        if(currentUser.data.length===0){
+            console.log(user)
+            await axios.post(Url+"/insertUser",user).then(res =>{})
+            let currentUser = await axios.post(Url+"/getUserByMatricule",{matricule : user.matricule})
+            console.log(currentUser.data[0].id_user)
+            let allRole = [];
+            allRole.push(user.id_role)
+            axios.post(Url+"/insertUserRole",{id_user : currentUser.data[0].id_user, role : allRole})
+            let allProcessus = Object.keys(selectedItems).filter(key=>selectedItems[key])
+            console.log(allProcessus)
+            axios.post(Url+"/insertUserProcessus",{id_user : currentUser.data[0].id_user, processus : allProcessus})
+            Success('')
+        }else{
+            console.log(user)
+            await axios.post(Url+"/updateUser",user).then(res =>{})
+            let allRole = [];
+            allRole.push(user.id_role)
+            await axios.post(Url+"/deleteUserRole",{id_user : currentUser.data[0].id_user})
+            await axios.post(Url+"/deleteUserProcessus",{id_user : currentUser.data[0].id_user})
+            await axios.post(Url+"/insertUserRole",{id_user : currentUser.data[0].id_user, role : allRole})
+            let allProcessus = Object.keys(selectedItems).filter(key=>selectedItems[key])
+            console.log(allProcessus)
+            await axios.post(Url+"/insertUserProcessus",{id_user : currentUser.data[0].id_user, processus : allProcessus})
+            Success('Mise à jour effectué avec succès ')
+        }
         setSelectedItems([])
         dispatch(addUser(user))
+        const allUser = await axios.get(Url+"/getUsers")
+        console.log(allUser.data)
+        dispatch(setUsersData(allUser.data))
         form.current.reset()
-        Success('')
+        
     }
 
     const Reset = () =>{
@@ -110,16 +154,18 @@ const Formulaire_User = ({theme}) =>{
             setCallProcess(false)
         }else{
             setCallProcess(true)
+            if(usersUpdate.id_user!==""){
+                getIdProcessusUpdate(usersUpdate.id_user)
+            }
         }
     }
-
-    const [selectedItems, setSelectedItems] = useState({});
 
     const handleCheckboxChange = (id, value) => {
         setSelectedItems(prevState => ({
         ...prevState,
         [id]: !prevState[id],
         }));
+        
         
     };
     
@@ -151,7 +197,9 @@ const Formulaire_User = ({theme}) =>{
                             <option  value="">Role...</option>
                             {
                             listRole.map((item,index)=>
-                                <option key={index} value={item.id_role}>{item.type_role}</option>
+                                <option key={index} value={item.id_role}
+                                    selected={item.id_role === idRole}    
+                                >{item.type_role}</option>
                             )
                         }
                         </select>

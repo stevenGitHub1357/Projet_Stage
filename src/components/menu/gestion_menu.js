@@ -32,6 +32,7 @@ const Gestion_menu =({theme})=>{
     const [etat_modal, setEtatModal] = useState(false)
     const [collapse_sous_menu, setCollpaseSM] = useState(false)
     const [role_modif, setRoleModif] = useState([])
+    const base = useRef()
     const menu = useRef()
     const route = useRef()
     const Icon = useRef()
@@ -43,6 +44,7 @@ const Gestion_menu =({theme})=>{
     const [icon_sous_menu,setIconSousMenu] = useState('')
     const [id_sous_menu, setIdSousMenu] = useState('')
     const [checked, setChecked] = useState([])
+    const [checkedProcess, setCheckedProcess] = useState([])
     const openModal = () =>{setIsOpen(true)}
     const afterOpenModal = () =>{subtitle.style.color="black"}
     const closeModal = () =>{setIsOpen(false)}
@@ -66,19 +68,6 @@ const Gestion_menu =({theme})=>{
     }
     const dragOver = (e) =>{e.preventDefault()}
 
-    /* fin drag and drop */
-
-    const NomSousMenu = (e) =>{
-        setNomSousMenu(e.target.value)
-    }
-
-    const RouteSousMenu = (e) =>{
-        setRouteSousMenu(e.target.value)
-    }
-
-    const IconSousMenu = (e) =>{
-        setIconSousMenu(e.target.value)
-    }
     const MajMenu = (item)=>{
         setEtatModal(true)
         console.log(item.role)
@@ -99,15 +88,16 @@ const Gestion_menu =({theme})=>{
         Success()
     }
 
-    const AddMenu = () =>{
+    async function AddMenu(){
 
         let objMenu = {
+            base : base.current.value,
             id_menu:id_menu.current.value,
             icon: Icon.current.value,
             labelle_menu: menu.current.value,
             route: route.current.value,
-            sous_menus:[],
             role: checked,
+            processus: checkedProcess
         }
         
         console.log(objMenu)
@@ -116,19 +106,28 @@ const Gestion_menu =({theme})=>{
             Warning('Information incomplète !')
             return
         }
-        if(id_menu.current.value != ""){
-            dispatch(updateMenu(objMenu))
-            axios.post(Url+"/Update-Menu",objMenu).then(res=>{
-            }) 
-            Success('Mise à jour effectué avec succès !')
-            reset()
-            return
-        }
+        // if(id_menu.current.value != ""){
+        //     dispatch(updateMenu(objMenu))
+        //     axios.post(Url+"/Update-Menu",objMenu).then(res=>{
+        //     }) 
+        //     Success('Mise à jour effectué avec succès !')
+        //     reset()
+        //     return
+        // }
         dispatch(addMenu(objMenu))
-        axios.post(Url+"/insertMenu",objMenu).then(res =>{
+        let res = {}
+        await axios.post(Url+"/insertMenu",objMenu).then(result =>{
+            res = result.data
         })
+        console.log(res)
+        console.log({id_menu : res.id_menu, processus: objMenu.processus})
+        console.log({id_menu : res.id_menu, processus: objMenu.processus})
+        await axios.post(Url+"/insertMenuProcessus",{id_menu : res.id_menu, processus: objMenu.processus}).then(res =>{})
+        await axios.post(Url+"/insertMenuRole",{id_menu : res.id_menu, role: objMenu.role}).then(res =>{})
         Success()
         setEtatModal(false)
+        setChecked([null])
+        setCheckedProcess([null])
         reset()
     }
 
@@ -149,6 +148,7 @@ const Gestion_menu =({theme})=>{
         id_menu.current.value = ""
         menu.current.value = ""
         route.current.value = ""
+        base.current.value = 0
         setEtatModal(false)
     }
     const Initialisation = () =>{
@@ -166,6 +166,16 @@ const Gestion_menu =({theme})=>{
           updatedList.splice(checked.indexOf(event.target.value), 1);
         }
         setChecked(updatedList);
+    }
+
+    const handleCheckedProcessus = (event) => {
+        var updatedList = [...checked];
+        if (event.target.checked) {
+          updatedList = [...checked, event.target.value];
+        } else {
+          updatedList.splice(checked.indexOf(event.target.value), 1);
+        }
+        setCheckedProcess(updatedList);
     }
 
     const AddRole = (role) =>{
@@ -206,10 +216,23 @@ const Gestion_menu =({theme})=>{
                 <div className="col-lg-1 mt-2">
                     <button className={!theme ? "btn btn-dark" : "btn btn-warning"} data-bs-toggle="modal" data-bs-target="#iconInfo"><i className={btnIcon}></i></button>
                 </div>
-                <div className="col-lg-3 mt-2">
+                <div className="col-lg-2 mt-2">
+                    <select className={!theme ? "form-control" : "form-control darkMode border-dark text-white"} ref={base}>
+                        
+                        <option value={0}>
+                            Base Menu
+                        </option>
+                        {menusSlice.map((menu,index) => 
+                            <option value={menu.id_menu}>
+                                {menu.labelle_menu+"(/"+menu.route+")"}
+                            </option>
+                        )}
+                    </select>
+                </div>
+                <div className="col-lg-2 mt-2">
                     <input className={!theme ? "form-control" : "form-control darkMode border-dark text-white"} type="text" placeholder="Menu" ref={menu} />
                 </div>
-                <div className="col-lg-3 mt-2">
+                <div className="col-lg-2 mt-2">
                     <input className={!theme ? "form-control" : "form-control darkMode border-dark text-white"} type="text" placeholder="Route" ref={route}  />
                 </div>
                 <div className="col-lg-2 mt-2">
@@ -238,7 +261,7 @@ const Gestion_menu =({theme})=>{
                             </div>
                         </div>
                     </div>
-                    <button className="btn btn-outline-success form-control" data-bs-toggle="modal" data-bs-target={etat_modal == true ? "#processus_list_modif" : "#processus_list"}>Role</button>
+                    <button className="btn btn-outline-success form-control" data-bs-toggle="modal" data-bs-target={etat_modal == true ? "#processus_list_modif" : "#processus_list"}>Processus</button>
                     <div className="modal fade" id="processus_list">
                         <div className="modal-dialog modal-sm modal-dialog-centered">
                             <div className={!theme ? "modal-content" : "modal-content bg-dark"}>
@@ -251,8 +274,8 @@ const Gestion_menu =({theme})=>{
                                             {
                                                 processusSlice.map((processus,index)=>
                                                     <tr key={index}>
-                                                        <td>{processus.type_processus}</td>
-                                                        <td><input type="checkbox" value={processus.id_processus}  onChange={handleCheckedRole} /></td>
+                                                        <td>{processus.libelle_processus}</td>
+                                                        <td><input type="checkbox" value={processus.id_processus}  onChange={handleCheckedProcessus} /></td>
                                                     </tr>
                                                 )
                                             }
@@ -262,42 +285,7 @@ const Gestion_menu =({theme})=>{
                             </div>
                         </div>
                     </div>
-                    <div className="modal fade" id="role_list_modif">
-                        <div className="modal-dialog modal-sm modal-dialog-centered">
-                            <div className={!theme ? "modal-content":"modal-content bg-dark"}>
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="exampleModalLabel">Listes des roles</h5>
-                                </div>
-                                <div className="modal-body">
-                                    <table className={!theme ? "table table-striped":"table text-white"}>
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <select className={!theme ? "form-control form-control-sm" : "form-control darkMode text-white border-dark"} ref={role}>
-                                                    {
-                                                        rolesSlice.map((role,index)=>
-                                                           <option key={index} value={role.id_role}>{role.type_role}</option>
-                                                        )
-                                                    }
-                                                    </select>
-                                                </td>
-                                                <td><button className={!theme ? "btn btn-success btn-sm" : "btn btn-success"} onClick={()=>AddRole(role)}> <i className="bi bi-plus"></i> </button></td>
-                                            </tr>
-                                            {
-                                                checked.map((role,index)=>
-                                                    <tr key={index}>
-                                                        <td>{role === role.id_role}</td>
-                                                        <td><button className="btn btn-danger btn-sm" onClick={()=>RemoveRoleModif(index)} ><i className="bi bi-dash"></i> </button></td>
-                                                    </tr>
-                                                )
-                                            }
-                                            
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
                 <div className="col-lg-3 mt-2">
                     {/* <button className="btn btn-success ms-2" type="button" onClick={()=>AddMenu()} >Sous menus</button> */}
@@ -370,98 +358,32 @@ const Gestion_menu =({theme})=>{
                                     </div>
                                 </div>
                             </div>
+                            <button className="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target={"#listProcessus"+index}>Processus</button>
+                            <div className="modal fade" id={"listProcessus"+index}>
+                                <div className="modal-dialog modal-sm modal-dialog-centered">
+                                    <div className={!theme ? "modal-content" : "modal-content bg-dark"}>
+                                        <div className="modal-header ">
+                                            <h5 className="text-center" id="exampleModalLabel">Listes des Processus</h5>
+                                        </div>
+                                        <div className="modal-body">
+                                           {
+                                                rolesSlice.map((roles,id)=>{
+                                                    return(
+                                                        <div key={id} className="p-2">{roles.type_role}</div>
+                                                    )
+                                                })
+                                           }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <button className="btn btn-sm btn-success ms-2" type="button" onClick={()=>MajMenu(menu)} data-bs-toggle="tooltip" data-bs-placement="top" title="Modifier"><i className="bi bi-pen"></i></button>
                             <button className="btn btn-sm btn-danger ms-2" type="button" onClick={()=>DeleteMenu(menu)} disabled={menu.labelle_menu == "Administration" ? true : false} data-bs-toggle="tooltip" data-bs-placement="top" title="Supprimer"><i className="bi bi-trash"></i></button>
                         </div>
                         <div className="col-sm-1 fs-sm-4" data-bs-toggle="tooltip" data-bs-placement="top" title="Darg and Drop">
                         <i className="bi bi-grip-vertical"></i>
                         </div>
-
-                        {/* sous_menusssss */}
-                        <div className="row mb-2 px-4 collapse" id={"collapse"+index}>
-                            <table className={!theme ? "table mt-2 table-striped" : "table mt-2 text-white"}>
-                                <thead className="">
-                                        <tr>
-                                            <th>Icon</th>
-                                            <th>Route</th>
-                                            <th>Role</th>
-                                            <th>Actions</th>
-                                            <th></th>
-                                        </tr>
-                                </thead>
-                                <tbody>{
-                                        
-                                        menusSlice.map((sousMenu,i) =>{
-                                            return(
-                                                <tr  key={i}>
-                                                    <td><button className={!theme ? "btn btn-sm btn-dark":"btn btn-sm btn-outline-warning"}> <i className={sousMenu.icon}></i> </button></td>
-                                                   
-                                                    <td>
-                                                    <div className="modal fade" id={"listRoleSousMenu_"+i + "_"+index}>
-                                                        <div className="modal-dialog modal-sm modal-dialog-centered">
-                                                            <div className={!theme ? "modal-content" : "modal-content bg-dark"}>
-                                                                <div className="modal-header ">
-                                                                    <h5 className="text-center" id="exampleModalLabel">Listes des roles</h5>
-                                                                </div>
-                                                                <div className="modal-body">
-                                                                {
-                                                                        rolesSlice.map((roles,id)=>{
-                                                                            return(
-                                                                                <div key={id} className="p-2">{roles.type_role}</div>
-                                                                            )
-                                                                        })
-                                                                }
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    </td>
-                                                    <td>
-                                                        {/* <button className="btn btn-sm btn-success ms-2" type="button" onClick={()=>SelectSousMenu(menu,i)} data-bs-toggle="tooltip" data-bs-placement="top" title="Modifier"><i className="bi bi-pen"></i></button>
-                                                        <button className="btn btn-sm btn-danger ms-2" type="button" onClick={()=>DeleteMenuSousMenus(menu,i)} data-bs-toggle="tooltip" disabled={sousMenu.route_sous_menu == 'menu' || sousMenu.route_sous_menu == 'utilisateur' ? true : false} data-bs-placement="top" title="Supprimer"><i className="bi bi-trash"></i></button> */}
-                                                    </td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                </tr>
-                                                    
-                                                    )
-                                                })
-                                       
-                                        }
-                                    <tr>
-                                        <td>
-                                            <input type="hidden" value={icon_sous_menu}></input>
-                                            <button className={!theme ? "btn btn-dark btn-sm" : "btn btn-sm btn-warning"} data-bs-toggle="modal" data-bs-target="#iconInfo" ><i className={btnIcon}></i></button>
-                                        </td>
-                                        <td>
-                                            <input type="hidden" value={id_sous_menu}></input>
-                                            <input className={!theme ? "form-control form-control-sm" : "form-control form-control-sm darkMode border-dark text-white" } placeholder="Sous menu" value={nom_sous_menu} onChange={(e)=>NomSousMenu(e)}></input>
-                                        </td>
-                                        <td>
-                                            <input className={!theme ? "form-control form-control-sm" : "form-control form-control-sm darkMode border-dark text-white" } placeholder="Route sous menu" value={route_sous_menu} onChange={(e)=>RouteSousMenu(e)} ></input>
-                                        </td>
-                                        <td>
-                                            <button className="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target={etat_modal == true ? "#role_list_modif" : "#role_list"}>Role</button>
-                                        </td>
-                                        <td>
-                                            <button className="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target={etat_modal == true ? "#processus_list_modif" : "#processus_list"}>Processus</button>
-                                        </td>
-                                        <td>
-                                            {/* {id_sous_menu === '' ? 
-                                                <button className="btn btn-sm btn-primary ms-2" type="button" onClick={()=>AjousSousMenu(menu)} ><i className="bi bi-save"></i></button>
-                                                :
-                                                <button  className="btn btn-sm btn-primary ms-2" type="button" onClick={()=>MajSousMenu(menu)}><i className="bi bi-save"></i></button>
-                                            } */}
-                                            <button className={!theme ? "btn btn-sm btn-dark ms-2" : "btn btn-sm btn-secondary ms-2"} onClick={()=>Initialisation()}><i className="bi bi-x-lg"></i></button>
-                                        </td>
-                                        <td></td>
-
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
+                            
                     </div>
                     )
                 }

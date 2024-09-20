@@ -83,6 +83,45 @@ const Menu = defautl_db.defaultSequelize.define('menus', {
     timestamps: false,
     noPrimaryKey: true, 
   });
+
+
+  const MenuRole = defautl_db.defaultSequelize.define('menu_role', {
+    id_m_role: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false,
+    },
+    id_menu: {
+        type: Sequelize.INTEGER,
+    },
+    id_role: {
+        type: Sequelize.INTEGER,
+    },
+},{
+    tableName: "menu_role",
+    createdAt: false,
+    updatedAt: false,
+});
+
+const MenuProcessus = defautl_db.defaultSequelize.define('menu_processus', {
+    id_m_processus: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false,
+    },
+    id_menu: {
+        type: Sequelize.INTEGER,
+    },
+    id_processus: {
+        type: Sequelize.INTEGER,
+    },
+},{
+    tableName: "menu_processus",
+    createdAt: false,
+    updatedAt: false,
+});
   
-module.exports = { Menu, Menu_role_processus }  
+module.exports = { Menu, Menu_role_processus, MenuProcessus, MenuRole}  
   

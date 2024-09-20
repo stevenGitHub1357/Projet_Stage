@@ -3,11 +3,15 @@ const roleSlice = createSlice({
     name:"role",
     initialState:{
         role:[{id_role:null, type_role:"", date_create:""}],
+        roleUser:[{id_role:null, type_role:"", date_create:""}],
         updateRole:{id_role:null, type_role:"", date_create:null},
     },
     reducers:{
         setRolesData:(state,{payload})=>{
             state.role = payload
+        },
+        setRolesUserData:(state,{payload})=>{
+            state.roleUser = payload
         },
         addRole:(state,{payload})=>{
             console.log(payload)
@@ -38,5 +42,5 @@ const roleSlice = createSlice({
     }
 })
 
-export const {setRolesData,addRole,deleteRole,updateRoleData,updateRole} = roleSlice.actions
+export const {setRolesData,addRole,deleteRole,updateRoleData,updateRole, setRolesUserData} = roleSlice.actions
 export default roleSlice.reducer

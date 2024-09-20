@@ -46,7 +46,6 @@ function Tableau_User({theme}){
                             <th className="text-center">Matricule</th>
                             <th className="text-center">Nom</th>
                             <th className="text-center">Prénom</th>
-                            <th className="text-center">Role</th>
                             <th className="text-center">Action</th>
                         </tr>
                     </thead>
@@ -56,7 +55,6 @@ function Tableau_User({theme}){
                                 <td>{user.matricule}</td>
                                 <td>{user.nom}</td>
                                 <td>{user.prenom}</td>
-                                <td>{user.id_role == 1 ? "Administrateur": user.id_role == 2 ? "Manageur" : user.id_role == 3 ? "Simple Utilisateur" : user.id_role == 4 ? "Developeur" : user.id_role}</td>
                                 <td>
                                     <Edit_user user={user}/>
                                     <Delete_User user={user}/>

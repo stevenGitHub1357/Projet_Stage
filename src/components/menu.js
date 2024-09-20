@@ -10,7 +10,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {styleMenuDefault,styleMenuMinim,styleImg} from './menu/style/styleMenu'
 
 import { setMenusData } from "./feature/menus.slice"
-import { setRolesData } from "./feature/roles.slice"
+import { setRolesData, setRolesUserData } from "./feature/roles.slice"
 import { setProcessusData, setProcessusUserData } from "./feature/processus.slice"
 import { setUsersData } from "./feature/users.slice"
 import { setObjectifData } from "./feature/objectifs.slice"
@@ -48,7 +48,7 @@ const Menu =()=>{
         dispatch(setUsersData(user.data))
         setCookie("id_user",user.data[0].id_user)
         const role = await axios.post(Url+"/getRoleByUser",{id_user:user.data[0].id_user})
-        dispatch(setRolesData(role.data))
+        dispatch(setRolesUserData(role.data))
         const processusUser = await axios.post(Url+"/getProcessusByUser",{id_user:user.data[0].id_user})
         dispatch(setProcessusUserData(processusUser.data))
         setCookie("id_processus",processusUser.data[processusUser.data.length-1].id)
@@ -57,6 +57,9 @@ const Menu =()=>{
         })
         axios.get(Url+"/getProcessus").then(res=>{
             dispatch(setProcessusData(res.data))  
+        })
+        axios.get(Url+"/getRole").then(res=>{
+            dispatch(setRolesData(res.data))  
         })
     }
     
