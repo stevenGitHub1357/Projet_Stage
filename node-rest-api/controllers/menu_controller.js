@@ -223,5 +223,57 @@ const deleteMenuProcessus = (req,res) => {
   })
 };
 
+const getMenuRole= (req,res,next) =>{
+  let id_menu = req.body.id_menu;
+  console.log(id_menu)
+  menuModel.MenuRole.findAll(
+    {
+      
+      where : {
+        id_menu : id_menu
+      },
+    }
+  )
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
 
-module.exports = {getMenu,insertMenu,deleteMenu,updateMenu,getMenuByUser, insertMenuProcessus, insertMenuRole, deleteMenuProcessus, deleteMenuRole};
+const getMenuProcessus= (req,res,next) =>{
+  let id_menu = req.body.id_menu;
+  menuModel.MenuProcessus.findAll(
+    {
+      
+      where : {
+        id_menu : id_menu
+      },
+    }
+  )
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+module.exports = 
+                {
+                  getMenu,insertMenu,deleteMenu,updateMenu,
+                  getMenuByUser, 
+                  insertMenuProcessus, deleteMenuProcessus, getMenuProcessus,
+                  insertMenuRole, deleteMenuRole, getMenuRole
+                };

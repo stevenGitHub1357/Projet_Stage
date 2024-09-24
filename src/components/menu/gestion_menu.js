@@ -37,6 +37,8 @@ const Gestion_menu =({theme})=>{
     const route = useRef()
     const Icon = useRef()
     const id_menu = useRef()
+    const position = useRef()
+    const rang = useRef()
     const searchIcon = useRef()
     const role = useRef()
     const [nom_sous_menu,setNomSousMenu] = useState('')
@@ -48,6 +50,16 @@ const Gestion_menu =({theme})=>{
     const openModal = () =>{setIsOpen(true)}
     const afterOpenModal = () =>{subtitle.style.color="black"}
     const closeModal = () =>{setIsOpen(false)}
+    const [roleActuel, setRoleActuel] = useState([])
+    const [processusActuel, setProcessusActuel] = useState([])
+    const [checkedBoxesRole, setCheckedBoxesRole] = useState([]);
+    const [checkedBoxesProcessus, setCheckedBoxesProcessus] = useState([]);
+    const allPosition = [
+        {id:1, libelle:"Laterale"},
+        {id:2, libelle:"Superieur"},
+        {id:3, libelle:"Logo"},
+    ]
+
     /******drag and drop*****/
     const dragItem = useRef();
     const dragOverItem = useRef();
@@ -69,22 +81,25 @@ const Gestion_menu =({theme})=>{
     const dragOver = (e) =>{e.preventDefault()}
 
     const MajMenu = (item)=>{
-        setEtatModal(true)
-        console.log(item.role)
-        setRoleModif(item.role)
+        console.log(item)
+        // setEtatModal(true)
+        base.current.value = item.base
         id_menu.current.value = item.id_menu
         route.current.value = item.route
+        position.current.value = item.position
         menu.current.value = item.labelle_menu
+        rang.current.value = item.rang
         Icon.current.value = item.icon
         setBtnIcon(item.icon)
-        setChecked(item.role)
+        // setChecked(handleRoleActuel(item))
+        // setCheckedProcess(handleProcessusActuel(item))
     }
 
     const DeleteMenu = (menu)=>{
         dispatch(deleteMenu(menu.id_menu))
-
-        axios.post(Url+"/deleteMenu",menu).then(res =>{
-        });
+        axios.post(Url+"/deleteMenuRole",menu).then(res =>{});
+        axios.post(Url+"/deleteMenuProcessus",menu).then(res =>{});
+        axios.post(Url+"/deleteMenu",menu).then(res =>{});
         Success()
     }
 
@@ -96,8 +111,10 @@ const Gestion_menu =({theme})=>{
             icon: Icon.current.value,
             labelle_menu: menu.current.value,
             route: route.current.value,
+            rang: rang.current.value,
+            position: position.current.value,
             role: checked,
-            processus: checkedProcess
+            processus: checkedProcess.filter(process => process !== "")
         }
         
         console.log(objMenu)
@@ -106,28 +123,34 @@ const Gestion_menu =({theme})=>{
             Warning('Information incomplète !')
             return
         }
-        // if(id_menu.current.value != ""){
-        //     dispatch(updateMenu(objMenu))
-        //     axios.post(Url+"/Update-Menu",objMenu).then(res=>{
-        //     }) 
-        //     Success('Mise à jour effectué avec succès !')
-        //     reset()
-        //     return
-        // }
+        if(id_menu.current.value != ""){
+            dispatch(updateMenu(objMenu))
+            console.log(objMenu)
+            axios.post(Url+"/updateMenu",objMenu).then(res=>{})
+            axios.post(Url+"/deleteMenuProcessus",objMenu).then(res=>{})
+            axios.post(Url+"/deleteMenuRole",objMenu).then(res=>{}) 
+            await axios.post(Url+"/insertMenuProcessus",{id_menu : objMenu.id_menu, processus: objMenu.processus}).then(res =>{})
+            await axios.post(Url+"/insertMenuRole",{id_menu : objMenu.id_menu, role: objMenu.role}).then(res =>{})
+            Success('Mise à jour effectué avec succès !')
+            reset()
+            return
+        }
         dispatch(addMenu(objMenu))
         let res = {}
         await axios.post(Url+"/insertMenu",objMenu).then(result =>{
             res = result.data
         })
         console.log(res)
-        console.log({id_menu : res.id_menu, processus: objMenu.processus})
+        console.log({id_menu : res.id_menu, role: objMenu.role})
         console.log({id_menu : res.id_menu, processus: objMenu.processus})
         await axios.post(Url+"/insertMenuProcessus",{id_menu : res.id_menu, processus: objMenu.processus}).then(res =>{})
         await axios.post(Url+"/insertMenuRole",{id_menu : res.id_menu, role: objMenu.role}).then(res =>{})
         Success()
         setEtatModal(false)
-        setChecked([null])
-        setCheckedProcess([null])
+        setChecked([])
+        setCheckedProcess([])
+        setCheckedBoxesRole([]);
+        setCheckedBoxesProcessus([]);
         reset()
     }
 
@@ -148,8 +171,20 @@ const Gestion_menu =({theme})=>{
         id_menu.current.value = ""
         menu.current.value = ""
         route.current.value = ""
+        rang.current.value = ""
         base.current.value = 0
+        position.current.value = 0
         setEtatModal(false)
+        resetCheckboxes()
+        
+    }
+    function resetCheckboxes() {
+        // Sélectionnez tous les éléments input de type checkbox
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        // Parcourez chaque checkbox et décochez-la
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
     }
     const Initialisation = () =>{
         setIdSousMenu("")
@@ -169,12 +204,19 @@ const Gestion_menu =({theme})=>{
     }
 
     const handleCheckedProcessus = (event) => {
-        var updatedList = [...checked];
+        var updatedList = [...checkedProcess];
+        console.log(checkedProcess)
         if (event.target.checked) {
-          updatedList = [...checked, event.target.value];
+            console.log("111 : "+event.target.value)
+          updatedList = [...checkedProcess, event.target.value];
         } else {
-          updatedList.splice(checked.indexOf(event.target.value), 1);
+          updatedList.splice(checkedProcess.indexOf(event.target.value), 1);
         }
+        let all = []
+        for(let item of updatedList){
+            all.push({[item]:true})
+        }
+        console.log(updatedList)
         setCheckedProcess(updatedList);
     }
 
@@ -197,7 +239,6 @@ const Gestion_menu =({theme})=>{
         // setRoleModif(array)
         setChecked(array)
     }
-    console.log(menusSlice)
     const collapseSM = () =>{
         if(collapse_sous_menu == false){
             setCollpaseSM(true)
@@ -205,7 +246,40 @@ const Gestion_menu =({theme})=>{
             setCollpaseSM(false)
         }
     }
-    
+
+    async function handleRoleActuel(menu){
+        console.log(menu)
+        let roleAct =  [];
+        await axios.post(Url+"/getMenuRole",{id_menu : menu.id_menu}).then(res =>{
+            roleAct = res.data
+        })
+        roleAct = roleAct.map(role => role.id_role)
+        console.log(roleAct)
+        roleAct = rolesSlice.filter(role => 
+            Array.from(roleAct).includes(role.id_role))
+        setRoleActuel(roleAct)
+        console.log(roleActuel.map(role => {
+            console.log(role.type_role)
+        }))
+        return roleAct
+    }
+    async function handleProcessusActuel(menu){
+        console.log(menu)
+        let processusAct =  [];
+        await axios.post(Url+"/getMenuProcessus",{id_menu : menu.id_menu}).then(res =>{
+            processusAct = res.data
+        })
+        processusAct = processusAct.map(process => process.id_processus)
+        console.log(processusAct)
+        processusAct = processusSlice.filter(proc => 
+            Array.from(processusAct).includes(proc.id))
+        setProcessusActuel(processusAct)
+        console.log(processusActuel.map(proc => {
+            console.log(proc.libelle_processus)
+        }))
+        return processusAct
+    }
+
     return(
         <>
         <div className=" mb-4">
@@ -228,6 +302,25 @@ const Gestion_menu =({theme})=>{
                             </option>
                         )}
                     </select>
+                </div>
+                <div className="col-lg-1 mt-2">
+                    <select className={!theme ? "form-control" : "form-control darkMode border-dark text-white"} ref={position}>
+                        
+                            <option value={0}>
+                                Position
+                            </option>
+                            {allPosition.map((position,index) =>
+                                <option value={position.id}>
+                                    {position.libelle}
+                                </option>
+                                
+                            )}
+                            
+                    
+                    </select>
+                </div>
+                <div className="col-lg-1 mt-2">
+                    <input className={!theme ? "form-control" : "form-control darkMode border-dark text-white"} type="number" placeholder="Rang" ref={rang} />
                 </div>
                 <div className="col-lg-2 mt-2">
                     <input className={!theme ? "form-control" : "form-control darkMode border-dark text-white"} type="text" placeholder="Menu" ref={menu} />
@@ -275,7 +368,7 @@ const Gestion_menu =({theme})=>{
                                                 processusSlice.map((processus,index)=>
                                                     <tr key={index}>
                                                         <td>{processus.libelle_processus}</td>
-                                                        <td><input type="checkbox" value={processus.id_processus}  onChange={handleCheckedProcessus} /></td>
+                                                        <td><input type="checkbox" value={processus.id}  onChange={handleCheckedProcessus} /></td>
                                                     </tr>
                                                 )
                                             }
@@ -326,7 +419,7 @@ const Gestion_menu =({theme})=>{
                         key={index}
                         draggable>
                         
-                        <div className="col-sm-3">
+                        <div className="col-lg-3">
                             {
                                 menu.route == "" || menu.route == null ? 
                                 <button className="btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target={"#collapse"+index} aria-expanded="false" aria-controls={"collapse"+index} >
@@ -336,10 +429,10 @@ const Gestion_menu =({theme})=>{
                             }
                             <button className="btn btn-primary btn-sm ms-2"><i className={menu.icon}></i></button>
                         </div>
-                        <div className="col-sm-2 fs-4">{menu.labelle_menu}</div>
-                        <div className="col-sm-2 fs-4">{menu.route}</div>
-                        <div className="col-sm-3 text-center">
-                            <button className="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target={"#listRole"+index}>Role</button>
+                        <div className="col-lg-2 fs-4">{menu.labelle_menu}</div>
+                        <div className="col-lg-2 fs-4">{menu.route}</div>
+                        <div className="col-lg-3 text-center">
+                            <button className="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target={"#listRole"+index} onClick={()=>handleRoleActuel(menu)}>Role</button>
                             <div className="modal fade" id={"listRole"+index}>
                                 <div className="modal-dialog modal-sm modal-dialog-centered">
                                     <div className={!theme ? "modal-content" : "modal-content bg-dark"}>
@@ -348,9 +441,9 @@ const Gestion_menu =({theme})=>{
                                         </div>
                                         <div className="modal-body">
                                            {
-                                                rolesSlice.map((roles,id)=>{
+                                                roleActuel.map((roles,index)=>{
                                                     return(
-                                                        <div key={id} className="p-2">{roles.type_role}</div>
+                                                        <div key={index} className="p-2">{roles.type_role}</div>
                                                     )
                                                 })
                                            }
@@ -358,7 +451,7 @@ const Gestion_menu =({theme})=>{
                                     </div>
                                 </div>
                             </div>
-                            <button className="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target={"#listProcessus"+index}>Processus</button>
+                            <button className="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target={"#listProcessus"+index} onClick={()=>handleProcessusActuel(menu)}>Processus</button>
                             <div className="modal fade" id={"listProcessus"+index}>
                                 <div className="modal-dialog modal-sm modal-dialog-centered">
                                     <div className={!theme ? "modal-content" : "modal-content bg-dark"}>
@@ -367,9 +460,9 @@ const Gestion_menu =({theme})=>{
                                         </div>
                                         <div className="modal-body">
                                            {
-                                                rolesSlice.map((roles,id)=>{
+                                                processusActuel.map((processus,index)=>{
                                                     return(
-                                                        <div key={id} className="p-2">{roles.type_role}</div>
+                                                        <div key={index} className="p-2">{processus.libelle_processus}</div>
                                                     )
                                                 })
                                            }

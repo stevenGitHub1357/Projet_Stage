@@ -245,6 +245,52 @@ const insertUserProcessus = (req,res,next) =>{
   })
 };
 
+const getUserRole= (req,res,next) =>{
+  let id_user = req.body.id_user;
+  console.log(id_user)
+  userModel.UserRole.findAll(
+    {
+      
+      where : {
+        id_user : id_user
+      },
+    }
+  )
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
+const getUserProcessus= (req,res,next) =>{
+  let id_user = req.body.id_user;
+  userModel.UserProcessus.findAll(
+    {
+      
+      where : {
+        id_user : id_user
+      },
+    }
+  )
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
 
 
   
@@ -328,7 +374,9 @@ const VerificationOperateurSecuriter = (req,res,next)=>{
 };
 
 
- module.exports = {getUsers,getUserByMatricule,insertUsers,getLog,deleteUser, insertUserRole, insertUserProcessus, desactiveUser, getAllUsers, deleteUserRole, deleteUserProcessus,
+ module.exports = {
+                getUsers,getUserByMatricule,insertUsers,getLog,deleteUser, getAllUsers, desactiveUser,
+                insertUserRole, insertUserProcessus, deleteUserRole, deleteUserProcessus, getUserProcessus, getUserRole,
                 getInfoLog,UpdateUser,getUserFromGpao,VerificationOperateurSecuriter,getNb_echec};
 
 

@@ -13,6 +13,8 @@ router.post("/deleteUser",users.deleteUser)
 router.post("/deleteUserRole",users.deleteUserRole)
 router.post("/insertUserRole",users.insertUserRole)
 router.post("/insertUserProcessus",users.insertUserProcessus)
+router.post("/getUserProcessus",users.getUserProcessus)
+router.post("/getUserRole",users.getUserRole)
 
 router.post("/getLog",users.getLog)
 router.post("/get-info-log",users.getInfoLog)
@@ -34,6 +36,11 @@ router.post("/deleteMenuRole",menus.deleteMenuRole)
 router.post("/deleteMenuProcessus",menus.deleteMenuProcessus)
 router.post("/insertMenuRole",menus.insertMenuRole)
 router.post("/insertMenuProcessus",menus.insertMenuProcessus)
+
+router.post("/getMenuProcessus",menus.getMenuProcessus)
+router.post("/getMenuRole",menus.getMenuRole)
+
+
 
 router.post("/getMenuByUser",menus.getMenuByUser)
 
