@@ -139,6 +139,41 @@ const getAllParametrageObjectif = (req,res,next) =>{
   })
 };
 
+const getParametrageObjectifUser = (req,res,next) =>{
+  const processus = req.body.processus;
+  console.log(processus)
+  const ids_processus = processus.map(obj => obj.id)
+  ParametrageObjectif.findAll({
+    // include: [
+    //   Unite,
+    //   {
+    //     model: Processus,
+    //     as: "processus"
+    //   }
+    // ],
+    where: {
+      id_processus:{
+        [Op.in] : ids_processus
+      },
+      activate: {
+        [Op.ne] : 0
+      },
+
+    },
+  })
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
 
 const insertParametrageObjectif = (req,res,next) =>{
   const body = req.body
@@ -259,5 +294,5 @@ const updateParametrageObjectif = (req,res,next) =>{
 
 
 
-module.exports = {getUnite, insertUnite, getRecuperation, insertRecuperation, getSynthese, getAllParametrageObjectif,
+module.exports = {getUnite, insertUnite, getRecuperation, insertRecuperation, getSynthese, getAllParametrageObjectif, getParametrageObjectifUser,
                   getParametrageObjectif,insertParametrageObjectif,deleteParametrageObjectif,updateParametrageObjectif,insertManyParametrageObjectif, desactiveParametrageObjectif};

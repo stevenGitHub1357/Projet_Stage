@@ -32,6 +32,7 @@ const Gestion_menu =({theme})=>{
     const [etat_modal, setEtatModal] = useState(false)
     const [collapse_sous_menu, setCollpaseSM] = useState(false)
     const [role_modif, setRoleModif] = useState([])
+    const [modeUpdate, setModeUpdate] = useState(false)
     const base = useRef()
     const menu = useRef()
     const route = useRef()
@@ -91,6 +92,7 @@ const Gestion_menu =({theme})=>{
         rang.current.value = item.rang
         Icon.current.value = item.icon
         setBtnIcon(item.icon)
+        setModeUpdate(true)
         // setChecked(handleRoleActuel(item))
         // setCheckedProcess(handleProcessusActuel(item))
     }
@@ -123,7 +125,7 @@ const Gestion_menu =({theme})=>{
             Warning('Information incomplète !')
             return
         }
-        if(id_menu.current.value != ""){
+        if(modeUpdate){
             dispatch(updateMenu(objMenu))
             console.log(objMenu)
             axios.post(Url+"/updateMenu",objMenu).then(res=>{})
@@ -133,6 +135,7 @@ const Gestion_menu =({theme})=>{
             await axios.post(Url+"/insertMenuRole",{id_menu : objMenu.id_menu, role: objMenu.role}).then(res =>{})
             Success('Mise à jour effectué avec succès !')
             reset()
+            setModeUpdate(false)
             return
         }
         dispatch(addMenu(objMenu))

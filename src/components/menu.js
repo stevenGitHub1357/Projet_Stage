@@ -45,15 +45,19 @@ const Menu =()=>{
 
     async function getAllData(){
         const user = await axios.post(Url+"/getUserByMatricule",{matricule:matricule})
+        console.log(user)
         dispatch(setUsersData(user.data))
         setCookie("id_user",user.data[0].id_user)
         const role = await axios.post(Url+"/getRoleByUser",{id_user:user.data[0].id_user})
+        console.log(role)
         dispatch(setRolesUserData(role.data))
         const processusUser = await axios.post(Url+"/getProcessusByUser",{id_user:user.data[0].id_user})
+        console.log(processusUser)
         dispatch(setProcessusUserData(processusUser.data))
         setCookie("id_processus",processusUser.data[processusUser.data.length-1].id)
         axios.post(Url+"/getMenuByUser",{role: role.data, processus: processusUser.data}).then(res=>{
-            dispatch(setMenusData(res.data))  
+            dispatch(setMenusData(res.data)) 
+            console.log(res.data) 
         })
         axios.get(Url+"/getProcessus").then(res=>{
             dispatch(setProcessusData(res.data))  
@@ -109,6 +113,8 @@ const Menu =()=>{
                     
                     <ul className="nav d-block mt-3 scroller" >
                         {
+                        listMenuSlice.length > 0 &&
+                        listMenuSlice.length > 0 &&
                         listMenuSlice.filter(menu => menu.base===0 && menu.position===1).length>0 &&
                         listMenuSlice.filter(menu => menu.base===0 && menu.position===1).map((menu, index)  => (
                             <li className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>
@@ -201,6 +207,7 @@ const Menu =()=>{
             <div className={!theme ? "row titlePage shadow-sm d-flex justify-content-between bg-white row" : "bg-dark titlePage shadow-sm text-white d-flex justify-content-between row"}>
                         <div className="col-2"></div>
                         {
+                        listMenuSlice.length > 0 &&
                         listMenuSlice.filter(menu => menu.base===0 && menu.position===2).length>0 && 
                         listMenuSlice.filter(menu => menu.base===0 && menu.position===2).map((menu, index)  => (
                             <ul className="col-2 float-end float-right" data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>
@@ -272,6 +279,7 @@ const Menu =()=>{
                                     
                                         <div className={background + " card card-body "}>
                                             {
+                                            listMenuSlice.length > 0 &&
                                             listMenuSlice.filter(menu => menu.base===0 && menu.position===3).map((menu, index) =>(
                                                 <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>
                                                     <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  

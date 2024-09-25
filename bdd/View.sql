@@ -8,7 +8,7 @@ join role as r on ur.id_role = r.id_role;
 --Detail_user_processus
 CREATE or replace VIEW detail_user_processus as
     select ur.id_u_processus as id_u_processus, ur.id_user as id_user,
-	p.id as id_processus , p.libelle_processus as libelle_processus , p.num_processus as num_processus, p.abbrv as abbrv , p.date_create as date_create 
+	p.id as id_processus , p.libelle_processus as libelle_processus , p.num_processus as num_processus, p.abbrv as abbrv , p.excel as excel, p.date_create as date_create 
 	from user_processus as ur
 join processus as p on ur.id_processus = p.id;
 

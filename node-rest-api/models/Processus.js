@@ -40,6 +40,7 @@ const Detail_user_processus = defautl_db.defaultSequelize.define('detai_user_pro
         num_processus: Sequelize.STRING(200),
         abbrv: Sequelize.STRING(200),
         date_create: Sequelize.DATE,
+        excel: Sequelize.STRING(300),
       
         },{
           tableName: "detail_user_processus",

@@ -7,9 +7,9 @@ import { useDispatch } from "react-redux"
 import axios from "axios"
 import {useLocation} from "react-router-dom"
 
-import  {setObjectifData, deleteObjectif  , updateObjectif,
+import  {setObjectifData, setObjectifUserData, deleteObjectif  , updateObjectif,
             setParametrageObjectifData, deleteParametrageObjectif,
-            addObjectif,
+            addObjectif, 
             setUniteData,
             setRecuperationData
         } from "../feature/objectifs.slice"
@@ -60,7 +60,7 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
     ]
 
     const [triage, setTriage] = useState(colonneTriage);
-    const processus =  useSelector((state) => state.processus.processus)
+    const processus =  useSelector((state) => state.processus.processusUser)
 
     useEffect(()=>{ 
         getPage();
@@ -72,12 +72,17 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
     },[])
 
     function initialiseObjectif(){
-        const obj= axios.get(Url+"/getParametrageObjectif").then(res=>{
-            // console.log(res.data)
+        // const obj= axios.get(Url+"/getParametrageObjectif").then(res=>{
+        //     // console.log(res.data)
+        //     dispatch(setObjectifData(res.data))
+        //     setDispatch(true)
+        // })
+        const objUser= axios.post(Url+"/getParametrageObjectifUser",{processus}).then(res=>{
+            console.log(res.data)
             dispatch(setObjectifData(res.data))
             setDispatch(true)
         })
-        return obj
+        return objUser
     }
     function initialiseUnite(){
         const obj= axios.get(Url+"/getParamObjUnite").then(res=>{
@@ -406,27 +411,29 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
         const allData = []
         for(let objet of dataPossible){
             const imp = {}
-            // console.log(objet[0])
-            // console.log(processus)
-            const proc =  processus.filter(processus => processus.excel === objet[0])
-            
-            imp.id_processus = proc[0].id
-            imp.objectifs = objet[1];
-            imp.poids = objet[2];
-            console.log(uniteParam)
-            if(imp.objectifs.includes('%')){
-                imp.cible = objet[3]*100;
-                imp.id_unite = uniteParam.filter(unite => unite.abbrv === '%')[0].id
-            }else{
-                imp.cible = objet[3]+""
-                imp.id_unite = uniteParam.filter(unite => unite.abbrv === '')[0].id
+            console.log(objet[0])
+            console.log(processus)
+            const proc =  processus.filter(processus => processus.excel === objet[0] || processus.libelle_processus === objet[0])
+            console.log(proc)
+            if(proc.length>0 ){
+                imp.id_processus = proc[0].id
+                imp.objectifs = objet[1];
+                imp.poids = objet[2];
+                console.log(uniteParam)
+                if(imp.objectifs.includes('%')){
+                    imp.cible = objet[3]*100;
+                    imp.id_unite = uniteParam.filter(unite => unite.abbrv === '%')[0].id
+                }else{
+                    imp.cible = objet[3]+""
+                    imp.id_unite = uniteParam.filter(unite => unite.abbrv === '')[0].id
+                }
+                const recuperationAll = recuperationParam.filter(rec => rec.type_recuperation === objet[4])
+                
+                imp.recuperation = recuperationAll[0].id
+                imp.support = objet[5]
+                console.log(imp)
+                allData.push(imp)
             }
-            const recuperationAll = recuperationParam.filter(rec => rec.type_recuperation === objet[4])
-            
-            imp.recuperation = recuperationAll[0].id
-            imp.support = objet[5]
-            // console.log(imp)
-            allData.push(imp)
         }
         console.log(allData)
         setModeUpdate(false)
@@ -659,7 +666,7 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
 
                         </thead>
                 
-                <tbody style={{ overflowY: 'auto', height: '450px' }}>
+                <tbody style={{ overflowY: 'auto', height: '290px' }}>
 {/*liste*/}
                     {
                         liste.length>0 &&

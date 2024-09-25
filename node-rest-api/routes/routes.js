@@ -40,8 +40,6 @@ router.post("/insertMenuProcessus",menus.insertMenuProcessus)
 router.post("/getMenuProcessus",menus.getMenuProcessus)
 router.post("/getMenuRole",menus.getMenuRole)
 
-
-
 router.post("/getMenuByUser",menus.getMenuByUser)
 
 
@@ -61,6 +59,8 @@ router.post("/getProcessusByUser",processus.getProcessusByUser);
 const parametrageObjectif = require("../controllers/objectif_controller.js")
 router.get("/getParametrageObjectif", parametrageObjectif.getParametrageObjectif)
 router.get("/getAllParametrageObjectif", parametrageObjectif.getParametrageObjectif)
+router.post("/getParametrageObjectifUser", parametrageObjectif.getParametrageObjectifUser)
+
 router.post("/insertParametrageObjectif", parametrageObjectif.insertParametrageObjectif)
 router.post("/deleteParametrageObjectif",parametrageObjectif.deleteParametrageObjectif)
 router.post("/updateParametrageObjectif",parametrageObjectif.updateParametrageObjectif)

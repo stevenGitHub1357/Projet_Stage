@@ -53,7 +53,7 @@ INSERT INTO public."role" (id_role,type_role,date_create) VALUES
 
 -- processus
 INSERT INTO public.processus (id,libelle_processus,num_processus,abbrv, excel) VALUES
-	(0,'All','0','ALL',NULL),
+	(0,'All','0','ALL','ALL'),
 	(1,'Production','1','PRO', 'PRODUCTION'),
 	(2,'Méthode et qualité','2','MET', 'METHODES ET QUALITE'),
 	(3,'Développement','3','DEV', 'DEVELOPPEMENT'),
@@ -63,7 +63,7 @@ INSERT INTO public.processus (id,libelle_processus,num_processus,abbrv, excel) V
 	(7,'Administration','7','ADM', 'ADMINISTRATION'),
 	(8,'Approvisionnement','8','APPRO', 'APPROVISIONNEMENT'),
 	(9,'Facturation', '9','FACT', 'FACTURATION'),
-	(100,'Generale','8','GEN',NULL);
+	(100,'Generale','8','GEN','GENERALE');
 
 
 -- user_role

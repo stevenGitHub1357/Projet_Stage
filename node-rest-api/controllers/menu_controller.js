@@ -93,7 +93,9 @@ const getMenuByUser = (req,res,next) =>{
   let roles = req.body.role;
   let processus = req.body.processus;
   const ids_role = roles.map(obj => obj.id_role)
+  ids_role.push(0)
   const ids_processus = processus.map(obj => obj.id)
+  ids_processus.push(0)
   Menu_role_processus.findAll(
     {
       attributes : [
@@ -105,7 +107,7 @@ const getMenuByUser = (req,res,next) =>{
         },
         id_role:{
           [Op.in] : ids_role
-        }
+        }, 
       },
       group : 
       [

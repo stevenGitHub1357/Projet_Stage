@@ -88,7 +88,7 @@ const getProcessusByUser = (req,res) => {
       attributes : [
         ['id_processus','id'],
         'libelle_processus',
-        'num_processus', 'abbrv', 'date_create'],
+        'num_processus', 'abbrv', 'date_create', 'excel'],
       where : 
         {
           id_user : req.body.id_user
