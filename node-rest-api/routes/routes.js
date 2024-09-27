@@ -53,6 +53,7 @@ router.post("/getRoleByUser",role.getRoleByUser);
 const processus = require("../controllers/processus_controller.js")
 router.get("/getProcessus",processus.getProcessus);
 router.post("/getProcessusByUser",processus.getProcessusByUser);
+router.post("/insertProcessus",processus.insertProcessus);
 
 
 

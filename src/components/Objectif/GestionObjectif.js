@@ -21,6 +21,7 @@ import Synthese from "./Synthese"
 import Unite from "./Unite"
 import Recuperation from "./Recuperation"
 import { Button, OverlayTrigger, Tooltip, Table } from 'react-bootstrap';
+import Processus from "../Processus/Processus"
 
 
 var Url = Global_url
@@ -34,7 +35,7 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
     const [liste,setListe] = useState([]);
     const [cookies, setCookie] = useCookies(['islogged_react','matricule_react','role_react','nom_complet_react',"id_user","id_processus","page"])
     const location = useLocation();
-    const page = cookies.page;
+    const [page,setPage] = useState(cookies.page);
     const [valideDispatch, setDispatch] = useState(true);
     const [modeUpdate, setModeUpdate] = useState(false);
     const [afterFilter, setAfterFilter] = useState(false);
@@ -71,18 +72,18 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
         initialiseObjectif();
     },[])
 
-    function initialiseObjectif(){
+    async function initialiseObjectif(){
         // const obj= axios.get(Url+"/getParametrageObjectif").then(res=>{
         //     // console.log(res.data)
         //     dispatch(setObjectifData(res.data))
         //     setDispatch(true)
         // })
-        const objUser= axios.post(Url+"/getParametrageObjectifUser",{processus}).then(res=>{
-            console.log(res.data)
-            dispatch(setObjectifData(res.data))
+        const objUser = await axios.post(Url+"/getParametrageObjectifUser",{processus})
+            console.log(objUser.data)
+            dispatch(setObjectifData(objUser.data))
             setDispatch(true)
-        })
-        return objUser
+            dispatch(setExportData(traitementExportData(objUser.data)))
+        return objUser.data
     }
     function initialiseUnite(){
         const obj= axios.get(Url+"/getParamObjUnite").then(res=>{
@@ -100,10 +101,16 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
     }
 
     function getHeadingsExcel(){
-        const headings = ['id']
+        const headings = []
         colonneTable.map((objet) => (
-            headings.push(objet.nom)
+            objet.nom !== 'Unite' ?
+                headings.push(objet.nom)
+            :
+                null
         ))
+        headings.push("Support")
+        headings.push("Date creation")
+
         return headings
     }
 
@@ -111,12 +118,14 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
         const params = new URLSearchParams(location.search);
         setCookie('page',params.get('page'));  
         console.log(page+ " : " +params.get('page'));
-        dispatch(setExportData(liste))
+        setPage(params.get('page'))
+        
         // console.log("dispatch : "+ valideDispatch);
         // console.log(afterFilter)
         if(afterFilter === false){
             
             setListe(objectif)
+            dispatch(setExportData(traitementExportData(objectif)))
             if(params.get('page')==="1" && valideDispatch===true){
                 // initialiseObjectif()
                 const headings = getHeadingsExcel()
@@ -282,7 +291,7 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
     };
 
     const handleDeleteParam = (item) =>{
-        // console.log("delete");
+        console.log("delete");
         setModeUpdate(false);
         dispatch(deleteParametrageObjectif(item));
     }
@@ -331,7 +340,7 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
             );
         }
         console.log(triageListe)
-        dispatch(setExportData(triageListe))
+        dispatch(setExportData(traitementExportData(triageListe)))
         if(page==="1"){
             dispatch(setObjectifData(triageListe))
         }
@@ -392,14 +401,22 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
 
         // console.log(listFiltre)
         // dispatch(setObjectifData(listFiltre));
-        dispatch(setExportData(listFiltre))
+        dispatch(setExportData(traitementExportData(listFiltre)))
         setListe(listFiltre);
         if(filtreValide === false){
+            // const obj = initialiseObjectif()
+            console.log(objectif)
             resetInputs();
-            dispatch(setExportData(objectif))
+            dispatch(setExportData(traitementExportData(objectif)))
             setListe(objectif);
             setAfterFilter(false);
         }
+    }
+
+    function handleActualise(){
+        initialiseObjectif()
+        resetInputs();
+        setAfterFilter(false);
     }
 
     function handleImport(){
@@ -409,6 +426,7 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
 
         console.log(dataPossible)
         const allData = []
+        let nb = 1;
         for(let objet of dataPossible){
             const imp = {}
             console.log(objet[0])
@@ -416,23 +434,29 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
             const proc =  processus.filter(processus => processus.excel === objet[0] || processus.libelle_processus === objet[0])
             console.log(proc)
             if(proc.length>0 ){
+                imp.index = nb
                 imp.id_processus = proc[0].id
                 imp.objectifs = objet[1];
                 imp.poids = objet[2];
                 console.log(uniteParam)
-                if(imp.objectifs.includes('%')){
-                    imp.cible = objet[3]*100;
-                    imp.id_unite = uniteParam.filter(unite => unite.abbrv === '%')[0].id
-                }else{
-                    imp.cible = objet[3]+""
-                    imp.id_unite = uniteParam.filter(unite => unite.abbrv === '')[0].id
-                }
+                
+                        for(let unites of uniteParam){
+                            if(imp.objectifs.includes(unites.abbrv)){
+                                imp.cible = objet[3];
+                                imp.id_unite = unites.id
+                            }
+                            if(imp.objectifs.includes("%")){
+                                imp.cible = objet[3]*100;
+                            }
+                        }
+                    
                 const recuperationAll = recuperationParam.filter(rec => rec.type_recuperation === objet[4])
                 
                 imp.recuperation = recuperationAll[0].id
                 imp.support = objet[5]
                 console.log(imp)
                 allData.push(imp)
+                nb++
             }
         }
         console.log(allData)
@@ -451,6 +475,28 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
     }
     const handleModeEdit = (id) => {
             setModeEdit(id)
+    }
+
+    function traitementExportData(datas){
+        let allData = []
+        if(datas.length>0){
+            for(let data of datas){
+                let newData = {}
+                // newData.id = data.id;
+                newData.processus = processus.filter(proc => proc.id === data.id_processus)[0].excel
+                newData.objectifs = data.objectifs;
+                newData.poids = data.poids;
+                const unite = uniteParam.filter(item => item.id === data.id_unite)[0].abbrv
+                // console.log(unite)
+                newData.cible = data.cible+""+unite
+                newData.recuperation = recuperationParam.filter(proc => proc.id === data.recuperation)[0].type_recuperation
+                newData.support = data.support
+                newData.create = data.createat
+                // console.log(newData)
+                allData.push(newData)
+            }
+        }
+        return allData
     }
 
 
@@ -539,15 +585,20 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
 
                     
                         
-                <div className="row col-6">
+                <div className="row col-6 mb-3">
                     <div className="col-1">
                         <OverlayTrigger placement="top" overlay={<Tooltip>Filtrer</Tooltip>}>
                             <button className="btn btn-success rounded-1 shadow" onClick={() => handleModaleFiltre(true)} ><i className="bi bi-search"></i></button>
                         </OverlayTrigger>
                     </div>
                     <div className="col-1">
-                        <OverlayTrigger placement="top" overlay={<Tooltip>Reinitialiser filtrer</Tooltip>}>
+                        <OverlayTrigger placement="top" overlay={<Tooltip>Reinitialiser filtre</Tooltip>}>
                             <button className="btn btn-warning rounded-1 shadow" onClick={() => handleFiltre(false)} ><i className="bi bi-eye"></i></button>
+                        </OverlayTrigger>
+                    </div>
+                    <div className="col-1">
+                        <OverlayTrigger placement="top" overlay={<Tooltip>Actualisation</Tooltip>}>
+                            <button className="btn btn-primary rounded-1 shadow" onClick={() => handleActualise()} ><i className="bi bi-arrow-repeat"></i></button>
                         </OverlayTrigger>
                     </div>
                     <div className="col-1">
@@ -560,10 +611,14 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
                             
                 </>
                 :
-                <div className="row mb-4" style={{heigth:'70vh'}}>
-                    <div className="col-4"><FichierExcel action={"1"}/></div>
-                    <button className="col-1 btn btn-warning rounded-5 shadow" onClick={() => handleImport()} >valider</button>
-                </div>
+                <>
+                    <div className="row mb-4" style={{heigth:'70vh'}}>
+                        <div className="col-lg-5 mx-1"><FichierExcel action={"1"}/></div>
+                        <button className="col-lg-1 mx-1 btn btn-warning rounded-4 shadow" onClick={() => handleImport()} >valider</button>
+                        <button className="col-lg-2 mx-1 btn btn-outline-success btn-md" onClick={handleSaveAll}>Sauvegarder les données</button>
+                        <button className="col-lg-2 mx-1 btn btn-outline-danger btn-md" onClick={handleResetTableau}>Initialiser le tableau</button>
+                    </div>
+                </>
                 }
                 </filtre>
                 
@@ -592,6 +647,12 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
                                         <div className="col-1"><Unite/></div>
                                         </>
                                         :
+                                        colonne.nom === "Processus" ?
+                                        <>
+                                        <div className="col-7">{colonne.nom}</div> 
+                                        <div className="col-1"><Processus/></div>
+                                        </>
+                                        :
                                         <div className="col-5">{colonne.nom}</div> 
                                         }
                                     </div>
@@ -599,6 +660,9 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
                             
                         ))}
                     </tr>
+                </thead>
+                
+                <tbody>
                 
 {/* ajout */}   
                 <tr className="row mb-3">
@@ -664,9 +728,8 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
                             </td>)}
                         </tr>
 
-                        </thead>
                 
-                <tbody style={{ overflowY: 'auto', height: '290px' }}>
+                <div style={{ overflowY: 'auto', height: '275px' }}>
 {/*liste*/}
                     {
                         liste.length>0 &&
@@ -822,16 +885,11 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
                         ))
                     }
                     
-
+                </div>
                     
                 </tbody>
             </Table>
-            {page!=="1" ?
-                <div>
-                <button className="btn btn-outline-success btn-md" onClick={handleSaveAll}>Sauvegarder les données</button>
-                <button className="btn btn-outline-danger btn-md" onClick={handleResetTableau}>Initialiser le tableau</button>
-                </div>
-            :<></>}
+            
         </div>
     )
 }

@@ -65,7 +65,7 @@ function FichierExcel({action}) {
   }
 
   return (
-    <div className='row mb-3'>
+    <div>
     {
     action === "1" ?
     <div>

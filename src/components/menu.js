@@ -45,19 +45,19 @@ const Menu =()=>{
 
     async function getAllData(){
         const user = await axios.post(Url+"/getUserByMatricule",{matricule:matricule})
-        console.log(user)
+        // console.log(user)
         dispatch(setUsersData(user.data))
         setCookie("id_user",user.data[0].id_user)
         const role = await axios.post(Url+"/getRoleByUser",{id_user:user.data[0].id_user})
-        console.log(role)
+        // console.log(role)
         dispatch(setRolesUserData(role.data))
         const processusUser = await axios.post(Url+"/getProcessusByUser",{id_user:user.data[0].id_user})
-        console.log(processusUser)
+        // console.log(processusUser)
         dispatch(setProcessusUserData(processusUser.data))
         setCookie("id_processus",processusUser.data[processusUser.data.length-1].id)
         axios.post(Url+"/getMenuByUser",{role: role.data, processus: processusUser.data}).then(res=>{
             dispatch(setMenusData(res.data)) 
-            console.log(res.data) 
+            // console.log(res.data) 
         })
         axios.get(Url+"/getProcessus").then(res=>{
             dispatch(setProcessusData(res.data))  

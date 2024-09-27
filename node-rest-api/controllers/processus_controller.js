@@ -21,12 +21,13 @@ const getProcessus = (req,res) => {
 
 
 const insertProcessus = (req,res) => {
-  const {libelle_processus,num_processus,abbrv} = req.body
+  const {libelle_processus,num_processus,abbrv,excel} = req.body.processus
   Processus.create(
     { 
       libelle_processus : libelle_processus,
       num_processus : num_processus,  
       abbrv : abbrv,
+      excel: excel
     }
   )
   .then(function(results) {
@@ -104,14 +105,7 @@ const getProcessusByUser = (req,res) => {
     if (results.length > 0) {
       if(results[0].id === 0){
         console.log(results)
-        Processus.findAll()
-          .then(function(resu){
-            getProcessus(req,res)
-          })
-          .catch(function(error) {
-            console.error(error);
-            res.status(400).json({ error });
-          })
+        getProcessus(req,res)
       }
       else{
         res.status(200).json(results);
