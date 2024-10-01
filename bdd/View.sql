@@ -34,4 +34,4 @@ select
 	from objectif.parametrage p
 join processus as proc on proc.id = p.id_processus 
 	group by id_processus , libelle_processus
-	ORDER BY poids DESC
+	ORDER BY poids DESC;

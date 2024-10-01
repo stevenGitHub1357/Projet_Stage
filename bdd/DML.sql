@@ -35,9 +35,9 @@ INSERT INTO public.menus (id_menu,labelle_menu,icon,route,position,"rang",base) 
 	(1200,'Vue global','bi bi-file-earmark-plus','global',2,2,0),
 	(1300,'Profils','bi bi-person-circle','profils',3,1,0),
 	(1400,'Graphique','bi bi-calendar2-range','graphe',2,2,0),
-	(1500,'Parametrage objectifs','bi bi-calendar2-range','objectif?page=1',1,1,0),
-		(1510,'Liste objectif','bi bi-calendar2-range','objectif?page=1',1,2,1500),
-		(1520,'Import et insertion','bi bi-calendar2-range','objectif?page=2',1,2,1500);
+	(1500,'Parametrage objectifs','bi bi-calendar2-range','gestionObjectifs',1,1,0),
+		(1510,'Liste objectif','bi bi-calendar2-range','gestionObjectifs',1,2,1500),
+		(1520,'Import et insertion','bi bi-calendar2-range','multiParametrageObjectifs',1,2,1500);
 
 
 -- role

@@ -17,11 +17,13 @@ import { setObjectifData } from "./feature/objectifs.slice"
 
 
 import { GetRole } from "./service/service-role"
-import Global_url from "../global_url"
+
 import logo from '../images/logo-jouveTitle.png'
 import $ from 'jquery'
 import Route_Serv from './route/routeServer'
+import Deploy from "../Deploy"
 
+import Global_url from "../global_url"
 var Url = Global_url
 const Menu =()=>{
     
@@ -346,6 +348,7 @@ const Menu =()=>{
                                                     </div>
                                                 </div>
                                             </span> 
+                                            <Deploy/>
                                             <div className="log">
                                                 <button className="btn  btn-sm form-control text-white" onClick={handleLogout}>
                                                     <i className="bi bi-box-arrow-right"></i> <span className={!MenuCollapse ? "logoutText text-uppercase" :"d-none"}>Logout</span>

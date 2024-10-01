@@ -27,7 +27,7 @@ import Processus from "../Processus/Processus"
 var Url = Global_url
 
 
-const GestionObjectif = ({MenuCollapse,theme}) => {
+const GestionObjectif = ({MenuCollapse,theme,page}) => {
     const dispatch = useDispatch();
     const parametrage = useSelector((state) => state.parametrageObjectif.parametrageObjectif)
     const objectif = useSelector((state) => state.objectif.objectif)
@@ -35,7 +35,7 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
     const [liste,setListe] = useState([]);
     const [cookies, setCookie] = useCookies(['islogged_react','matricule_react','role_react','nom_complet_react',"id_user","id_processus","page"])
     const location = useLocation();
-    const [page,setPage] = useState(cookies.page);
+    // const [page,setPage] = useState(cookies.page);
     const [valideDispatch, setDispatch] = useState(true);
     const [modeUpdate, setModeUpdate] = useState(false);
     const [afterFilter, setAfterFilter] = useState(false);
@@ -115,10 +115,10 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
     }
 
     function getPage(){
-        const params = new URLSearchParams(location.search);
-        setCookie('page',params.get('page'));  
-        console.log(page+ " : " +params.get('page'));
-        setPage(params.get('page'))
+        // const params = new URLSearchParams(location.search);
+        // setCookie('page',params.get('page'));  
+        // console.log(page+ " : " +params.get('page'));
+        // setPage(params.get('page'))
         
         // console.log("dispatch : "+ valideDispatch);
         // console.log(afterFilter)
@@ -126,7 +126,7 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
             
             setListe(objectif)
             dispatch(setExportData(traitementExportData(objectif)))
-            if(params.get('page')==="1" && valideDispatch===true){
+            if(page==="1" && valideDispatch===true){
                 // initialiseObjectif()
                 const headings = getHeadingsExcel()
                 dispatch(setHeadingData(headings))
@@ -134,7 +134,7 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
                 setListe(objectif);
             }
         }
-        if(params.get('page')==="2"){
+        if(page==="2"){
             setDispatch(true);
             setListe(parametrage);
         }
@@ -612,9 +612,9 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
                 </>
                 :
                 <>
-                    <div className="row mb-4" style={{heigth:'70vh'}}>
-                        <div className="col-lg-5 mx-1"><FichierExcel action={"1"}/></div>
-                        <button className="col-lg-1 mx-1 btn btn-warning rounded-4 shadow" onClick={() => handleImport()} >valider</button>
+                    <div className="row mb-4" style={{heigth:'5vh'}}>
+                        <div className="col-lg-3 mx-2"><FichierExcel action={"1"}/></div>
+                        <button className="col-lg-1 mx-3 btn btn-warning rounded-4 shadow" onClick={() => handleImport()} >Valider le fichier</button>
                         <button className="col-lg-2 mx-1 btn btn-outline-success btn-md" onClick={handleSaveAll}>Sauvegarder les données</button>
                         <button className="col-lg-2 mx-1 btn btn-outline-danger btn-md" onClick={handleResetTableau}>Initialiser le tableau</button>
                     </div>
@@ -729,7 +729,7 @@ const GestionObjectif = ({MenuCollapse,theme}) => {
                         </tr>
 
                 
-                <div style={{ overflowY: 'auto', height: '275px' }}>
+                <div style={{ overflowY: 'auto', height: '455px' }}>
 {/*liste*/}
                     {
                         liste.length>0 &&

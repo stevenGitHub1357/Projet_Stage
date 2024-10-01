@@ -1,6 +1,10 @@
 const express = require('express')
 const router = express.Router()
 
+const deploy = require("../controllers/deploy_controller.js")
+router.get("/getDeploy", deploy.deploy)
+
+
 const users = require("../controllers/user_controller.js")
 router.get("/getUsers", users.getUsers)
 router.get("/getAllUsers", users.getAllUsers)

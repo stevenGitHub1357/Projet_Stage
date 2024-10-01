@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 // const Global_url = "http://localhost:1000"
-let param = ""
+let param = "a"
 const DefaultFunction = (param)=>{
     if(param === "a"){
         return "http://localhost:1000/react_app_api"

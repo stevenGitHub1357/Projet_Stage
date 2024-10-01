@@ -68,7 +68,7 @@ function FichierExcel({action}) {
     <div>
     {
     action === "1" ?
-    <div>
+    <div style={{heigth:'50vh'}}>
       {
         !up ?
       <button className="btn btn-success float-right" onClick={handleUp}>Import fichier excel <i className="bi bi-upload"></i></button>

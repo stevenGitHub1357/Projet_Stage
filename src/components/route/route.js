@@ -22,7 +22,8 @@ const Route_menu =({MenuCollapse,theme,logo})=>{
             <Route path={Route_Server + "module"} element = {<Module MenuCollapse={MenuCollapse} theme={theme} logo={logo}/>}></Route>
             <Route path={Route_Server + "test"} element = {<Test MenuCollapse={MenuCollapse} theme={theme} logo={logo}/>}></Route>
 
-            <Route path={Route_Server + "objectif"} element = {<GestionObjectif MenuCollapse={MenuCollapse} theme={theme} logo={logo}/>}></Route>
+            <Route path={Route_Server + "gestionObjectifs"} element = {<GestionObjectif MenuCollapse={MenuCollapse} theme={theme} logo={logo} page={"1"}/>}></Route>
+            <Route path={Route_Server + "multiParametrageObjectifs"} element = {<GestionObjectif MenuCollapse={MenuCollapse} theme={theme} logo={logo} page={"2"}/>}></Route>
         </Routes>
     )
 }
