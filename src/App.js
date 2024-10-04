@@ -2,6 +2,7 @@ import './App.css';
 import Menu from './components/menu';
 import { useCookies } from 'react-cookie';
 import Login from './components/login/login';
+import { useEffect } from 'react';
 
 function App(props) {
   const [cookies, setCookie, removeCookie] = useCookies(['islogged_react','matricule_react']);

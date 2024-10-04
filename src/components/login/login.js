@@ -8,6 +8,7 @@ import { Danger, Success, Warning } from "../service/service-alert"
 import Global_url from "../../global_url"
 import { useDispatch } from "react-redux/es/hooks/useDispatch"
 import { setUsersData } from "../feature/users.slice"
+import Route_Serv from "../route/routeServer"
 var Url = Global_url
 
 const Login =()=>{
@@ -48,6 +49,7 @@ const Login =()=>{
     }
     
     if(countLog > 0 && countAcces < 3){
+        if(matricule.current !== null){
             axios.post(Url+"/get-info-log",{matricule:matricule.current.value}).then(res=>{
                 var resRole = res.data[0].id_role
                 setCookie('role_react',""+resRole )
@@ -61,8 +63,12 @@ const Login =()=>{
             setCookie('matricule_react',resMatricule)
             Success('Connecté avec succès !')
             
-
-            // return(<Menu/>)
+        }
+            
+        
+            return(<Menu/>)
+            // const urlReact = Route_Serv;
+            // window.location.pathname = urlReact+'accueil'
         
 
     }else{

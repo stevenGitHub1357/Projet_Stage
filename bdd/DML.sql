@@ -44,7 +44,6 @@ INSERT INTO public.menus (id_menu,labelle_menu,icon,route,position,"rang",base) 
 INSERT INTO public."role" (id_role, type_role,date_create) VALUES
 	(0,'All','2024-04-11 13:32:58.054');
 INSERT INTO public."role" (type_role,date_create) VALUES
-	('All','2024-04-11 13:32:58.054'),
 	('Developpeur','2024-04-11 13:32:58.054'),
 	('Administrateur','2024-04-11 13:32:58.054'),
 	('Direction','2024-04-08 16:18:04.678'),

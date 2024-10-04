@@ -2,7 +2,6 @@ const bd_pool = require("../config/default.config")
 const pool = bd_pool.pool
 const gpao = require("../config/dbGpao.config")
 const userModel = require("../models/Users");
-const { id } = require("date-fns/locale");
 const { INTEGER, where, Op } = require("sequelize");
 const User = userModel.User;
 

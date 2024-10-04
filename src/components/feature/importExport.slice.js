@@ -7,7 +7,8 @@ const importSlice = createSlice({
     },
     reducers:{
         setImportData:(state,{payload})=>{
-            console.log(payload)
+            // console.log(payload)
+            console.log("setImportData")
             state.import = payload
         },
         
@@ -22,11 +23,13 @@ const exportSlice = createSlice({
     },
     reducers:{
         setExportData:(state,{payload})=>{
-            console.log(payload)
+            // console.log(payload)
+            // console.log("setExportData")
             state.export = payload
         },
         setHeadingData:(state,{payload})=>{
-            console.log(payload)
+            // console.log(payload)
+            console.log("setHeadingData")
             state.headings = payload
         },
         

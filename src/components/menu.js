@@ -36,12 +36,45 @@ const Menu =()=>{
     const userSlice = useSelector((state) => state.users.users)
     const listMenuSlice = useSelector((state) => state.menus.menus)
     const listRoleSlice = useSelector((state) => state.role.role)
+    const listRoleUserSlice = useSelector((state) => state.role.roleUser)
     const listProcessusSlice = useSelector((state) => state.processus.processus)
     const urlReact = Route_Serv;
     let matricule = cookies.matricule_react;
 
+    // Fonction pour obtenir l'URL de base
+    function getBaseURL() {
+        const url = window.location.href;
+        const protocol = window.location.protocol;
+        const host = window.location.host;
+    
+        // Obtenir la partie principale de l'URL
+        let basePart = `${protocol}//${host}/`;
+    
+        // Vérifier s'il y a une partie "suivant" dans l'URL
+        const nextPart = url.split('/').slice(-2)[0];
+    
+        if (nextPart && nextPart !== '') {
+            basePart += nextPart + '/';
+        }
+        console.log(basePart)
+        return basePart;
+    }
+
+    // Fonction principale pour rediriger vers l'URL de base si nécessaire
+    function redirectToBase() {
+        const currentUrl = window.location.href;
+        const baseUrl = getBaseURL();
+
+        if (currentUrl !== baseUrl) {
+            // window.history.replaceState({}, document.title, baseUrl);
+            window.location.href = baseUrl
+
+        }
+    }
+
     useEffect(()=>{
         getAllData();
+        // redirectToBase();
     },[])
     
 
@@ -49,24 +82,37 @@ const Menu =()=>{
         const user = await axios.post(Url+"/getUserByMatricule",{matricule:matricule})
         // console.log(user)
         dispatch(setUsersData(user.data))
+        
         setCookie("id_user",user.data[0].id_user)
-        const role = await axios.post(Url+"/getRoleByUser",{id_user:user.data[0].id_user})
+        let role = await axios.post(Url+"/getRoleByUser",{id_user:user.data[0].id_user})
         // console.log(role)
         dispatch(setRolesUserData(role.data))
-        const processusUser = await axios.post(Url+"/getProcessusByUser",{id_user:user.data[0].id_user})
+        let processusUser = await axios.post(Url+"/getProcessusByUser",{id_user:user.data[0].id_user})
         // console.log(processusUser)
         dispatch(setProcessusUserData(processusUser.data))
+
+        axios.get(Url+"/getProcessus").then(res=>{
+            dispatch(setProcessusData(res.data))
+            if(processusUser.data.includes(0)===true){
+                dispatch(setProcessusUserData(res.data))
+                processusUser = res
+            }  
+        })
+        axios.get(Url+"/getRole").then(res=>{
+            dispatch(setRolesData(res.data))  
+            if(role.data.map(role=> role.id_role).includes(0)===true){
+                dispatch(setRolesUserData(res.data))
+                role = res
+            }
+        })
+
         setCookie("id_processus",processusUser.data[processusUser.data.length-1].id)
         axios.post(Url+"/getMenuByUser",{role: role.data, processus: processusUser.data}).then(res=>{
             dispatch(setMenusData(res.data)) 
             // console.log(res.data) 
         })
-        axios.get(Url+"/getProcessus").then(res=>{
-            dispatch(setProcessusData(res.data))  
-        })
-        axios.get(Url+"/getRole").then(res=>{
-            dispatch(setRolesData(res.data))  
-        })
+        
+        console.log(role.data)
     }
     
     function handleLogout(){
@@ -74,7 +120,7 @@ const Menu =()=>{
         removeCookie("matricule_react")
         removeCookie("role_react")
         removeCookie("id_processus")
-        window.location.pathname = urlReact+'/login'
+        window.location.pathname = urlReact+'logout'
     }
     
     const darkMode = () =>{
@@ -347,8 +393,14 @@ const Menu =()=>{
                                                                 </button>
                                                     </div>
                                                 </div>
-                                            </span> 
-                                            <Deploy/>
+                                            </span>
+                                            {
+                                                listRoleUserSlice.map(role=>role.id_role).includes(0) || listRoleUserSlice.map(role=>role.id_role).includes(1) & Url.includes("localhost")?
+                                                <Deploy/>
+                                                :
+                                                <></>
+                                            } 
+                                            
                                             <div className="log">
                                                 <button className="btn  btn-sm form-control text-white" onClick={handleLogout}>
                                                     <i className="bi bi-box-arrow-right"></i> <span className={!MenuCollapse ? "logoutText text-uppercase" :"d-none"}>Logout</span>

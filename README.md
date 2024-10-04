@@ -28,6 +28,9 @@ npm install sequelize;
 
 #### React
 npm install react-bootstrap bootstrap --legacy-peer-deps
+npm install exec-sh --save-dev
+
+
 
 
 ## Utilisation

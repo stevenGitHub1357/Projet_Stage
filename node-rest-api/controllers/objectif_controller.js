@@ -2,9 +2,8 @@ const pool = require("../config/default.config");
 const {Op} = require("sequelize");
 const {ParametrageObjectif, Unite, Synthese, Recuperation}= require("../models/Objectif");
 const { Processus } = require("../models/Processus");
-const { default: axios } = require("axios");
 const { getProcessus } = require("./processus_controller");
-const Url = "http://localhost:1000/react_app_api/"
+
 
 const getUnite = (req,res,next) =>{
   Unite.findAll()
@@ -146,14 +145,14 @@ async function getParametrageObjectifUser(req,res,next){
   const processus = req.body.processus;
   // console.log(processus)
   let ids_processus = processus.map(obj => obj.id)
-  const verif = ids_processus.includes(0);
-  if(verif){
-    let allProc= []
-    await axios.get(Url+"/getProcessus").then(res=>{
-      allProc = res.data
-    })
-    ids_processus = allProc.map(obj=> obj.id)  
-  }
+  // const verif = ids_processus.includes(0);
+  // if(verif){
+  //   let allProc= []
+  //   await axios.get(Url+"/getProcessus").then(res=>{
+  //     allProc = res.data
+  //   })
+  //   ids_processus = allProc.map(obj=> obj.id)  
+  // }
   // console.log(ids_processus)
   ParametrageObjectif.findAll({
     // include: [

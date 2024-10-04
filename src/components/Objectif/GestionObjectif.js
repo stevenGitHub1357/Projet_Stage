@@ -11,7 +11,8 @@ import  {setObjectifData, setObjectifUserData, deleteObjectif  , updateObjectif,
             setParametrageObjectifData, deleteParametrageObjectif,
             addObjectif, 
             setUniteData,
-            setRecuperationData
+            setRecuperationData,
+            updateUnite
         } from "../feature/objectifs.slice"
 import {Success, Confirmation} from "../service/service-alert";
 import Global_url from "../../global_url"
@@ -73,30 +74,35 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
     },[])
 
     async function initialiseObjectif(){
+        console.log("initialiseObjectif")
         // const obj= axios.get(Url+"/getParametrageObjectif").then(res=>{
         //     // console.log(res.data)
         //     dispatch(setObjectifData(res.data))
         //     setDispatch(true)
         // })
         const objUser = await axios.post(Url+"/getParametrageObjectifUser",{processus})
-            console.log(objUser.data)
+            // console.log(objUser.data)
             dispatch(setObjectifData(objUser.data))
             setDispatch(true)
             dispatch(setExportData(traitementExportData(objUser.data)))
+            const headings = getHeadingsExcel()
+            dispatch(setHeadingData(headings))
         return objUser.data
     }
-    function initialiseUnite(){
-        const obj= axios.get(Url+"/getParamObjUnite").then(res=>{
-            dispatch(setUniteData(res.data));
-            console.log(res.data)
-        })
+    async function initialiseUnite(){
+        console.log("initialiseUnite")
+        let obj= await axios.get(Url+"/getParamObjUnite")
+        dispatch(setUniteData(obj.data));
+        obj = obj.data
+        // console.log(obj)
         return obj
     }
-    function initialiseRecuperation(){
-        const obj= axios.get(Url+"/getParamObjRecuperation").then(res=>{
-            dispatch(setRecuperationData(res.data));
-            console.log(res.data)
-        })
+    async function initialiseRecuperation(){
+        console.log("initialiseRecuperation")
+        let obj= await axios.get(Url+"/getParamObjRecuperation")
+        dispatch(setRecuperationData(obj.data));
+        obj = obj.data
+        // console.log(obj)
         return obj
     }
 
@@ -122,14 +128,14 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
         
         // console.log("dispatch : "+ valideDispatch);
         // console.log(afterFilter)
+        console.log("page : "+page)
         if(afterFilter === false){
             
             setListe(objectif)
             dispatch(setExportData(traitementExportData(objectif)))
             if(page==="1" && valideDispatch===true){
                 // initialiseObjectif()
-                const headings = getHeadingsExcel()
-                dispatch(setHeadingData(headings))
+                
                 setDispatch(false);
                 setListe(objectif);
             }
@@ -176,6 +182,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
     }
 
     const handleUpdateListe = (index, direct) =>{
+        console.log("updateListe")
         let allParam = [];
         const tbody = document.querySelector('tbody');
         const trs = tbody.querySelectorAll('tr');
@@ -242,6 +249,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
     }
 
     const resetInputs = () => {
+        console.log("resetInputs")
         setModeUpdate(false)
         var inputs = document.querySelectorAll('#inputParametrage');
         inputs.forEach(input => {
@@ -250,6 +258,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
     };
 
     const resetTableau = () => {
+        console.log("resetTableau")
         setModeUpdate(false)
         const param = {index:0, id_processus:"", objectifs:"",poids:"", cible:"",id_unite:"",recuperation:""};
         const allParam = [];
@@ -297,14 +306,14 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
     }
 
     const handleUpdate = () =>{
-        // console.log("update");
+        console.log("update");
         if(modeUpdate===false){
             setModeUpdate(true)
         }
     }
 
     const handleDeleteObjectif= (item) => {
-        // console.log("delete objectif:"+item.id)
+        console.log("delete objectif:"+item.id)
         setModeUpdate(false)
         const id = item.id
         Confirmation(theme, "Êtes-vous sûr(e) de vouloir supprimer cette objectif", "Oui, supprimer !", true).then(
@@ -382,9 +391,9 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
             });
             break;
         };
-        console.log(filter)
+        // console.log(filter)
         let listFiltre = objectif;
-        console.log(objectif)
+        // console.log(objectif)
         if(filter.id_processus !== 0) listFiltre = listFiltre.filter(item => item.id_processus === filter.id_processus)
         
         if(filter.objectifs !== "") listFiltre = listFiltre.filter(item => item.objectifs.toLowerCase().includes(filter.objectifs))
@@ -414,33 +423,39 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
     }
 
     function handleActualise(){
+        console.log("actualisation")
         initialiseObjectif()
         resetInputs();
         setAfterFilter(false);
     }
 
     function handleImport(){
-        console.log(importData)
+        console.log("importData")
         let dataPossible = importData.filter(data=> data[0].toLowerCase() !== 'processus'.toLowerCase())
         dataPossible = dataPossible.filter(data => !isNaN(Number(data[2])))
 
-        console.log(dataPossible)
+        // console.log(dataPossible)
         const allData = []
         let nb = 1;
         for(let objet of dataPossible){
             const imp = {}
-            console.log(objet[0])
-            console.log(processus)
+            // console.log(objet[0])
+            // console.log(processus)
             const proc =  processus.filter(processus => processus.excel === objet[0] || processus.libelle_processus === objet[0])
-            console.log(proc)
+            // console.log(proc)
             if(proc.length>0 ){
                 imp.index = nb
                 imp.id_processus = proc[0].id
                 imp.objectifs = objet[1];
                 imp.poids = objet[2];
-                console.log(uniteParam)
-                
-                        for(let unites of uniteParam){
+                // console.log(uniteParam)
+                let allUnite = []
+                if(uniteParam.length){
+                    allUnite = uniteParam
+                }else{
+                    allUnite = initialiseUnite()
+                }
+                        for(let unites of allUnite){
                             if(imp.objectifs.includes(unites.abbrv)){
                                 imp.cible = objet[3];
                                 imp.id_unite = unites.id
@@ -450,11 +465,19 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                             }
                         }
                     
-                const recuperationAll = recuperationParam.filter(rec => rec.type_recuperation === objet[4])
+                let recuperationAll = []
+                if(recuperationParam.length){
+                    recuperationAll = recuperationParam.filter(rec => rec.type_recuperation === objet[4])
+                }else{
+                    let rec = [] 
+                    rec = initialiseRecuperation()
+                    recuperationAll = rec.filter(rec => rec.type_recuperation === objet[4])
+                }
+                
                 
                 imp.recuperation = recuperationAll[0].id
                 imp.support = objet[5]
-                console.log(imp)
+                // console.log(imp)
                 allData.push(imp)
                 nb++
             }
@@ -478,18 +501,38 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
     }
 
     function traitementExportData(datas){
+        const headings = getHeadingsExcel()
+        dispatch(setHeadingData(headings))
         let allData = []
         if(datas.length>0){
             for(let data of datas){
                 let newData = {}
                 // newData.id = data.id;
-                newData.processus = processus.filter(proc => proc.id === data.id_processus)[0].excel
+                if(processus.length){
+                    newData.processus = processus.filter(proc => proc.id === data.id_processus)[0].excel
+                }
                 newData.objectifs = data.objectifs;
                 newData.poids = data.poids;
-                const unite = uniteParam.filter(item => item.id === data.id_unite)[0].abbrv
+                // console.log(uniteParam)
+                if(uniteParam.length){
+                    const unite = uniteParam.filter(item => item.id === data.id_unite)[0].abbrv
+                    newData.cible = data.cible+""+unite
+                }
+                // else{
+                //     const unite = initialiseUnite();
+                //     newData.cible = data.cible+""+unite
+                // }
+
                 // console.log(unite)
-                newData.cible = data.cible+""+unite
-                newData.recuperation = recuperationParam.filter(proc => proc.id === data.recuperation)[0].type_recuperation
+                if(recuperationParam.length){
+                    newData.recuperation = recuperationParam.filter(proc => proc.id === data.recuperation)[0].type_recuperation
+                }
+                // else{
+                //     let recup = []
+                //     recup = initialiseRecuperation()
+                //     console.log(recup[0])
+                //     newData.recuperation = recup.filter(proc => proc.id === data.recuperation)[0].type_recuperation
+                // }
                 newData.support = data.support
                 newData.create = data.createat
                 // console.log(newData)
@@ -544,6 +587,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                 <select className="col-10"  name="unite">
                                     <option key={0} value="0">Uniter</option>
                                     {
+                                        uniteParam.length>0 &&
                                         uniteParam.map((uniteParam, index) => (
                                             <option 
                                                 key={index}
@@ -564,6 +608,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                 <select className="col-10" name="recuperation">
                                     <option key={0} value="0">Recuperation</option>
                                     {
+                                        recuperationParam.length>0 &&
                                         recuperationParam.map((recuperationParam, index) => (
                                             <option 
                                                 key={index}
@@ -623,7 +668,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                 </filtre>
                 
                 <thead className="mt-2">
-                <tr className="row" key="0">
+                <tr className="row">
                     {
                         colonneTable.map((colonne,index) => (
                            
@@ -669,6 +714,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                             <td className="col-2">
                                 <select className="col-12" name="processus" >
                                     {
+                                        processus.length>0 &&
                                         processus.map((processus, index) => (
                                             <option 
                                                 key={index}
@@ -686,6 +732,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                     
                                     <select className="col-12 mb-1"  name="unite">
                                         {
+                                            uniteParam.length>0 &&
                                             uniteParam.map((uniteParam, index) => (
                                                 <option 
                                                     key={index}
@@ -702,6 +749,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                             <td className="col-2">
                                 <select className="col-12" name="recuperation">
                                     {
+                                        recuperationParam.length>0 &&
                                         recuperationParam.map((recuperationParam, index) => (
                                             <option 
                                                 key={index}
@@ -740,6 +788,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                             <td className="col-2">
                                 <select className="col-12"  name="processus">
                                     {
+                                        processus.length>0 &&
                                         processus.map((processus, index) => (
                                             
                                             <option 
@@ -764,6 +813,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                 
                                 <select className="col-12"  name="unite">
                                     {
+                                        uniteParam.length>0 &&
                                         uniteParam.map((uniteParam, index) => (
                                             <option 
                                                 key={index}
@@ -780,6 +830,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                             <td className="col-2">
                                 <select className="col-12" name="recuperation">
                                     {
+                                        recuperationParam.length>0 &&
                                         recuperationParam.map((recuperationParam, index) => (
                                             <option 
                                                 key={index}
@@ -800,6 +851,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                             <td className="col-2">
                                 <select className="form-control col-12"  name="processus">
                                     {
+                                        processus.length>0 &&
                                         processus.map((processus, index) => (
                                             processus.id===item.id_processus ? (
                                             <option 
@@ -827,6 +879,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                 
                                 <select className="form-control col-12"  name="unite">
                                     {
+                                        uniteParam.length>0 &&
                                         uniteParam.map((uniteParam, index) => (
                                             uniteParam.id === item.id_unite ? (
                                             <option 
@@ -836,7 +889,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                             >
                                                 {uniteParam.abbrv}
                                             </option> 
-                                            ) : (<option></option>)
+                                            ) : (<div></div>)
                                         ))
                                     }
                                 </select>
@@ -845,6 +898,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                             <td className="col-2">
                                 <select className="form-control col-12" name="recuperation">
                                     {
+                                        recuperationParam.length>0 &&
                                         recuperationParam.map((recuperationParam, index) => (
                                             recuperationParam.id === item.recuperation ? (
                                             <option 
@@ -854,7 +908,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                             >
                                                 {recuperationParam.type_recuperation} 
                                             </option>
-                                            ) : (<option></option>) 
+                                            ) : (<div></div>) 
                                         ))
                                     }
                                 </select>
