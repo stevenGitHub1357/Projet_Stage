@@ -29,7 +29,7 @@ const exportSlice = createSlice({
         },
         setHeadingData:(state,{payload})=>{
             // console.log(payload)
-            console.log("setHeadingData")
+            // console.log("setHeadingData")
             state.headings = payload
         },
         

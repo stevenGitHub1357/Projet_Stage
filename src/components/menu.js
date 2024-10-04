@@ -86,23 +86,27 @@ const Menu =()=>{
         setCookie("id_user",user.data[0].id_user)
         let role = await axios.post(Url+"/getRoleByUser",{id_user:user.data[0].id_user})
         // console.log(role)
-        dispatch(setRolesUserData(role.data))
+        
         let processusUser = await axios.post(Url+"/getProcessusByUser",{id_user:user.data[0].id_user})
         // console.log(processusUser)
-        dispatch(setProcessusUserData(processusUser.data))
+        
 
-        axios.get(Url+"/getProcessus").then(res=>{
+        await axios.get(Url+"/getProcessus").then(res=>{
             dispatch(setProcessusData(res.data))
             if(processusUser.data.includes(0)===true){
                 dispatch(setProcessusUserData(res.data))
                 processusUser = res
+            }else{
+                dispatch(setProcessusUserData(processusUser.data))
             }  
         })
-        axios.get(Url+"/getRole").then(res=>{
+        await axios.get(Url+"/getRole").then(res=>{
             dispatch(setRolesData(res.data))  
             if(role.data.map(role=> role.id_role).includes(0)===true){
                 dispatch(setRolesUserData(res.data))
                 role = res
+            }else{
+                dispatch(setRolesUserData(role.data))
             }
         })
 
@@ -112,7 +116,7 @@ const Menu =()=>{
             // console.log(res.data) 
         })
         
-        console.log(role.data)
+        // console.log(role.data)
     }
     
     function handleLogout(){
@@ -320,7 +324,7 @@ const Menu =()=>{
                         <NavLink className="col-1"  to="Test" data-bs-toggle="collapse" data-bs-target={"#collapseMenu"} aria-expanded="false" aria-controls="collapseExample" > 
                             <img src={logo}  className="col-2" style={styleImg} ></img>
                         </NavLink>
-        
+                        
                                 <div className="row">
                                 <div className="col-10"></div>
                                 <div className="collapse col-2" id="collapseMenu" >

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useEffect } from "react"
 import { TitlePage } from "../templates/templates"
-import { useCookies } from "react-cookie"
+import { Cookies, useCookies } from "react-cookie"
 import { useSelector } from "react-redux"
 import { useDispatch } from "react-redux"
 import axios from "axios"
@@ -12,7 +12,8 @@ import  {setObjectifData, setObjectifUserData, deleteObjectif  , updateObjectif,
             addObjectif, 
             setUniteData,
             setRecuperationData,
-            updateUnite
+            updateUnite,
+            addParametrageObjectif
         } from "../feature/objectifs.slice"
 import {Success, Confirmation} from "../service/service-alert";
 import Global_url from "../../global_url"
@@ -21,7 +22,7 @@ import { setExportData, setHeadingData } from "../feature/importExport.slice"
 import Synthese from "./Synthese"
 import Unite from "./Unite"
 import Recuperation from "./Recuperation"
-import { Button, OverlayTrigger, Tooltip, Table } from 'react-bootstrap';
+import { Button, OverlayTrigger, Tooltip, Table, Form } from 'react-bootstrap';
 import Processus from "../Processus/Processus"
 
 
@@ -41,8 +42,11 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
     const [modeUpdate, setModeUpdate] = useState(false);
     const [afterFilter, setAfterFilter] = useState(false);
     const [modeEdit, setModeEdit] = useState();
-    const [modaleFiltre, setModaleFiltre] = useState(false);
+    const [modaleFiltre, setModaleFiltre] = useState(true);
+    const [modaleAjout, setModaleAjout] = useState(false);
 
+    const processus =  useSelector((state) => state.processus.processusUser)
+    const processusUser =  useSelector((state) => state.processus.processusUser)
     const uniteParam = useSelector((state) => state.unite.Unite)
     const recuperationParam = useSelector((state) => state.recuperation.Recuperation)
 
@@ -62,7 +66,6 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
     ]
 
     const [triage, setTriage] = useState(colonneTriage);
-    const processus =  useSelector((state) => state.processus.processusUser)
 
     useEffect(()=>{ 
         getPage();
@@ -75,13 +78,20 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
 
     async function initialiseObjectif(){
         console.log("initialiseObjectif")
-        // const obj= axios.get(Url+"/getParametrageObjectif").then(res=>{
-        //     // console.log(res.data)
-        //     dispatch(setObjectifData(res.data))
-        //     setDispatch(true)
-        // })
-        const objUser = await axios.post(Url+"/getParametrageObjectifUser",{processus})
-            // console.log(objUser.data)
+        
+        let processusUser =processus
+
+        // console.log(processus)
+        if(processus[0].id === null){
+            console.log("processus null")
+            processusUser = await axios.post(Url+"/getProcessusByUser",{id_user:cookies.id_user})
+            processusUser = processusUser.data
+        }
+        console.log(processusUser)
+
+        console.log(processus)
+        const objUser = await axios.post(Url+"/getParametrageObjectifUser",{processus : processusUser})
+            console.log(objUser.data)
             dispatch(setObjectifData(objUser.data))
             setDispatch(true)
             dispatch(setExportData(traitementExportData(objUser.data)))
@@ -128,10 +138,11 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
         
         // console.log("dispatch : "+ valideDispatch);
         // console.log(afterFilter)
-        console.log("page : "+page)
+        // console.log("page : "+page)
         if(afterFilter === false){
             
             setListe(objectif)
+            // console.log(objectif)
             dispatch(setExportData(traitementExportData(objectif)))
             if(page==="1" && valideDispatch===true){
                 // initialiseObjectif()
@@ -359,75 +370,64 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
         setAfterFilter(false)
     }
 
-    const handleFiltre = (filtreValide) => {
-        console.log("filter")
-        const filtre = document.querySelector('filtre');
-        const trs = filtre.querySelectorAll('tr');
-        setModeUpdate(false)
+    const handleFiltre = (e) => {
+        e.preventDefault();
         setAfterFilter(true)
+        console.log("filter")
         let filter = {};
-        for(let tr of trs){
-            const tds = tr.querySelectorAll('td');
-            tds.forEach(td => {
-                const inputs = td.querySelectorAll('input');
-                const selects = td.querySelectorAll('select');
-                inputs.forEach(input => {
-                    if(input.name === 'objectif') filter.objectifs = input.value
-                    if(input.name === 'support') filter.support = input.value
-                    if(input.name === 'id_processus') filter.id_processus = Number(input.value)
-                    if(input.name === 'validateProcessus') filter.validateProcessus = input.checked
-                    if(input.name === 'poidsMax') filter.poidsMax = Number(input.value.replace(',','.'))
-                    if(input.name === 'poidsMin') filter.poidsMin = Number(input.value.replace(',','.'))
-                    if(input.name === 'cibleMax') filter.cibleMax = Number(input.value.replace(',','.'))
-                    if(input.name === 'cibleMin') filter.cibleMin = Number(input.value.replace(',','.'))
-                    if(input.name === 'validateUnite') filter.validateUnite = input.checked
-                    if(input.name === 'validateRecuperation') filter.validateRecuperation = input.checked
-                })
-                selects.forEach(select => {
-                    if(select.name === 'unite') filter.id_unite = Number(select.value)
-                    if(select.name === 'recuperation') filter.recuperation = Number(select.value) 
-                    if(select.name === 'processus') filter.id_processus= Number(select.value) 
-                })
-            });
-            break;
-        };
-        // console.log(filter)
+        filter.id_processus = Number(e.currentTarget.elements.processus.value)
+        filter.id_unite = Number(e.currentTarget.elements.unite.value)
+        filter.objectifs = e.currentTarget.elements.objectifs.value
+        filter.poidsMax = Number(e.currentTarget.elements.poidsMax.value.replace(',','.'))
+        filter.poidsMin = Number(e.currentTarget.elements.poidsMin.value.replace(',','.'))
+        filter.cibleMax = e.currentTarget.elements.cibleMax.value.replace(',','.')
+        filter.cibleMin = e.currentTarget.elements.cibleMin.value.replace(',','.')
+        filter.recuperation = Number(e.currentTarget.elements.recuperation.value)
+        filter.support = e.currentTarget.elements.support.value
+        // console.log(Ni)
+        console.log(filter)
         let listFiltre = objectif;
-        // console.log(objectif)
+        console.log(objectif)
         if(filter.id_processus !== 0) listFiltre = listFiltre.filter(item => item.id_processus === filter.id_processus)
-        
-        if(filter.objectifs !== "") listFiltre = listFiltre.filter(item => item.objectifs.toLowerCase().includes(filter.objectifs))
-             
-        if(filter.poidsMax !== 0) listFiltre = listFiltre.filter(item => item.poids >= filter.poidsMin.toString() && item.poids <= filter.poidsMax.toString())
-
-        if(filter.cibleMax !== 0) listFiltre = listFiltre.filter(item => item.cible >= filter.cibleMin.toString() && item.cible <= filter.cibleMax.toString())
-
+            console.log(listFiltre)
+        if(filter.objectifs !== "") listFiltre = listFiltre.filter(item => item.objectifs.toLowerCase().includes(filter.objectifs.toLowerCase()))
+            console.log(listFiltre)
+        if(filter.poidsMax !== 0) listFiltre = listFiltre.filter(item => item.poids.toString() >= filter.poidsMin.toString() && item.poids.toString() <= filter.poidsMax.toString())
+            console.log(listFiltre)
+        if(filter.cibleMax !== "" && filter.cibleMin !== "") listFiltre = listFiltre.filter(item => Number(item.cible) >= Number(filter.cibleMin) && Number(item.cible) <= Number(filter.cibleMax))
+            console.log(listFiltre)
+        if(filter.cibleMin === "" && filter.cibleMax !== "") listFiltre = listFiltre.filter(item => item.cible.toLowerCase().includes(filter.cibleMax.toLowerCase()))
+            console.log(listFiltre)
         if(filter.id_unite !== 0) listFiltre = listFiltre.filter(item => item.id_unite === filter.id_unite)
-
+            console.log(listFiltre)
         if(filter.recuperation !== 0)  listFiltre = listFiltre.filter(item => item.recuperation === filter.recuperation)
+            console.log(listFiltre)
+        if(filter.support !== "") listFiltre = listFiltre.filter(item => item.support.toLowerCase().includes(filter.support.toLowerCase()))
 
-        if(filter.support !== "") listFiltre = listFiltre.filter(item => item.support.toLowerCase().includes(filter.support))
-
-        // console.log(listFiltre)
+        console.log(listFiltre)
         // dispatch(setObjectifData(listFiltre));
         dispatch(setExportData(traitementExportData(listFiltre)))
         setListe(listFiltre);
-        if(filtreValide === false){
+        
             // const obj = initialiseObjectif()
-            console.log(objectif)
-            resetInputs();
-            dispatch(setExportData(traitementExportData(objectif)))
-            setListe(objectif);
-            setAfterFilter(false);
-        }
+            
+        
     }
 
-    function handleActualise(){
-        console.log("actualisation")
-        initialiseObjectif()
+    const handleInitialiserFiltre = () => {
+        console.log(objectif)
         resetInputs();
+        dispatch(setExportData(traitementExportData(objectif)))
+        setListe(objectif);
         setAfterFilter(false);
     }
+
+    // function handleActualise(){
+    //     console.log("actualisation")
+    //     initialiseObjectif()
+    //     resetInputs();
+    //     setAfterFilter(false);
+    // }
 
     function handleImport(){
         console.log("importData")
@@ -508,13 +508,13 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
             for(let data of datas){
                 let newData = {}
                 // newData.id = data.id;
-                if(processus.length){
+                if(processus[0].id !== null){
                     newData.processus = processus.filter(proc => proc.id === data.id_processus)[0].excel
                 }
                 newData.objectifs = data.objectifs;
                 newData.poids = data.poids;
-                // console.log(uniteParam)
-                if(uniteParam.length){
+                // console.log(uniteParam[0].id)
+                if(uniteParam[0].id !== null){
                     const unite = uniteParam.filter(item => item.id === data.id_unite)[0].abbrv
                     newData.cible = data.cible+""+unite
                 }
@@ -524,7 +524,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                 // }
 
                 // console.log(unite)
-                if(recuperationParam.length){
+                if(recuperationParam[0].id !== null){
                     newData.recuperation = recuperationParam.filter(proc => proc.id === data.recuperation)[0].type_recuperation
                 }
                 // else{
@@ -542,21 +542,59 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
         return allData
     }
 
+    const handleModaleAjout = () => {
+        if(modaleAjout){
+            setModaleAjout(false)
+        }else{
+            setModaleAjout(true)
+        }
+        
+    }
+
+    const handleAddObjectif = (e) => {
+        e.preventDefault();
+        let ajout = {};
+        console.log("addObjectif")
+        ajout.id_processus = Number(e.currentTarget.elements.processus.value)
+        ajout.id_unite = Number(e.currentTarget.elements.unite.value)
+        ajout.objectifs = e.currentTarget.elements.objectifs.value
+        ajout.poids = e.currentTarget.elements.poids.value
+        ajout.cible = e.currentTarget.elements.cible.value
+        ajout.recuperation = Number(e.currentTarget.elements.recuperation.value)
+        ajout.support = e.currentTarget.elements.support.value
+
+        if(page==="1"){
+            console.log("save")
+            saveObjectifController(ajout)
+            resetInputs();
+        }
+        if(page==="2"){
+            console.log("page2 save")
+            dispatch(addParametrageObjectif(ajout));
+            resetInputs();
+        }
+                
+        
+        console.log('Formulaire soumis:',ajout);
+    }
+    
+
 
   return (
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
             <TitlePage title={page==="1" ? "Liste des objectifs" : "Parametrage objectifs"} process={false} theme={theme}/>
-            <Table className="row">
-                <filtre>
+            
+                
                 { page === "1" ? 
                 <>
 {/* filtre */}
                 {modaleFiltre === true ? (
-                <tr className="row mb-3" >
-                            <td className="col-2">
+                <form onSubmit={handleFiltre}>
+                <div className="row mb-3" >
+                            <div className="col-2">
                                 {/* <div className="row"> */}
                                 {/* <input onClick={handleUpdate} className="col-2" type="checkbox" name="validateProcessus"></input> */}
-                                <select className="col-10"  name="processus">
+                                <select className="col-12"  name="processus">
                                     <option key={0} value="0">Processus</option> 
                                     {
                                         processus.filter(process => process.id !== 0).map((processus, index) => (
@@ -571,20 +609,20 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                     
                                 </select>
                                 {/* </div> */}
-                            </td> 
-                            <td className="col-3"><input onClick={handleUpdate} className="col-11" type="texte" size="40" name="objectif" placeholder="objectif" id="inputParametrage"></input></td>
-                            <td className="col-1">
-                                <input onClick={handleUpdate} className="col-10" type="text" name="poidsMin" placeholder="Poids min" id="inputParametrage"></input>
-                                <input onClick={handleUpdate} className="col-10" type="text" name="poidsMax" placeholder="Poids max" id="inputParametrage"></input>
-                            </td>
-                            <td className="col-1">
-                                <input onClick={handleUpdate} className="col-10" type="text" name="cibleMin" placeholder="Cible min" id="inputParametrage"></input>
-                                <input onClick={handleUpdate} className="col-10" type="text" name="cibleMax" placeholder="Cible max" id="inputParametrage"></input>
-                            </td>
-                            <td className="col-2">
+                            </div> 
+                            <div className="col-3"><input onClick={handleUpdate} className="col-11" type="texte" size="40" name="objectifs" placeholder="objectif" id="inputParametrage"></input></div>
+                            <div className="col-1">
+                                <input onClick={handleUpdate} className="col-12" type="text" name="poidsMin" placeholder="Poids min" id="inputParametrage"></input>
+                                <input onClick={handleUpdate} className="col-12" type="text" name="poidsMax" placeholder="Poids max" id="inputParametrage"></input>
+                            </div>
+                            <div className="col-1">
+                                <input onClick={handleUpdate} className="col-12" type="text" name="cibleMin" placeholder="Cible min" id="inputParametrage"></input>
+                                <input onClick={handleUpdate} className="col-12" type="text" name="cibleMax" placeholder="Cible max" id="inputParametrage"></input>
+                            </div>
+                            <div className="col-2">
                                 {/* <div className="row"> */}
                                 {/* <input onClick={handleUpdate} className="col-2" type="checkbox" name="validateUnite" id="inputParametrage"></input> */}
-                                <select className="col-10"  name="unite">
+                                <select className="col-12"  name="unite">
                                     <option key={0} value="0">Uniter</option>
                                     {
                                         uniteParam.length>0 &&
@@ -599,13 +637,13 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                     }
                                 </select>
                                 {/* </div> */}
-                            </td>
+                            </div>
                             
-                            <td className="col-2">
+                            <div className="col-2">
                                 {/* <div className="row"> */}
                                 {/* <input onClick={handleUpdate} className="col-2" type="checkbox" name="validateRecuperation"></input> */}
                                 
-                                <select className="col-10" name="recuperation">
+                                <select className="col-12" name="recuperation">
                                     <option key={0} value="0">Recuperation</option>
                                     {
                                         recuperationParam.length>0 &&
@@ -619,18 +657,24 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                         ))
                                     }
                                 </select>
-                                <input onClick={handleUpdate} className="col-10" type="text" name="support" placeholder="Support" id="inputParametrage"></input>
+                                <input onClick={handleUpdate} className="col-12" type="text" name="support" placeholder="Support" id="inputParametrage"></input>
                                 {/* </div> */}
-                            </td>
-                            <td className="col-1">
-                                    <button className="btn btn-success rounded-1 shadow" onClick={() => handleFiltre(true)} >Filtrer</button>
-                            </td>
-                </tr>
+                            </div>
+                            <div className="col-1">
+                                    <button className="btn btn-success rounded-1 shadow" type="submit" >Filtrer</button>
+                            </div>
+                </div>
+                </form>
                 ) : (<></>)}
-
+                
                     
                         
                 <div className="row col-6 mb-3">
+                    <div className="col-1">
+                        <OverlayTrigger placement="top" overlay={<Tooltip>Ajout</Tooltip>}>
+                            <button className="btn btn-success rounded-1 shadow" onClick={() => handleModaleAjout(true)} ><i className="bi bi-plus"></i></button>
+                        </OverlayTrigger>
+                    </div>
                     <div className="col-1">
                         <OverlayTrigger placement="top" overlay={<Tooltip>Filtrer</Tooltip>}>
                             <button className="btn btn-success rounded-1 shadow" onClick={() => handleModaleFiltre(true)} ><i className="bi bi-search"></i></button>
@@ -638,14 +682,14 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                     </div>
                     <div className="col-1">
                         <OverlayTrigger placement="top" overlay={<Tooltip>Reinitialiser filtre</Tooltip>}>
-                            <button className="btn btn-warning rounded-1 shadow" onClick={() => handleFiltre(false)} ><i className="bi bi-eye"></i></button>
+                            <button className="btn btn-warning rounded-1 shadow" onClick={() => handleInitialiserFiltre()} ><i className="bi bi-eye"></i></button>
                         </OverlayTrigger>
                     </div>
-                    <div className="col-1">
+                    {/* <div className="col-1">
                         <OverlayTrigger placement="top" overlay={<Tooltip>Actualisation</Tooltip>}>
                             <button className="btn btn-primary rounded-1 shadow" onClick={() => handleActualise()} ><i className="bi bi-arrow-repeat"></i></button>
                         </OverlayTrigger>
-                    </div>
+                    </div> */}
                     <div className="col-1">
                             <Synthese />
                     </div>
@@ -657,18 +701,106 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                 </>
                 :
                 <>
-                    <div className="row mb-4" style={{heigth:'5vh'}}>
-                        <div className="col-lg-3 mx-2"><FichierExcel action={"1"}/></div>
+                    <div className="row mb-4" style={{heigth:''}}>
+                        <div className="col-lg-1 ">
+                            <OverlayTrigger placement="top" overlay={<Tooltip>Ajouter un objectif</Tooltip>}>
+                                <button className="btn btn-success rounded-1 shadow  mx-2" onClick={() => handleModaleAjout(true)} ><i className="bi bi-plus"></i></button>
+                            </OverlayTrigger>
+                        </div>
+                        <div className="col-lg-3 mx-2">
+                            <FichierExcel action={"1"}/>
+                        </div>
                         <button className="col-lg-1 mx-3 btn btn-warning rounded-4 shadow" onClick={() => handleImport()} >Valider le fichier</button>
                         <button className="col-lg-2 mx-1 btn btn-outline-success btn-md" onClick={handleSaveAll}>Sauvegarder les données</button>
                         <button className="col-lg-2 mx-1 btn btn-outline-danger btn-md" onClick={handleResetTableau}>Initialiser le tableau</button>
                     </div>
                 </>
                 }
-                </filtre>
                 
-                <thead className="mt-2">
-                <tr className="row">
+                 
+{/* ajout */} 
+            
+            { modaleAjout ? (
+            <form onSubmit = {handleAddObjectif}>
+            <tr className="row mb-3">
+                <td className="col-2">
+                    <select className="col-12" name="processus" >
+                        {
+                            processus.length>0 &&
+                            processus.map((processus, index) => (
+                                <option 
+                                    key={index}
+                                    value={processus.id}
+                                    selected={processus.id === 1}
+                                >{processus.libelle_processus}</option> 
+                            ))
+                        }
+                    </select>
+                </td>
+                <td className="col-4"><textarea className="col-12" name="objectifs" id="inputParametrage" placeholder="Objectif" required></textarea></td>
+                <td className="col-1"><input className="col-12" type="text" name="poids" id="inputParametrage" placeholder="Poids" required></input></td>
+                <td className="col-1"><input className="col-12" type="text" name="cible" id="inputParametrage" placeholder="Cible" required></input></td>
+                <td className="col-1">
+                        
+                        <select className="col-12 mb-1"  name="unite">
+                                    <option 
+                                        key={0}
+                                        value={1}
+                                    >Unité</option>
+                            {
+                                uniteParam.length>0 &&
+                                uniteParam.map((uniteParam, index) => (
+                                    <option 
+                                        key={index}
+                                        value={uniteParam.id}
+                                    >{uniteParam.abbrv}</option> 
+                                ))
+                            }
+                            
+                        </select>
+                        
+                        
+                </td>
+                
+                <td className="col-2">
+                    <select className="col-12" name="recuperation">
+                                    <option 
+                                        key={0}
+                                        value={1}
+                                    >Recuperation</option>
+                        
+                        {
+                            recuperationParam.length>0 &&
+                            recuperationParam.map((recuperationParam, index) => (
+                                <option 
+                                    key={index}
+                                    value={recuperationParam.id}
+                                >{recuperationParam.type_recuperation}</option> 
+                            ))
+                        }
+                    </select>            
+                    <textarea className="col-12" name="support" id="inputParametrage" placeholder="Support"></textarea>
+                
+                </td>
+                
+                {
+                page !== "1" ? (
+                <td className="col-1">
+                    <button  className="btn btn-success btn-sm rounded-2 shadow mb-1 ms-1" type="submit" onClick={() => handleAddObjectif(null, false)} >Ajouter</button>
+                    <button  className="btn btn-warning btn-sm rounded-2 shadow" onClick={resetInputs}>Initialiser</button>
+                </td>
+                ):(
+                <td className="col-1">
+                    <button  className="btn btn-success btn-sm rounded-2 shadow mb-1 ms-1" type="submit" onClick={() => handleAddObjectif(null, true)} >Ajouter</button>
+                    <button  className="btn btn-warning btn-sm rounded-2 shadow" onClick={resetInputs}>Initialiser</button>
+                </td>)}
+            </tr>
+            </form>
+            ) : (<></>)}
+            
+            <Table className="row">
+                <thead className="mt-2 mb-2">
+                <tr className="row" key ="">
                     {
                         colonneTable.map((colonne,index) => (
                            
@@ -707,77 +839,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                     </tr>
                 </thead>
                 
-                <tbody>
-                
-{/* ajout */}   
-                <tr className="row mb-3">
-                            <td className="col-2">
-                                <select className="col-12" name="processus" >
-                                    {
-                                        processus.length>0 &&
-                                        processus.map((processus, index) => (
-                                            <option 
-                                                key={index}
-                                                value={processus.id}
-                                                selected={processus.id === 1}
-                                            >{processus.libelle_processus}</option> 
-                                        ))
-                                    }
-                                </select>
-                            </td>
-                            <td className="col-4"><textarea className="col-12" name="objectif" id="inputParametrage"></textarea></td>
-                            <td className="col-1"><input className="col-12" type="text" name="poids" id="inputParametrage"></input></td>
-                            <td className="col-1"><input className="col-12" type="text" name="cible" id="inputParametrage"></input></td>
-                            <td className="col-1">
-                                    
-                                    <select className="col-12 mb-1"  name="unite">
-                                        {
-                                            uniteParam.length>0 &&
-                                            uniteParam.map((uniteParam, index) => (
-                                                <option 
-                                                    key={index}
-                                                    value={uniteParam.id}
-                                                >{uniteParam.abbrv}</option> 
-                                            ))
-                                        }
-                                        
-                                    </select>
-                                    
-                                    
-                            </td>
-                            
-                            <td className="col-2">
-                                <select className="col-12" name="recuperation">
-                                    {
-                                        recuperationParam.length>0 &&
-                                        recuperationParam.map((recuperationParam, index) => (
-                                            <option 
-                                                key={index}
-                                                value={recuperationParam.id}
-                                                selected={recuperationParam.id === 1}
-                                            >{recuperationParam.type_recuperation}</option> 
-                                        ))
-                                    }
-                                </select>            
-                                <td className="col-4"><textarea className="col-12" name="support" id="inputParametrage" placeholder="Support"></textarea></td>
-                            
-                            </td>
-                            
-                            {
-                            page !== "1" ? (
-                            <td className="col-1">
-                                <button className="btn btn-success btn-sm rounded-2 shadow mb-1 ms-1" onClick={() => handleUpdateListe(null, false)} >Ajouter</button>
-                                <button className="btn btn-warning btn-sm rounded-2 shadow" onClick={resetInputs}>Initialiser</button>
-                            </td>
-                            ):(
-                            <td className="col-1">
-                                <button className="btn btn-success btn-sm rounded-2 shadow mb-1 ms-1" onClick={() => handleUpdateListe(null, true)} >Ajouter</button>
-                                <button className="btn btn-warning btn-sm rounded-2 shadow" onClick={resetInputs}>Initialiser</button>
-                            </td>)}
-                        </tr>
-
-                
-                <div style={{ overflowY: 'auto', height: '455px' }}>
+                <tbody style={{ overflowY: 'auto', height: '455px' }}>
 {/*liste*/}
                     {
                         liste.length>0 &&
@@ -862,7 +924,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                                 {processus.libelle_processus}
                                             </option> 
                                             ) : (
-                                                <div></div>
+                                                <></>
                                             )
                                         ))
                                     }
@@ -889,7 +951,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                             >
                                                 {uniteParam.abbrv}
                                             </option> 
-                                            ) : (<div></div>)
+                                            ) : (<></>)
                                         ))
                                     }
                                 </select>
@@ -908,7 +970,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                             >
                                                 {recuperationParam.type_recuperation} 
                                             </option>
-                                            ) : (<div></div>) 
+                                            ) : (<></>) 
                                         ))
                                     }
                                 </select>
@@ -925,21 +987,19 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                     <div className="row">
                                     { 
                                     modeEdit !== item.id ?
-                                        <button className="col-7 mr-2 btn btn-warning btn-sm rounded-3 shadow mb-1" onClick={() => handleModeEdit(item.id)} ><i class="bi bi-pencil-square"></i></button>
+                                        <button className="col-7 mr-2 btn btn-warning btn-sm rounded-3 shadow mb-1" onClick={() => handleModeEdit(item.id)} ><i className="bi bi-pencil-square"></i></button>
                                     :
-                                        <button className="col-7 mr-2 btn btn-success btn-sm rounded-3 shadow mb-1" onClick={() => handleUpdateListe(item.id)} ><i class="bi bi-save"></i></button>
+                                        <button className="col-7 mr-2 btn btn-success btn-sm rounded-3 shadow mb-1" onClick={() => handleUpdateListe(item.id)} ><i className="bi bi-save"></i></button>
                                     }
-                                    <button className="col-7 btn btn-danger btn-sm rounded-3 shadow mb-1" onClick={() => handleDeleteObjectif(item)} ><i class="bi bi-trash-fill"></i></button>
+                                    <button className="col-7 btn btn-danger btn-sm rounded-3 shadow mb-1" onClick={() => handleDeleteObjectif(item)} ><i className="bi bi-trash-fill"></i></button>
                                     </div>
                                 :
-                                    <button className="btn btn-danger btn-sm rounded-3 shadow mb-1" onClick={() => handleDeleteParam(item)} ><i class="bi bi-trash-fill"></i></button>
+                                    <button className="btn btn-danger btn-sm rounded-3 shadow mb-1" onClick={() => handleDeleteParam(item)} ><i className="bi bi-trash-fill"></i></button>
                                 }
                             </td>
                         </tr>
                         ))
                     }
-                    
-                </div>
                     
                 </tbody>
             </Table>

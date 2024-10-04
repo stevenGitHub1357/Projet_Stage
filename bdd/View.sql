@@ -33,5 +33,6 @@ select
 	count(*) as nb_objectif,sum(poids) as poids  
 	from objectif.parametrage p
 join processus as proc on proc.id = p.id_processus 
+Where p.activate != 0
 	group by id_processus , libelle_processus
 	ORDER BY poids DESC;

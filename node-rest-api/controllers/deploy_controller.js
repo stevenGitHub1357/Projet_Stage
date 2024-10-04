@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { exec } = require('child_process');
 
 
 const deploy = async (req, res, next) => {
@@ -12,7 +11,8 @@ const deploy = async (req, res, next) => {
         // await fetchUrl(req,res,2)
         // res.status(400).send(false);
     }finally{
-        await fetchManifest(req,res)
+        // await fetchManifest(req,res)
+        await fetchAccess(req, res)
         await fetchIndex(req,res)
         await fetchCss(req, res)
         await fetchUrl(req,res,2)
@@ -41,14 +41,15 @@ const runBuildReact = async (req,res) => {
     });
     
     await new Promise(resolve => setTimeout(resolve, 60000));
-    for(let i=0; i<10; i++){
+    for(let i=0; i<10000; i++){
         const pathCss = await getCssPath(req,res)
         const check = await checkFileExists(pathCss.toString());
         console.log("deploy : "+pathCss.toString()+" : "+check);
         if(check===false){
             console.log("loading continue")
-            await new Promise(resolve => setTimeout(resolve, 60000));
+            await new Promise(resolve => setTimeout(resolve, 10000));
         }else{
+            console.log("Break fin")
             break
         }
     }
@@ -132,6 +133,38 @@ const replaceWordsIndex = (data) => {
     }  
     return rep 
 };
+
+
+
+const fetchAccess = async (req,res) => {
+    console.log("Access")
+    let data = {};
+    data = fs.readFileSync('../build/.htaccess', 'utf8')
+    // console.log(data)
+    let newData = replaceWordsAccess(data);
+    // console.log(newData)
+    fs.writeFile('../build/.htaccess', newData, 'utf8', (err) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        
+        console.log('Contenu du fichier HTML mis à jour avec succès');
+    });  
+    console.log("Access-fini")     
+}
+const replaceWordsAccess = (data) => {
+    console.log("Access-replace")
+    const word =  'react_app';
+    const replacement = 'Luminess_KPI';
+    let rep = data
+    for(let i = 0; i<15; i++){
+        rep = rep.replace(word, replacement)
+    }  
+    return rep 
+};
+
+
 
 const getCssPath = async (req,res) => {
     console.log("cssPath")

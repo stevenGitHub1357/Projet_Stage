@@ -143,7 +143,7 @@ const getAllParametrageObjectif = (req,res,next) =>{
 
 async function getParametrageObjectifUser(req,res,next){
   const processus = req.body.processus;
-  // console.log(processus)
+  console.log(processus)
   let ids_processus = processus.map(obj => obj.id)
   // const verif = ids_processus.includes(0);
   // if(verif){

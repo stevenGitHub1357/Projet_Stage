@@ -52,7 +52,7 @@ const Login =()=>{
         if(matricule.current !== null){
             axios.post(Url+"/get-info-log",{matricule:matricule.current.value}).then(res=>{
                 var resRole = res.data[0].id_role
-                setCookie('role_react',""+resRole )
+                setCookie('id_user',""+res.data[0].id_user)
                 var resNom = res.data[0].nom +" "+res.data[0].prenom
                 setCookie('nom_complet_react',resNom)   
             })
