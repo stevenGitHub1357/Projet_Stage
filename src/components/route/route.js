@@ -7,6 +7,7 @@ import User from "../Utilisateur/index_user";
 import Module from "../module/module";
 import Route_Serv from "./routeServer"
 import GestionObjectif from "../Objectif/GestionObjectif";
+import RevueDirection from "../RevueDirection/RevueDirection";
 
 const Route_menu =({MenuCollapse,theme,logo})=>{
     let Route_Server = Route_Serv;
@@ -20,7 +21,8 @@ const Route_menu =({MenuCollapse,theme,logo})=>{
             <Route path={Route_Server + "module"} element = {<Module MenuCollapse={MenuCollapse} theme={theme} logo={logo}/>}></Route>
             <Route path={Route_Server + "gestionObjectifs"} element = {<GestionObjectif MenuCollapse={MenuCollapse} theme={theme} logo={logo} page={"1"}/>}></Route>
             <Route path={Route_Server + "multiParametrageObjectifs"} element = {<GestionObjectif MenuCollapse={MenuCollapse} theme={theme} logo={logo} page={"2"}/>}></Route>
-
+            <Route path={Route_Server + "revueDirection"} element = {<RevueDirection MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
+            
         </Routes>
     )
 }

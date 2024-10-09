@@ -38,6 +38,7 @@ const Menu =()=>{
     const listRoleSlice = useSelector((state) => state.role.role)
     const listRoleUserSlice = useSelector((state) => state.role.roleUser)
     const listProcessusSlice = useSelector((state) => state.processus.processus)
+    const listProcessusUserSlice = useSelector((state) => state.processus.processusUser)
     const urlReact = Route_Serv;
     let matricule = cookies.matricule_react;
 
@@ -164,6 +165,7 @@ const Menu =()=>{
                     <hr className="text-success"></hr>
                     
                     <ul className="nav d-block mt-3 scroller" >
+                    
                         {
                         listMenuSlice.length > 0 &&
                         listMenuSlice.length > 0 &&
@@ -240,7 +242,6 @@ const Menu =()=>{
                                 </div>
                             </li>
                         ))}
-                     
                             
                 
                     </ul>

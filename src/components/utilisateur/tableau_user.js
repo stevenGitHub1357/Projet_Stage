@@ -87,7 +87,7 @@ function Tableau_User({theme}){
             <div className="table-wrapper-scroll-y mt-2">
                 <table className="table table-bordered text-center " style={border} id="table_user">
                     <thead className="text-success ">
-                        <tr  >
+                        <tr>
                             <th className="text-center">Matricule</th>
                             <th className="text-center">Nom</th>
                             <th className="text-center">Prénom</th>

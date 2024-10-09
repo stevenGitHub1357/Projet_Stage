@@ -42,7 +42,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
     const [modeUpdate, setModeUpdate] = useState(false);
     const [afterFilter, setAfterFilter] = useState(false);
     const [modeEdit, setModeEdit] = useState();
-    const [modaleFiltre, setModaleFiltre] = useState(true);
+    const [modaleFiltre, setModaleFiltre] = useState(false);
     const [modaleAjout, setModaleAjout] = useState(false);
 
     const processus =  useSelector((state) => state.processus.processusUser)
@@ -87,11 +87,11 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
             processusUser = await axios.post(Url+"/getProcessusByUser",{id_user:cookies.id_user})
             processusUser = processusUser.data
         }
-        console.log(processusUser)
+        // console.log(processusUser)
 
-        console.log(processus)
+        // console.log(processus)
         const objUser = await axios.post(Url+"/getParametrageObjectifUser",{processus : processusUser})
-            console.log(objUser.data)
+            // console.log(objUser.data)
             dispatch(setObjectifData(objUser.data))
             setDispatch(true)
             dispatch(setExportData(traitementExportData(objUser.data)))
@@ -288,13 +288,13 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
         );
     };
 
-    const saveAll = () =>{
+    const saveAll = async () =>{
         console.log("saveAll")
         console.log(handleUpdateListe(null))
         setModeUpdate(false)
         const objectifs = handleUpdateListe(null)
         console.log(objectifs)
-        axios.post(Url+"/insertManyParametrageObjectif",{objectifs})
+        await axios.post(Url+"/insertManyParametrageObjectif",{objectifs})
         resetTableau();
         initialiseObjectif();
     }
@@ -376,34 +376,40 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
         console.log("filter")
         let filter = {};
         filter.id_processus = Number(e.currentTarget.elements.processus.value)
-        filter.id_unite = Number(e.currentTarget.elements.unite.value)
         filter.objectifs = e.currentTarget.elements.objectifs.value
-        filter.poidsMax = Number(e.currentTarget.elements.poidsMax.value.replace(',','.'))
-        filter.poidsMin = Number(e.currentTarget.elements.poidsMin.value.replace(',','.'))
-        filter.cibleMax = e.currentTarget.elements.cibleMax.value.replace(',','.')
-        filter.cibleMin = e.currentTarget.elements.cibleMin.value.replace(',','.')
-        filter.recuperation = Number(e.currentTarget.elements.recuperation.value)
-        filter.support = e.currentTarget.elements.support.value
+
+        if(modaleFiltre){
+            filter.id_unite = Number(e.currentTarget.elements.unite.value)
+            filter.poidsMax = Number(e.currentTarget.elements.poidsMax.value.replace(',','.'))
+            filter.poidsMin = Number(e.currentTarget.elements.poidsMin.value.replace(',','.'))
+            filter.cibleMax = e.currentTarget.elements.cibleMax.value.replace(',','.')
+            filter.cibleMin = e.currentTarget.elements.cibleMin.value.replace(',','.')
+            filter.recuperation = Number(e.currentTarget.elements.recuperation.value)
+            filter.support = e.currentTarget.elements.support.value
+        }
         // console.log(Ni)
         console.log(filter)
         let listFiltre = objectif;
         console.log(objectif)
+        
         if(filter.id_processus !== 0) listFiltre = listFiltre.filter(item => item.id_processus === filter.id_processus)
             console.log(listFiltre)
         if(filter.objectifs !== "") listFiltre = listFiltre.filter(item => item.objectifs.toLowerCase().includes(filter.objectifs.toLowerCase()))
             console.log(listFiltre)
-        if(filter.poidsMax !== 0) listFiltre = listFiltre.filter(item => item.poids.toString() >= filter.poidsMin.toString() && item.poids.toString() <= filter.poidsMax.toString())
-            console.log(listFiltre)
-        if(filter.cibleMax !== "" && filter.cibleMin !== "") listFiltre = listFiltre.filter(item => Number(item.cible) >= Number(filter.cibleMin) && Number(item.cible) <= Number(filter.cibleMax))
-            console.log(listFiltre)
-        if(filter.cibleMin === "" && filter.cibleMax !== "") listFiltre = listFiltre.filter(item => item.cible.toLowerCase().includes(filter.cibleMax.toLowerCase()))
-            console.log(listFiltre)
-        if(filter.id_unite !== 0) listFiltre = listFiltre.filter(item => item.id_unite === filter.id_unite)
-            console.log(listFiltre)
-        if(filter.recuperation !== 0)  listFiltre = listFiltre.filter(item => item.recuperation === filter.recuperation)
-            console.log(listFiltre)
-        if(filter.support !== "") listFiltre = listFiltre.filter(item => item.support.toLowerCase().includes(filter.support.toLowerCase()))
 
+        if(modaleFiltre){
+            if(filter.poidsMax !== 0) listFiltre = listFiltre.filter(item => item.poids.toString() >= filter.poidsMin.toString() && item.poids.toString() <= filter.poidsMax.toString())
+                console.log(listFiltre)
+            if(filter.cibleMax !== "" && filter.cibleMin !== "") listFiltre = listFiltre.filter(item => Number(item.cible) >= Number(filter.cibleMin) && Number(item.cible) <= Number(filter.cibleMax))
+                console.log(listFiltre)
+            if(filter.cibleMin === "" && filter.cibleMax !== "") listFiltre = listFiltre.filter(item => item.cible.toLowerCase().includes(filter.cibleMax.toLowerCase()))
+                console.log(listFiltre)
+            if(filter.id_unite !== 0) listFiltre = listFiltre.filter(item => item.id_unite === filter.id_unite)
+                console.log(listFiltre)
+            if(filter.recuperation !== 0)  listFiltre = listFiltre.filter(item => item.recuperation === filter.recuperation)
+                console.log(listFiltre)
+            if(filter.support !== "") listFiltre = listFiltre.filter(item => item.support.toLowerCase().includes(filter.support.toLowerCase()))
+        }
         console.log(listFiltre)
         // dispatch(setObjectifData(listFiltre));
         dispatch(setExportData(traitementExportData(listFiltre)))
@@ -422,12 +428,12 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
         setAfterFilter(false);
     }
 
-    // function handleActualise(){
-    //     console.log("actualisation")
-    //     initialiseObjectif()
-    //     resetInputs();
-    //     setAfterFilter(false);
-    // }
+    function handleActualise(){
+        console.log("actualisation")
+        initialiseObjectif()
+        resetInputs();
+        setAfterFilter(false);
+    }
 
     function handleImport(){
         console.log("importData")
@@ -485,6 +491,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
         console.log(allData)
         setModeUpdate(false)
         dispatch(setParametrageObjectifData(allData.filter(data => data.objectifs !== "")))
+        // initialiseObjectif()
     }
 
 
@@ -513,8 +520,8 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                 }
                 newData.objectifs = data.objectifs;
                 newData.poids = data.poids;
-                // console.log(uniteParam[0].id)
                 if(uniteParam[0].id !== null){
+                    console.log(uniteParam[0].id)
                     const unite = uniteParam.filter(item => item.id === data.id_unite)[0].abbrv
                     newData.cible = data.cible+""+unite
                 }
@@ -566,7 +573,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
         if(page==="1"){
             console.log("save")
             saveObjectifController(ajout)
-            resetInputs();
+            // resetInputs();
         }
         if(page==="2"){
             console.log("page2 save")
@@ -588,10 +595,16 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                 { page === "1" ? 
                 <>
 {/* filtre */}
-                {modaleFiltre === true ? (
+                
                 <form onSubmit={handleFiltre}>
                 <div className="row mb-3" >
+                                {!modaleFiltre ? (
+                                    <div className="col-lg-3"></div>
+                                ):(
+                                    <></>
+                                )}
                             <div className="col-2">
+                                
                                 {/* <div className="row"> */}
                                 {/* <input onClick={handleUpdate} className="col-2" type="checkbox" name="validateProcessus"></input> */}
                                 <select className="col-12"  name="processus">
@@ -611,61 +624,66 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                 {/* </div> */}
                             </div> 
                             <div className="col-3"><input onClick={handleUpdate} className="col-11" type="texte" size="40" name="objectifs" placeholder="objectif" id="inputParametrage"></input></div>
-                            <div className="col-1">
-                                <input onClick={handleUpdate} className="col-12" type="text" name="poidsMin" placeholder="Poids min" id="inputParametrage"></input>
-                                <input onClick={handleUpdate} className="col-12" type="text" name="poidsMax" placeholder="Poids max" id="inputParametrage"></input>
-                            </div>
-                            <div className="col-1">
-                                <input onClick={handleUpdate} className="col-12" type="text" name="cibleMin" placeholder="Cible min" id="inputParametrage"></input>
-                                <input onClick={handleUpdate} className="col-12" type="text" name="cibleMax" placeholder="Cible max" id="inputParametrage"></input>
-                            </div>
-                            <div className="col-2">
-                                {/* <div className="row"> */}
-                                {/* <input onClick={handleUpdate} className="col-2" type="checkbox" name="validateUnite" id="inputParametrage"></input> */}
-                                <select className="col-12"  name="unite">
-                                    <option key={0} value="0">Uniter</option>
-                                    {
-                                        uniteParam.length>0 &&
-                                        uniteParam.map((uniteParam, index) => (
-                                            <option 
-                                                key={index}
-                                                value={uniteParam.id}
-                                            >
-                                                {uniteParam.abbrv}
-                                            </option> 
-                                        ))
-                                    }
-                                </select>
-                                {/* </div> */}
-                            </div>
                             
-                            <div className="col-2">
-                                {/* <div className="row"> */}
-                                {/* <input onClick={handleUpdate} className="col-2" type="checkbox" name="validateRecuperation"></input> */}
+                            {modaleFiltre === true ? (
+                                <>
+                                <div className="col-1">
+                                    <input onClick={handleUpdate} className="col-12" type="text" name="poidsMin" placeholder="Poids min" id="inputParametrage"></input>
+                                    <input onClick={handleUpdate} className="col-12" type="text" name="poidsMax" placeholder="Poids max" id="inputParametrage"></input>
+                                </div>
+                                <div className="col-1">
+                                    <input onClick={handleUpdate} className="col-12" type="text" name="cibleMin" placeholder="Cible min" id="inputParametrage"></input>
+                                    <input onClick={handleUpdate} className="col-12" type="text" name="cibleMax" placeholder="Cible max" id="inputParametrage"></input>
+                                </div>
+                                <div className="col-2">
+                                    {/* <div className="row"> */}
+                                    {/* <input onClick={handleUpdate} className="col-2" type="checkbox" name="validateUnite" id="inputParametrage"></input> */}
+                                    <select className="col-12"  name="unite">
+                                        <option key={0} value={0}>Uniter</option>
+                                        {
+                                            uniteParam.length>0 &&
+                                            uniteParam.map((uniteParam, index) => (
+                                                <option 
+                                                    key={index}
+                                                    value={uniteParam.id}
+                                                >
+                                                    {uniteParam.abbrv}
+                                                </option> 
+                                            ))
+                                        }
+                                    </select>
+                                    {/* </div> */}
+                                </div>
                                 
-                                <select className="col-12" name="recuperation">
-                                    <option key={0} value="0">Recuperation</option>
-                                    {
-                                        recuperationParam.length>0 &&
-                                        recuperationParam.map((recuperationParam, index) => (
-                                            <option 
-                                                key={index}
-                                                value={recuperationParam.id}
-                                            >
-                                                {recuperationParam.type_recuperation} 
-                                            </option> 
-                                        ))
-                                    }
-                                </select>
-                                <input onClick={handleUpdate} className="col-12" type="text" name="support" placeholder="Support" id="inputParametrage"></input>
-                                {/* </div> */}
-                            </div>
-                            <div className="col-1">
-                                    <button className="btn btn-success rounded-1 shadow" type="submit" >Filtrer</button>
-                            </div>
+                                <div className="col-2">
+                                    {/* <div className="row"> */}
+                                    {/* <input onClick={handleUpdate} className="col-2" type="checkbox" name="validateRecuperation"></input> */}
+                                    
+                                    <select className="col-12" name="recuperation">
+                                        <option key={0} value={0}>Recuperation</option>
+                                        {
+                                            recuperationParam.length>0 &&
+                                            recuperationParam.map((recuperationParam, index) => (
+                                                <option 
+                                                    key={index}
+                                                    value={recuperationParam.id}
+                                                >
+                                                    {recuperationParam.type_recuperation} 
+                                                </option> 
+                                            ))
+                                        }
+                                    </select>
+                                    <input onClick={handleUpdate} className="col-12" type="text" name="support" placeholder="Support" id="inputParametrage"></input>
+                                    {/* </div> */}
+                                </div>
+                                
+                            </>) : (<></>)}
+                                <div className="col-1">
+                                        <button className="btn btn-success rounded-1 shadow" type="submit" >Filtrer</button>
+                                </div>
                 </div>
                 </form>
-                ) : (<></>)}
+                
                 
                     
                         
@@ -685,11 +703,11 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                             <button className="btn btn-warning rounded-1 shadow" onClick={() => handleInitialiserFiltre()} ><i className="bi bi-eye"></i></button>
                         </OverlayTrigger>
                     </div>
-                    {/* <div className="col-1">
+                    <div className="col-1">
                         <OverlayTrigger placement="top" overlay={<Tooltip>Actualisation</Tooltip>}>
                             <button className="btn btn-primary rounded-1 shadow" onClick={() => handleActualise()} ><i className="bi bi-arrow-repeat"></i></button>
                         </OverlayTrigger>
-                    </div> */}
+                    </div>
                     <div className="col-1">
                             <Synthese />
                     </div>
@@ -800,11 +818,11 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
             
             <Table className="row">
                 <thead className="mt-2 mb-2">
-                <tr className="row" key ="">
+                <tr className="row" key ={-1}>
                     {
                         colonneTable.map((colonne,index) => (
                            
-                                <th className={colonne.nom === "Processus" ? "col-2" : colonne.nom === "Objectif" ? "col-4" : colonne.nom === "Recuperation" ? "col-2" :"col-1"} > 
+                                <th className={colonne.nom === "Processus" ? "col-2" : colonne.nom === "Objectif" ? "col-4" : colonne.nom === "Recuperation" ? "col-2" :"col-1"} key={index}> 
                                     <div className="row">
                                         <div className="col-1">
                                             {triage[colonne.tableColonne]===1 
@@ -824,7 +842,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                         <div className="col-1"><Unite/></div>
                                         </>
                                         :
-                                        colonne.nom === "Processus" ?
+                                        colonne.nom === "Processus" & processusUser.map(process=>process.id).includes(0) ?
                                         <>
                                         <div className="col-7">{colonne.nom}</div> 
                                         <div className="col-1"><Processus/></div>
@@ -839,7 +857,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                     </tr>
                 </thead>
                 
-                <tbody style={{ overflowY: 'auto', height: '455px' }}>
+                <tbody style={{ overflowY: 'auto', height: '500px' }}>
 {/*liste*/}
                     {
                         liste.length>0 &&

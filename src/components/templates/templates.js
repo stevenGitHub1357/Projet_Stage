@@ -48,27 +48,29 @@ export const TitlePage = ({title,theme,process}) => {
             {/* <img src={logo} alt="" width="40" className=""></img> */}
             
         </div>
-        <div className="CountBoard mt-2">
-        <div className="row text-white">
-            {
+        {
             process === true &&
-            listProcessusSlice.filter(process=>process.id>0).map((process,index) =>(
-                <div className="col-md-3 lg-4  mb-4 " style={{border: "none"} } 
-                        onClick={() => changeProcessus(process.id)} 
-                        key={index}>
+            <div className="CountBoard mb-4" style={{ overflowY: 'auto', height: '100px'}}>
+            <div className="row text-white mt-5">
+                {
+                listProcessusSlice.filter(process=>process.id>0).map((process,index) =>(
+                    <div className="col-md-3 lg-4  mb-4 " style={{border: "none"} } 
+                            onClick={() => changeProcessus(process.id)} 
+                            key={index}>
+                                
+                        <div  className={classCard} style={{height : "8vh"}}>
                             
-                    <div  className={classCard} style={{height : "8vh"}}>
-                        
-                        <div className={"row"+ !theme ? "bg-dark bg-gradient rounded-4 absolute shadow  text-center " : "bg-info bg-gradient rounded-4 absolute shadow  text-center"} style={cardIcon}>
-                            <div className="color-white col-2" style={!theme ? {color: "white"}  : {color: "black"}} >{process.abbrv}</div>
-                            {/* <div className="col-8">{process.libelle_processus}</div> */}
-                        </div>
-                        
-                    </div>   
-                </div>
-            ))}
-        </div>
-        </div>
+                            <div className={"row"+ !theme ? "bg-dark bg-gradient rounded-4 absolute shadow  text-center " : "bg-info bg-gradient rounded-4 absolute shadow  text-center"} style={cardIcon}>
+                                <div className="color-white col-2" style={!theme ? {color: "white"}  : {color: "black"}} >{process.abbrv}</div>
+                                {/* <div className="col-8">{process.libelle_processus}</div> */}
+                            </div>
+                            
+                        </div>   
+                    </div>
+                ))}
+            </div>
+            </div>
+        }
         </div>
     )
 }
