@@ -4,13 +4,21 @@ CREATE SCHEMA IF NOT EXISTS objectif;
 CREATE SCHEMA IF NOT EXISTS data_kpi;
 
 
+DROP VIEW IF EXISTS data_kpi.fnc_fac_synthese;
+DROP VIEW IF EXISTS data_kpi.fnc_fac_commentaire_final;
+DROP VIEW IF EXISTS data_kpi.fac_efficace;
+DROP VIEW IF EXISTS data_kpi.fnc_fac_realise_cloture;
+DROP VIEW IF EXISTS data_kpi.fnc_fac_declare;
+
+
+DROP VIEW IF EXISTS objectif.parametrage_objectif_synthese;
 DROP VIEW IF EXISTS detail_user_processus;
 DROP VIEW IF EXISTS detail_user_role;
 DROP VIEW IF EXISTS menu_role_processus;
-DROP VIEW IF EXISTS parametrage_objectif_synthese;
 
-
-DROP TABLE IF EXISTS data_kpi.fnc;
+DROP TABLE IF EXISTS objectif.revue_direction;
+DROP TABLE IF EXISTS data_kpi.fnc_fac_commentaire;
+DROP TABLE IF EXISTS data_kpi.fnc_fac;
 DROP TABLE IF EXISTS objectif.parametrage;
 DROP TABLE IF EXISTS objectif.unite;
 DROP TABLE IF EXISTS objectif.recuperation;
@@ -120,18 +128,45 @@ CREATE TABLE IF NOT EXISTS objectif.parametrage(
   updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
-
-
----fnc---
-
-CREATE TABLE IF NOT EXISTS data_kpi.fnc(
+--objectif_revue_direction
+CREATE TABLE IF NOT EXISTS objectif.revue_direction(
   id SERIAL PRIMARY KEY,
+  id_parametrage INTEGER REFERENCES objectif.parametrage(id),
+  revue_direction VARCHAR(500),
+  libelle VARCHAR(500)
+);
+
+---data_kpi
+
+  ---fnc_fac---
+
+CREATE TABLE IF NOT EXISTS data_kpi.fnc_fac(
+  id SERIAL PRIMARY KEY,
+  type_demande VARCHAR(100) DEFAULT 'FAC',
   titre VARCHAR(1000),
   objectif VARCHAR(1000),
   realise DOUBLE precision,
   date_demande DATE,
   date_cloture DATE,
-  statut VARCHAR(1000)
+  statut VARCHAR(1000),
+  id_statut INTEGER default 0,
+  createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS data_kpi.fnc_fac_commentaire(
+  id SERIAL PRIMARY KEY,
+  annee INTEGER,
+  type_demande VARCHAR(100),
+  commentaire VARCHAR(300),
+  createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+
+
+
+
 

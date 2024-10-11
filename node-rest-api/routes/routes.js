@@ -80,6 +80,24 @@ router.post("/insertParamObjRecuperation", parametrageObjectif.insertRecuperatio
 
 router.get("/getParamObjSynthese",parametrageObjectif.getSynthese)
 
+router.get("/getRevueDirection",parametrageObjectif.getAllRevueDirection)
+
+
+//-Data KPI-//
+
+//--MET/MQ--//
+
+//---FNC---//
+const fnc_fac = require("../controllers/Data_KPI/fnc_fac_controller.js")
+router.get("/getFNCConsultation", fnc_fac.getConsultation_FNC)
+router.get("/getFACConsultation", fnc_fac.getConsultation_FAC)
+
+router.get("/getFNCSynthese", fnc_fac.getSynthese_FNC)
+router.get("/getFACSynthese", fnc_fac.getSynthese_FAC)
+
+router.post("/insertFNCFACCommentaire", fnc_fac.insertCommentaire_FAC_FNC)
+
+
 
 module.exports = router
 

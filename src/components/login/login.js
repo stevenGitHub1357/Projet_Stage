@@ -9,6 +9,11 @@ import Global_url from "../../global_url"
 import { useDispatch } from "react-redux/es/hooks/useDispatch"
 import { setUsersData } from "../feature/users.slice"
 import Route_Serv from "../route/routeServer"
+import { setProcessusUserData, setProcessusData } from "../feature/processus.slice"
+import { setRolesData, setRolesUserData } from "../feature/roles.slice"
+import { setMenusData } from "../feature/menus.slice"
+// import { GetAllDataByMatricule } from "../../requete/Users"
+
 var Url = Global_url
 
 const Login =()=>{
@@ -22,7 +27,7 @@ const Login =()=>{
     const [countAcces, setCountAcces] = useState(0)
     
 
-    const handleSubmit = (e)=>{
+    const handleSubmit = async (e)=>{
         console.log("login");
         e.preventDefault()
         let user = {
@@ -54,10 +59,13 @@ const Login =()=>{
                 var resRole = res.data[0].id_role
                 setCookie('id_user',""+res.data[0].id_user)
                 var resNom = res.data[0].nom +" "+res.data[0].prenom
-                setCookie('nom_complet_react',resNom)   
+                setCookie('nom_complet_react',resNom) 
+                
+                
             })
             
-           
+            
+            
             setCookie('islogged_react',true)
             var resMatricule = matricule.current.value
             setCookie('matricule_react',resMatricule)

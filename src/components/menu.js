@@ -24,7 +24,10 @@ import Route_Serv from './route/routeServer'
 import Deploy from "../Deploy"
 
 import Global_url from "../global_url"
+// import { GetAllDataByMatricule } from "../requete/Users"
+
 var Url = Global_url
+
 const Menu =()=>{
     
 
@@ -74,7 +77,7 @@ const Menu =()=>{
     }
 
     useEffect(()=>{
-        getAllData();
+        getAllData()
         // redirectToBase();
     },[])
     
@@ -111,13 +114,17 @@ const Menu =()=>{
             }
         })
 
-        setCookie("id_processus",processusUser.data[processusUser.data.length-1].id)
+        if(cookies.id_processus === undefined){
+            setCookie("id_processus",processusUser.data[processusUser.data.length-1].id)
+        }     
+    
+
         axios.post(Url+"/getMenuByUser",{role: role.data, processus: processusUser.data}).then(res=>{
             dispatch(setMenusData(res.data)) 
             // console.log(res.data) 
         })
         
-        // console.log(role.data)
+        // console.log(cookies.id_processus)
     }
     
     function handleLogout(){

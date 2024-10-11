@@ -1,6 +1,6 @@
 const pool = require("../config/default.config");
 const {Op} = require("sequelize");
-const {ParametrageObjectif, Unite, Synthese, Recuperation}= require("../models/Objectif");
+const {ParametrageObjectif, Unite, Synthese, Recuperation, RevueDirection}= require("../models/Objectif");
 const { Processus } = require("../models/Processus");
 const { getProcessus } = require("./processus_controller");
 
@@ -303,7 +303,26 @@ const updateParametrageObjectif = (req,res,next) =>{
 }
 
 
+const getAllRevueDirection = (req,res,next) =>{
+  RevueDirection.findAll({
+    include: [
+      ParametrageObjectif
+    ]
+  })
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
 
 
-module.exports = {getUnite, insertUnite, getRecuperation, insertRecuperation, getSynthese, getAllParametrageObjectif, getParametrageObjectifUser,
+
+module.exports = {getUnite, insertUnite, getRecuperation, insertRecuperation, getSynthese, getAllParametrageObjectif, getParametrageObjectifUser, getAllRevueDirection,
                   getParametrageObjectif,insertParametrageObjectif,deleteParametrageObjectif,updateParametrageObjectif,insertManyParametrageObjectif, desactiveParametrageObjectif};

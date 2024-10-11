@@ -19,7 +19,8 @@ INSERT INTO public.users (matricule,nom,prenom,mot_de_passe,default_mdp) VALUES
 	('Di0001','Direction','user','0000','lum123'),
 	('R0001','Responsable','user','0000','lum123'),
 	('MQ0001','MQ','user','0000','lum123'),
-	('M0001','Manager','user','0000','lum123');
+	('M0001','Manager','user','0000','lum123'),
+	('00923','RAKOTONIAINA','Miandrisoa Haingonirina','rMh00923','lum123');
 
 
 -- menus
@@ -37,7 +38,8 @@ INSERT INTO public.menus (id_menu,labelle_menu,icon,route,position,"rang",base) 
 	(1400,'Graphique','bi bi-calendar2-range','graphe',2,2,0),
 	(1500,'Parametrage objectifs','bi bi-calendar2-range','gestionObjectifs',1,1,0),
 		(1510,'Liste objectif','bi bi-calendar2-range','gestionObjectifs',1,2,1500),
-		(1520,'Import et insertion','bi bi-calendar2-range','multiParametrageObjectifs',1,2,1500);
+		(1520,'Import et insertion','bi bi-calendar2-range','multiParametrageObjectifs',1,2,1500),
+	(1600,'Revue de direction','bi bi-easel','revueDirection',1,3,0);
 
 
 -- role
@@ -57,7 +59,7 @@ INSERT INTO public.processus (id,libelle_processus,num_processus,abbrv, excel) V
 	(0,'All','0','ALL','ALL');
 INSERT INTO public.processus (libelle_processus,num_processus,abbrv, excel) VALUES
 	('Production','1','PRO', 'PRODUCTION'),
-	('Méthode et qualité','2','MET', 'METHODES ET QUALITE'),
+	('Méthode et qualité','2','MQ', 'METHODES ET QUALITE'),
 	('Développement','3','DEV', 'DEVELOPPEMENT'),
 	('Infra-tech','4','INF', 'INFRA-TECH'),
 	('Service généraux','5','SER', 'SERVICES GENERAUX'),
@@ -75,7 +77,8 @@ INSERT INTO public.user_role (id_user, id_role) VALUES
 	(3, 3),
 	(4, 4),
 	(5, 5),
-	(6, 6);
+	(6, 6),
+	(7, 2);
 
 -- user_process
 INSERT INTO public.user_processus (id_user, id_processus) VALUES
@@ -84,7 +87,8 @@ INSERT INTO public.user_processus (id_user, id_processus) VALUES
 	(3, 0),
 	(4, 4), (4, 5), (4, 6),
 	(5, 5),
-	(6, 6);
+	(6, 6),
+	(7,0);
 
 
 -- menu_role
@@ -102,7 +106,8 @@ INSERT INTO public.menu_role (id_menu, id_role) VALUES
 	(1400, 0),
 	(1500, 0),
 		(1510, 0),
-		(1520, 0);
+		(1520, 0),
+	(1600, 0);
 
 -- menu_process
 INSERT INTO public.menu_processus (id_menu, id_processus) VALUES
@@ -119,7 +124,8 @@ INSERT INTO public.menu_processus (id_menu, id_processus) VALUES
 	(1400, 0),
 	(1500, 0),
 		(1510, 0),
-		(1520, 0);
+		(1520, 0),
+	(1600, 0);
 
 
 INSERT INTO objectif.unite (type_unite,abbrv) VALUES
@@ -132,10 +138,12 @@ INSERT INTO objectif.recuperation (type_recuperation) VALUES
 	('Manuel'),
 	('Excel à importer');
 
--- INSERT INTO objectif.parametrage VALUES
--- 	(1, 1,	'Prospect de nouveaux clients',	0.1, 1, 1, 1,'a', 1,null,null),
--- 	(2, 1,	'Seuil de sous-activité à 1%',	0.05, 1, 1, 2,'e', 1,null,null),
--- 	(3, 1,	'97% des projets respectent le taux qualité en interne', 0.25, 97, 1, 2,'f', 1,null,null),
--- 	(4, 1,	'10% de gains minimum pour les nouveaux projets', 0.25, 10, 1, 2,'g', 1,null,null),
--- 	(5, 1,	'5% de gains minimum par rapport à l ''année dernières', 0.25, 5, 1, 2,'g', 1,null,null),
--- 	(6, 1,	'KHD à 91%', 0.1, 91, 1, 2,'j', 1,null,null);
+
+
+
+---Revue direction
+INSERT INTO objectif.revue_direction (id_parametrage,revue_direction, libelle) VALUES
+	(39, 'FAC', 'Fiche d''amelioration continue'),
+	(40, 'FNC', 'Fiche non conformitée')
+	
+;

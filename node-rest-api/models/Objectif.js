@@ -25,7 +25,7 @@ const Unite = defautl_db.defaultSequelize.define('unite', {
         noPrimaryKey: true, 
       });
   
-      const Recuperation = defautl_db.defaultSequelize.define('recuperation', {
+const Recuperation = defautl_db.defaultSequelize.define('recuperation', {
         id: {
           type: Sequelize.INTEGER,
           autoIncrement: true,
@@ -45,7 +45,7 @@ const Unite = defautl_db.defaultSequelize.define('unite', {
       });
 
 
-const ParametrageObjectif = defautl_db.defaultSequelize.define('paremetrage', {
+const ParametrageObjectif = defautl_db.defaultSequelize.define('parametrage', {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -109,16 +109,44 @@ const Synthese = defautl_db.defaultSequelize.define('synthese', {
       },
       libelle_processus: {type: Sequelize.STRING(1000)},
       nb_objectif: {type: Sequelize.INTEGER},
-      poids: {type: Sequelize.INTEGER},
+      poids: {type: Sequelize.DECIMAL(10,5),},
     },{
       tableName: "parametrage_objectif_synthese",
+      schema: "objectif",
       freezeTableName: true,
       timestamps: false,
       noPrimaryKey: true, 
     });
   
+const RevueDirection = defautl_db.defaultSequelize.define('revue_direction', {
+      id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false,
+      },
+      id_parametrage : {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: ParametrageObjectif,
+            key: 'id'
+          },
+        },
+      revue_direction: {type: Sequelize.STRING(1000)},
+      libelle: {type: Sequelize.STRING(1000)},
+    },{
+      tableName: "revue_direction",
+      schema: "objectif",
+      freezeTableName: true,
+      timestamps: false,
+      noPrimaryKey: true, 
+    });
+
+  
+RevueDirection.belongsTo(ParametrageObjectif, {foreignKey:"id_parametrage"})
 ParametrageObjectif.belongsTo(Unite, { foreignKey:"id_unite"})
 ParametrageObjectif.belongsTo(Processus, {as: 'processus',foreignKey:"id_processus"})
   
-module.exports = { ParametrageObjectif, Unite, Synthese, Recuperation}  
+module.exports = { ParametrageObjectif, Unite, Synthese, Recuperation, RevueDirection}  
   

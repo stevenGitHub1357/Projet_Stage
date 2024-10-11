@@ -18,7 +18,12 @@ export const TitlePage = ({title,theme,process}) => {
     
     async function initialisation(){
         const processus = await axios.post(Url+"/getProcessusByUser",{id_user:cookies.id_user})
-        setProcessusActuel(processus.data[processus.data.length-1]) 
+        // console.log(cookies.id_processus)
+        if(cookies.id_processus === undefined){
+            setProcessusActuel(processus.data[processus.data.length-1])
+        }else{
+            setProcessusActuel(processus.data[cookies.id_processus])
+        }       
     }
 
     function changeProcessus(id){
