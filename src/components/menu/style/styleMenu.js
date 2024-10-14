@@ -1,7 +1,7 @@
 export const styleMenuDefault = {
   transition: "0.5s",
   width: "250px",
-  height: "100vh",
+  height: "100vh"
 };
 
 export const styleMenuMinim = {

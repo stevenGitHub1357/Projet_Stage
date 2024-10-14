@@ -3,9 +3,13 @@ const revueDirectionSlice = createSlice({
     name:"revueDirection",
     initialState:{
         revueDirection:[],
+        revueDirectionEtape:[],
         updateRevueDirection:{},
     },
     reducers:{
+        setRevueDirectionEtape:(state,{payload})=>{
+            state.revueDirectionEtape = payload
+        },
         setRevueDirectionData:(state,{payload})=>{
             state.revueDirection = payload
         },
@@ -41,5 +45,5 @@ const revueDirectionSlice = createSlice({
 })
 
 
-export const {setRevueDirectionData,addRevueDirection,deleteRevueDirection,updateRevueDirectionDataa} = revueDirectionSlice.actions
+export const {setRevueDirectionData,addRevueDirection,deleteRevueDirection,updateRevueDirectionData, setRevueDirectionEtape} = revueDirectionSlice.actions
 export default revueDirectionSlice.reducer

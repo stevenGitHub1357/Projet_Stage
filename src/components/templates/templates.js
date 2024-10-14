@@ -6,15 +6,23 @@ import { useState,useEffect } from 'react'
 import axios from "axios"
 import Global_url from "../../global_url"
 
-export const TitlePage = ({title,theme,process}) => {
+export const TitlePage = ({title,theme,process,listProcess}) => {
     var Url = Global_url
     const listProcessusSlice = useSelector((state) => state.processus.processus)
     const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus'])
-    const [processActuel,setProcessusActuel] = useState(0);
+    const [processActuel,setProcessusActuel] = useState(listProcessusSlice[0]);
      
     useEffect(()=>{
         initialisation();
     },[])
+
+    useEffect(()=>{
+        
+        // console.log(cookies.id_processus, listProcessusSlice[cookies.id_processus])
+        if(cookies.id_processus!==undefined){
+            changeProcessus(cookies.id_processus)
+        }
+    })
     
     async function initialisation(){
         const processus = await axios.post(Url+"/getProcessusByUser",{id_user:cookies.id_user})
@@ -28,9 +36,8 @@ export const TitlePage = ({title,theme,process}) => {
 
     function changeProcessus(id){
         setCookie('id_processus',id)
-        console.log(cookies.id_processus+"  "+id)
-        const process = listProcessusSlice.filter(process=>process.id===id)
-        setProcessusActuel(process[0])
+        // console.log(cookies.id_processus+"  "+id)
+        setProcessusActuel(listProcessusSlice[id])
     }
 
     const cardIcon = {
@@ -48,13 +55,13 @@ export const TitlePage = ({title,theme,process}) => {
         <div className={!theme ? " titlePage shadow-sm d-flex justify-content-between bg-white " : "bg-dark titlePage shadow-sm text-white d-flex justify-content-between"}>
             <span className="text-center">
                 {title}
-                {process ? ` - ${processActuel.libelle_processus} (${processActuel.abbrv})` : null}
+                {process && processActuel!==undefined ? ` - ${processActuel.libelle_processus} (${processActuel.abbrv})` : null}
             </span>
             {/* <img src={logo} alt="" width="40" className=""></img> */}
             
         </div>
         {
-            process === true &&
+            listProcess &&
             <div className="CountBoard mb-4" style={{ overflowY: 'auto', height: '100px'}}>
             <div className="row text-white mt-5">
                 {

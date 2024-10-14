@@ -44,7 +44,6 @@ function Deploy(theme) {
   return (
     <div className="log">
               
-                  <i className="bi bi-box-arrow-right"></i>
                   {
                     isRunning ? (
                       <button className="btn  btn-sm form-control text-white" onClick={EnCours}>

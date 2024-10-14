@@ -6,6 +6,7 @@ import { TitlePage } from "../templates/templates";
 import { useDispatch, useSelector } from "react-redux";
 import { addTodo, checkTodo, deleteTodo, setTodoData, updateTodo } from "../feature/todo";
 import "./homeStyle.scss"
+import { ColumnChart, LineChart, PieChart } from "../Graphique/Graphe";
 ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,BarElement,Title,Tooltip,Legend);
 
 const Home =({MenuCollapse,theme,logo})=>{
@@ -125,7 +126,7 @@ const Home =({MenuCollapse,theme,logo})=>{
     }
     return(
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
-            <TitlePage title="Tableau de bord" process={true} theme={theme}/>
+            <TitlePage title="Acceuil" theme={theme}/>
             <div className="CountBoard mt-5">
                 <div className="row">
                     <div className="col-sm-8 ">
@@ -205,6 +206,12 @@ const Home =({MenuCollapse,theme,logo})=>{
                 </div>
 
             </div>
+            <h1>Line chart</h1>
+            <LineChart/>
+            <h1>Colomn chart</h1>
+            <ColumnChart/>
+            <h1>Pie chart</h1>
+            {/* <PieChart/> */}
         </div>
     );
 }
