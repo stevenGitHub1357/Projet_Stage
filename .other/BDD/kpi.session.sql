@@ -1,17 +1,13 @@
-SELECT "revue_direction"."id", 
-    "revue_direction"."id_parametrage", 
-    "revue_direction"."revue_direction", 
-    "revue_direction"."libelle", 
-    "paremetrage"."id" AS "paremetrage.id", 
-    "paremetrage"."id_processus" AS "paremetrage.id_processus", 
-    "paremetrage"."objectifs" AS "paremetrage.objectifs", 
-    "paremetrage"."poids" AS "paremetrage.poids", 
-    "paremetrage"."cible" AS "paremetrage.cible", 
-    "paremetrage"."id_unite" AS "paremetrage.id_unite", 
-    "paremetrage"."recuperation" AS "paremetrage.recuperation", 
-    "paremetrage"."activate" AS "paremetrage.activate", 
-    "paremetrage"."support" AS "paremetrage.support", 
-    "paremetrage"."createat" AS "paremetrage.createat", 
-    "paremetrage"."updateat" AS "paremetrage.updateat" 
-    FROM "objectif"."revue_direction" AS "revue_direction" 
-    LEFT OUTER JOIN "objectif"."parametrage" AS "paremetrage" ON "revue_direction"."id" = "paremetrage"."id";
+
+SELECT revue_processus.id, revue_processus.id_processus, revue_processus.date_cloture, revue_processus.statut, revue_processus.createdat, 
+plan_actions.id AS plan_actions.id, 
+plan_actions.id_revue_processus AS plan_actions.id_revue_processus, 
+plan_actions.sujet AS plan_actions.sujet, 
+plan_actions.nb_ticket AS plan_actions.nb_ticket, 
+plan_actions.createdat AS plan_actions.createdat, 
+plan_actions->plan_action_commentaires.id AS plan_actions.plan_action_commentaires.id, 
+plan_actions->plan_action_commentaires.id_plan_action AS plan_actions.plan_action_commentaires.id_plan_action, 
+plan_actions->plan_action_commentaires.commentaire AS plan_actions.plan_action_commentaires.commentaire 
+FROM revue_direction.revue_processus AS revue_processus 
+LEFT OUTER JOIN revue_direction.plan_action AS plan_actions ON revue_processus.id = plan_actions.id_revue_processus 
+LEFT OUTER JOIN revue_direction.plan_action_commentaire AS plan_actions->plan_action_commentaires ON plan_actions.id = plan_actions->plan_action_commentaires.id_plan_action

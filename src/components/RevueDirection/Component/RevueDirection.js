@@ -35,11 +35,11 @@ const RevueDirection =({MenuCollapse,theme,logo})=>{
     
     return(
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
-            <TitlePage title="Revue de direction" process={true} theme={theme}/>
+            <TitlePage title="Revue de direction" process={true} listProcess={true} theme={theme}/>
                 {
                     cookies.id_processus === 2 || cookies.id_processus === "2"? (
                         <MQRevueDirection/>
-                    ):<MQRevueDirection/>
+                    ):<></>
                 }
         </div>
     );

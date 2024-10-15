@@ -48,11 +48,11 @@ const Menu =()=>{
     const heightFenetre = window.innerHeight;
 
     const menuProcesus = [
-        {id:1, nom:"Revue du plan", libelle:"Revue du plan d'action",icon:"", path:"revue"},
-        {id:2, nom:"Efficaciter", libelle:"Efficacité des actions face aux risques, enjeux et opportunités",icon:"", path:"efficacite"},
-        {id:3, nom:"Revue performance", libelle:"Revue de la performance du processus",icon:"", path:"performance"},
-        {id:4, nom:"Résultats des audits", libelle:"Résultats des audits",icon:"", path:"resultat"},
-        {id:5, nom:"Plan d'action", libelle:"Plan d'action",icon:"", path:"plan"},
+        {id:1, nom:"Revue du plan", libelle:"Revue du plan d'action",icon:"bi bi-inboxes", path:"revue"},
+        {id:2, nom:"Efficaciter", libelle:"Efficacité des actions face aux risques, enjeux et opportunités",icon:"bi bi-journal-check", path:"efficacite"},
+        {id:3, nom:"Revue performance", libelle:"Revue de la performance du processus",icon:"bi bi-graph-up-arrow", path:"performance"},
+        {id:4, nom:"Résultats des audits", libelle:"Résultats des audits",icon:"bi bi-list-check", path:"resultat"},
+        {id:5, nom:"Plan d'action", libelle:"Plan d'action",icon:"bi bi-layers", path:"plan"},
         
     ]
 
@@ -291,7 +291,7 @@ const Menu =()=>{
                                             menuProcesus.map((subMenu, subIndex) => (
                                                 <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu.nom} key={subIndex}>
                                                     <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
-                                                                to={urlReact+subMenu.path} >
+                                                                to={urlReact+subMenu.path} onClick={() => changeProcessus(processus.id)} >
                                                         <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+subIndex} aria-expanded="false" aria-controls="collapseExample">
                                                             {!MenuCollapse ? <span className="titleMenu "> {subMenu.nom}</span>:<></>}
                                                         </div>
@@ -309,7 +309,7 @@ const Menu =()=>{
                     {/* </div>       */}
                     </ul>
                 </div>
-                <div className="log">
+                <div className="log mb-5">
                     <button className="btn  btn-sm form-control text-white" onClick={handleLogout}>
                         <i className="bi bi-box-arrow-right"></i> <span className={!MenuCollapse ? "logoutText text-uppercase" :"d-none"}>Logout</span>
                     </button>
@@ -320,7 +320,7 @@ const Menu =()=>{
 
 
 {/* Menu 2 */}
-            <div className={!theme ? "row titlePage shadow-sm d-flex justify-content-between bg-white row" : "bg-dark titlePage shadow-sm text-white d-flex justify-content-between row"}>
+            <div className={!theme ? "row titlePage shadow-sm d-flex justify-content-between bg-white" : "bg-dark titlePage shadow-sm text-white d-flex justify-content-between row"}>
                         <div className="col-2"></div>
                         {
                         // listMenuSlice.length > 0 &&

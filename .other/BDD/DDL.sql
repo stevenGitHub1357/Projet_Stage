@@ -2,6 +2,8 @@
 
 CREATE SCHEMA IF NOT EXISTS objectif;
 CREATE SCHEMA IF NOT EXISTS data_kpi;
+CREATE SCHEMA IF NOT EXISTS revue_direction;
+
 
 
 DROP VIEW IF EXISTS data_kpi.fnc_fac_synthese;
@@ -10,12 +12,14 @@ DROP VIEW IF EXISTS data_kpi.fac_efficace;
 DROP VIEW IF EXISTS data_kpi.fnc_fac_realise_cloture;
 DROP VIEW IF EXISTS data_kpi.fnc_fac_declare;
 
-
 DROP VIEW IF EXISTS objectif.parametrage_objectif_synthese;
 DROP VIEW IF EXISTS detail_user_processus;
 DROP VIEW IF EXISTS detail_user_role;
 DROP VIEW IF EXISTS menu_role_processus;
 
+DROP TABLE IF EXISTS revue_direction.plan_action_commentaire;
+DROP TABLE IF EXISTS revue_direction.plan_action;
+DROP TABLE IF EXISTS revue_direction.revue_processus;
 DROP TABLE IF EXISTS objectif.revue_direction;
 DROP TABLE IF EXISTS data_kpi.fnc_fac_commentaire;
 DROP TABLE IF EXISTS data_kpi.fnc_fac;
@@ -162,6 +166,37 @@ CREATE TABLE IF NOT EXISTS data_kpi.fnc_fac_commentaire(
   createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+--revue_direction
+-- DROP TABLE IF EXISTS revue_direction.plan_action_commentaire;
+-- DROP TABLE IF EXISTS revue_direction.plan_action;
+-- DROP TABLE IF EXISTS revue_direction.revue_processus;
+  --revue_processus
+CREATE TABLE IF NOT EXISTS revue_direction.revue_processus(
+  id SERIAL PRIMARY KEY,
+  id_processus INTEGER REFERENCES public.processus(id),
+  date_cloture TIMESTAMP DEFAULT null,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  statut VARCHAR(200)
+);
+
+  --plan_action
+CREATE TABLE IF NOT EXISTS revue_direction.plan_action(
+  id SERIAL PRIMARY KEY,
+  id_revue_processus INTEGER REFERENCES revue_direction.revue_processus(id),
+  sujet VARCHAR(2000),
+  nb_ticket VARCHAR(200),
+  createdAt TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS revue_direction.plan_action_commentaire(
+  id SERIAL PRIMARY KEY,
+  id_plan_action INTEGER REFERENCES revue_direction.plan_action(id),
+  commentaire VARCHAR(200),
+  createdAt TIMESTAMP
+);
+
 
 
 

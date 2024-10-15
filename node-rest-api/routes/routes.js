@@ -98,6 +98,26 @@ router.get("/getFACSynthese", fnc_fac.getSynthese_FAC)
 router.post("/insertFNCFACCommentaire", fnc_fac.insertCommentaire_FAC_FNC)
 
 
+//-Revue direction-//
+//--Revue processus--//
+const revue_processus = require("../controllers/Revue_direction/Revue_processus_controller.js")
+router.get("/getRevueProcessus", revue_processus.getRevueProcessus)
+router.post("/getRevueProcessusById", revue_processus.getRevueProcessusById)
+router.post("/createRevueProcessus", revue_processus.createRevueProcessus)
+router.post("/clotureRevueProcessus", revue_processus.clotureRevueProcessus)
+router.post("/getLastRevueProcessusById", revue_processus.getLastRevueProcessusById)
+
+//--Plan d'action--//
+const plan_action = require("../controllers/Revue_direction/Plan_action_controller")
+router.post("/getTicketById", plan_action.getTicketById)
+router.post("/getTicketByManyId", plan_action.getTicketByManyId)
+router.get("/getPlanAction", plan_action.getPlanAction)
+router.post("/insertPlanAction", plan_action.insertPlanAction)
+router.post("/insertPlanActionCommentaire", plan_action.insertPlanActionCommentaire)
+
+
+
+
 
 module.exports = router
 

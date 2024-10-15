@@ -13,7 +13,7 @@ ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,BarElement,T
 const Plan = ({MenuCollapse,theme,logo,cible})=>{
 
     const dispatch = useDispatch()
-    let [listData,setListeData] = useState([])
+    let [listData,setListData] = useState([])
     let [annee,setAnnee] = useState(2023)
 
     const colonneTable = [
