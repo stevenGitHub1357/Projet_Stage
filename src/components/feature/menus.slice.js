@@ -11,7 +11,7 @@ const menusSlice = createSlice({
         },
         addMenu:(state,{payload})=>{
             console.log(payload)
-            if(payload != undefined){
+            if(payload !== undefined){
                 state.menus.push(payload)
             }
         },
@@ -23,7 +23,7 @@ const menusSlice = createSlice({
         },
         updateMenuData:(state,{payload}) =>{
             state.menus = state.menus.map((menu) =>{
-                if(menu.id_menu == payload.id_menu){
+                if(menu.id_menu === payload.id_menu){
                     return{
                         ...menu,
                         labelle_menu: payload.labelle_menu,

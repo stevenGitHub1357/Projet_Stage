@@ -5,6 +5,11 @@ CREATE SCHEMA IF NOT EXISTS data_kpi;
 CREATE SCHEMA IF NOT EXISTS revue_direction;
 
 
+DROP VIEW IF EXISTS revue_direction.performance_synthese;
+DROP VIEW IF EXISTS revue_direction.performance_commentaire_final;
+DROP VIEW IF EXISTS revue_direction.cloture;
+DROP VIEW IF EXISTS revue_direction.performance_declare;
+DROP VIEW IF EXISTS revue_direction.performance_objectif_detail;
 
 DROP VIEW IF EXISTS data_kpi.fnc_fac_synthese;
 DROP VIEW IF EXISTS data_kpi.fnc_fac_commentaire_final;
@@ -17,6 +22,10 @@ DROP VIEW IF EXISTS detail_user_processus;
 DROP VIEW IF EXISTS detail_user_role;
 DROP VIEW IF EXISTS menu_role_processus;
 
+
+DROP TABLE IF EXISTS revue_direction.performance_commentaire;
+DROP TABLE IF EXISTS revue_direction.performance_objectif;
+DROP TABLE IF EXISTS revue_direction.performance;
 DROP TABLE IF EXISTS revue_direction.plan_action_commentaire;
 DROP TABLE IF EXISTS revue_direction.plan_action;
 DROP TABLE IF EXISTS revue_direction.revue_processus;
@@ -169,9 +178,9 @@ CREATE TABLE IF NOT EXISTS data_kpi.fnc_fac_commentaire(
 
 
 --revue_direction
--- DROP TABLE IF EXISTS revue_direction.plan_action_commentaire;
--- DROP TABLE IF EXISTS revue_direction.plan_action;
--- DROP TABLE IF EXISTS revue_direction.revue_processus;
+DROP TABLE IF EXISTS revue_direction.plan_action_commentaire;
+DROP TABLE IF EXISTS revue_direction.plan_action;
+DROP TABLE IF EXISTS revue_direction.revue_processus;
   --revue_processus
 CREATE TABLE IF NOT EXISTS revue_direction.revue_processus(
   id SERIAL PRIMARY KEY,
@@ -187,15 +196,55 @@ CREATE TABLE IF NOT EXISTS revue_direction.plan_action(
   id_revue_processus INTEGER REFERENCES revue_direction.revue_processus(id),
   sujet VARCHAR(2000),
   nb_ticket VARCHAR(200),
-  createdAt TIMESTAMP
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS revue_direction.plan_action_commentaire(
   id SERIAL PRIMARY KEY,
   id_plan_action INTEGER REFERENCES revue_direction.plan_action(id),
   commentaire VARCHAR(200),
-  createdAt TIMESTAMP
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+  --performance
+DROP VIEW IF EXISTS revue_direction.performance_objectif_detail;
+DROP TABLE IF EXISTS revue_direction.performance_commentaire;
+DROP TABLE IF EXISTS revue_direction.performance_objectif;
+DROP TABLE IF EXISTS revue_direction.performance;
+
+CREATE TABLE IF NOT EXISTS revue_direction.performance_objectif(
+  id SERIAL PRIMARY KEY,
+  id_parametrage INTEGER REFERENCES objectif.parametrage(id),
+  performance VARCHAR(500),
+  libelle VARCHAR(500)
+);
+
+
+CREATE TABLE IF NOT EXISTS revue_direction.performance(
+  id SERIAL PRIMARY KEY,
+  id_base INTEGER,
+  type_demande VARCHAR(100) DEFAULT 'Default',
+  titre VARCHAR(1000),
+  objectif VARCHAR(1000),
+  realise DOUBLE precision,
+  date_demande DATE,
+  date_cloture DATE,
+  statut VARCHAR(1000),
+  id_statut INTEGER default 0,
+  createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS revue_direction.performance_commentaire(
+  id SERIAL PRIMARY KEY,
+  id_performance INTEGER REFERENCES revue_direction.performance(id),
+  commentaire VARCHAR(200),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 
 
 

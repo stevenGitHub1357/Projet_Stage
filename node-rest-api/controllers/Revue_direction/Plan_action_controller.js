@@ -6,32 +6,35 @@ const { Plan_action, Plan_action_commentaire } = require("../../models/Revue_dir
 
 const getTicketById = (req,res,next) =>{
     const ticket = req.body.item
-    kanboard.query(
-      `
-        SELECT t.id as id,t.title as action,us.name as pilote,c.title as pdca, t.date_due as delai from tasks t 
-                inner join projects p on t.project_id = p.id 
-                left join project_has_categories pc on t.category_id = pc.id 
-                inner join swimlanes sw on t.swimlane_id = sw.id 
-                inner join columns c on t.column_id = c.id 
-                left join users u on t.creator_id = u.id 
-                left join users us on t.owner_id = us.id 
-          WHERE t.id = ${ticket}  
-      `,
-      {
-        replacements: { ticket },
-        type: Sequelize.QueryTypes.SELECT
+    console.log(ticket)
+    if(ticket!==""){
+      kanboard.query(
+        `
+          SELECT t.id as id,t.title as action,us.name as pilote,c.title as pdca, t.date_due as delai from tasks t 
+                  inner join projects p on t.project_id = p.id 
+                  left join project_has_categories pc on t.category_id = pc.id 
+                  inner join swimlanes sw on t.swimlane_id = sw.id 
+                  inner join columns c on t.column_id = c.id 
+                  left join users u on t.creator_id = u.id 
+                  left join users us on t.owner_id = us.id 
+            WHERE t.id = ${ticket}  
+        `,
+        {
+          replacements: { ticket },
+          type: Sequelize.QueryTypes.SELECT
+        }
+        ,
+        function(err,result){
+            if (err) {
+              res.status(400).send(err);
+            }
+            if (Object.keys(result).length > 0) {
+              res.status(200).send(result);
+            } else {
+                res.status(200).send();
+            }
+        })
       }
-      ,
-      function(err,result){
-          if (err) {
-            res.status(400).send(err);
-          }
-          if (Object.keys(result).length > 0) {
-            res.status(200).send(result);
-          } else {
-              res.status(200).send();
-          }
-      })
   };
 
   const getTicketByManyId = (req,res,next) =>{
@@ -61,6 +64,7 @@ const getTicketById = (req,res,next) =>{
               res.status(200).send();
           }
       })
+    // kanboard.close()
     
   };
 
@@ -103,6 +107,30 @@ const getTicketById = (req,res,next) =>{
     })
   };
 
+  const updatePlanAction = (req,res,next) =>{
+    const {id,sujet} = req.body.item
+    // console.log()
+    Plan_action.update(
+      {
+        sujet : sujet,
+      },
+      {
+        where : 
+        {
+          id : id
+        }
+      }
+    )
+    .then(function(results) {
+      res.status(200).send(results);
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  };
+
+
   const insertPlanActionCommentaire = (req,res,next) =>{
     const {id_plan_action,commentaire} = req.body.item
     // console.log()
@@ -125,4 +153,4 @@ const getTicketById = (req,res,next) =>{
 
 
 
-module.exports = {getTicketById, getTicketByManyId, getPlanAction, insertPlanAction, insertPlanActionCommentaire}
+module.exports = {getTicketById, getTicketByManyId, getPlanAction, insertPlanAction, insertPlanActionCommentaire, updatePlanAction}

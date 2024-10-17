@@ -108,12 +108,19 @@ router.post("/clotureRevueProcessus", revue_processus.clotureRevueProcessus)
 router.post("/getLastRevueProcessusById", revue_processus.getLastRevueProcessusById)
 
 //--Plan d'action--//
-const plan_action = require("../controllers/Revue_direction/Plan_action_controller")
+const plan_action = require("../controllers/Revue_direction/Plan_action_controller.js")
 router.post("/getTicketById", plan_action.getTicketById)
 router.post("/getTicketByManyId", plan_action.getTicketByManyId)
 router.get("/getPlanAction", plan_action.getPlanAction)
 router.post("/insertPlanAction", plan_action.insertPlanAction)
 router.post("/insertPlanActionCommentaire", plan_action.insertPlanActionCommentaire)
+router.post("/updatePlanAction", plan_action.updatePlanAction)
+
+
+//--Performance--//
+const performance = require("../controllers/Revue_direction/Performance_controller.js")
+router.get("/getPerformanceObjectifDetail", performance.getPerformanceObjectifDetail)
+router.post("/getPerformanceObjectifDetailByProcessus", performance.getPerformanceObjectifDetailByProcessus)
 
 
 

@@ -28,12 +28,12 @@ const Route_menu =({MenuCollapse,theme,logo})=>{
             <Route path={Route_Server + "gestionObjectifs"} element = {<GestionObjectif MenuCollapse={MenuCollapse} theme={theme} logo={logo} page={"1"}/>}></Route>
             <Route path={Route_Server + "multiParametrageObjectifs"} element = {<GestionObjectif MenuCollapse={MenuCollapse} theme={theme} logo={logo} page={"2"}/>}></Route>
             <Route path={Route_Server + "revueDirection"} element = {<RevueDirection MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
-            <Route path={Route_Server + "revue"} element = {<Revue MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
-            <Route path={Route_Server + "efficacite"} element = {<Efficacite MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
-            <Route path={Route_Server + "performance"} element = {<Performance MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
-            <Route path={Route_Server + "resultat"} element = {<Resultat MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
-            <Route path={Route_Server + "plan"} element = {<Plan MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
-            <Route path={Route_Server + "acceuilProcessus"} element = {<HomeProcessus MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
+            <Route path={Route_Server + "revue/*"} element = {<Revue MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
+            <Route path={Route_Server + "efficacite/*"} element = {<Efficacite MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
+            <Route path={Route_Server + "performance/*"} element = {<Performance MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
+            <Route path={Route_Server + "resultat/*"} element = {<Resultat MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
+            <Route path={Route_Server + "plan/*"} element = {<Plan MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
+            <Route path={Route_Server + "acceuilProcessus/*"} element = {<HomeProcessus MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
         </Routes>
     )
 }

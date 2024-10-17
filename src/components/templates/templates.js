@@ -25,6 +25,7 @@ export const TitlePage = ({title,theme,process,listProcess}) => {
     })
     
     async function initialisation(){
+        // console.log("initialisation template data")
         const processus = await axios.post(Url+"/getProcessusByUser",{id_user:cookies.id_user})
         // console.log(cookies.id_processus)
         if(cookies.id_processus === undefined){

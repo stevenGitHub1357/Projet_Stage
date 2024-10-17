@@ -15,7 +15,7 @@ const roleSlice = createSlice({
         },
         addRole:(state,{payload})=>{
             console.log(payload)
-            if(payload != undefined){
+            if(payload !== undefined){
                 state.role.push(payload)
             }
         },
@@ -27,7 +27,7 @@ const roleSlice = createSlice({
         },
         updateRoleData:(state,{payload}) =>{
             state.role = state.role.map((roles) =>{
-                if(roles.id_role == payload.id_role){
+                if(roles.id_role === payload.id_role){
                     return{
                         ...roles,
                         type_role: payload.type_role,

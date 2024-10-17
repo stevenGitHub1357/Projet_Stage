@@ -27,7 +27,7 @@ const processusSlice = createSlice({
         },
         updateProcessusData:(state,{payload}) =>{
             state.processus = state.processus.map((processus) =>{
-                if(processus.id == payload.id){
+                if(processus.id === payload.id){
                     return{
                         ...processus,
                         libelle_processus: payload.libelle_processus,

@@ -50,6 +50,93 @@ Where p.activate != 0
 	group by id_processus , libelle_processus
 	ORDER BY poids DESC;
 
+--Perfromance_objectif_detail
+CREATE or replace VIEW revue_direction.performance_objectif_detail as
+SELECT 
+	p.id as id, p.id_processus as id_processus, p.objectifs as objectifs, p.poids as poids, p.cible as cible, 
+	p.id_unite as id_unite, u.type_unite as type_unite,
+	p.recuperation as id_recuperation, r.type_recuperation as type_recuperation,
+	p.support as support, p.activate as activate,
+    po.performance as performance, po.libelle as libelle
+    from objectif.parametrage as p
+left JOIN revue_direction.performance_objectif as po on po.id = p.id_parametrage
+JOIN objectif.unite as u on u.id = p.id_unite
+JOIN objectif.recuperation as r on r.id = p.recuperation;
+
+
+--Performance
+DROP VIEW IF EXISTS revue_direction.performance_synthese;
+DROP VIEW IF EXISTS revue_direction.performance_commentaire_final;
+DROP VIEW IF EXISTS revue_direction.cloture;
+DROP VIEW IF EXISTS revue_direction.performance_declare;
+	---declarer
+	CREATE OR replace VIEW revue_direction.performance_declare as
+select count(*) as declarer, type_demande, EXTRACT(year from date_demande) as annee 
+	from revue_direction.performance ff  
+	group by annee, type_demande, annee;
+
+	--realise_cloture
+	CREATE OR replace VIEW revue_direction.performance_cloture as 
+select count(*) as realise_cloture, type_demande, EXTRACT(year from date_demande) as annee 
+	from revue_direction.performance ff 
+where id_statut=0 
+	group by annee, type_demande, annee;
+
+	--commentaire
+	CREATE OR replace VIEW revue_direction.performance_commentaire_final as 
+SELECT DISTINCT ON (type_demande) *
+	FROM revue_direction.performance_commentaire ffc
+ORDER BY type_demande,createat desc 
+
+	--synthese
+	CREATE OR replace VIEW revue_direction.performance_synthese as
+select ffd.annee as annee, ffd.type_demande as type_demande, 
+	    ffd.declarer as declarer,
+		CASE 
+	        WHEN ffrc.realise_cloture is null  THEN 0
+	        ELSE ffrc.realise_cloture
+	    END as realise_cloture,
+	    CASE 
+	        WHEN ffrc.realise_cloture is null  THEN 0
+	        ELSE ffrc.realise_cloture*100/ffd.declarer
+	    END as taux
+	from revue_direction.performance_declare ffd 
+left join revue_direction.performance_realise_cloture as ffrc on ffrc.annee = ffd.annee and ffrc.type_demande = ffd.type_demande
+left join revue_direction.performance_commentaire_final as ffcf on ffcf.annee = ffd.annee and ffcf.type_demande = ffd.type_demande
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ---MQ
@@ -100,3 +187,4 @@ select ffd.annee as annee, ffd.type_demande as type_demande,
 left join data_kpi.fnc_fac_realise_cloture as ffrc on ffrc.annee = ffd.annee and ffrc.type_demande = ffd.type_demande
 left join data_kpi.fac_efficace as face on face.annee = ffd.annee and face.type_demande = ffd.type_demande
 left join data_kpi.fnc_fac_commentaire_final as ffcf on ffcf.annee = ffd.annee and ffcf.type_demande = ffd.type_demande
+

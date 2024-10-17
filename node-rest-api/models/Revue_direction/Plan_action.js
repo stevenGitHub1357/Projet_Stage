@@ -24,6 +24,9 @@ const Plan_action = defautl_db.defaultSequelize.define('plan_action', {
   nb_ticket: {
     type: Sequelize.STRING(200),
   },
+  createdat: {
+    type: Sequelize.DATE,
+  },
 },{
   tableName:"plan_action",
   schema:"revue_direction",
@@ -50,6 +53,9 @@ const Plan_action_commentaire = defautl_db.defaultSequelize.define('plan_action_
   commentaire: {
     type: Sequelize.STRING(1000),
     allowNull: false,
+  },
+  createdat: {
+    type: Sequelize.DATE,
   },
 },{
   tableName: "plan_action_commentaire",

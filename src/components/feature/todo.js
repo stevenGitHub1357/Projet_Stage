@@ -11,7 +11,7 @@ const todoSlice = createSlice({
         },
         addTodo:(state,{payload})=>{
             console.log(payload)
-            if(payload != undefined){
+            if(payload !== undefined){
                 state.todos.push(payload)
             }
         },
@@ -20,7 +20,7 @@ const todoSlice = createSlice({
         },
         updateTodo:(state,{payload}) =>{
             state.todos = state.todos.map((todo,index) =>{
-                if(index == payload.index){
+                if(index === payload.index){
                     return{
                         ...todo,
                         tache:payload.tache,
