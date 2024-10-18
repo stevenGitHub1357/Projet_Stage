@@ -31,6 +31,8 @@ const Revue = ({MenuCollapse,theme,logo})=>{
     const [idSujetModif, setIdSujetModif] = useState();
     const [valideTicket,setValideTicket] = useState(false)
 
+    const id_revue_processus = 1
+
     const colonneTable = [
         {id:1, nom:"Sujet"},
         {id:2, nom:"Action"},
@@ -53,7 +55,10 @@ const Revue = ({MenuCollapse,theme,logo})=>{
 
     async function getData(){
         console.log(cookies.id_processus)
-        let revueProcessus = await axios.post(Url+"/getLastRevueProcessusById",{item:cookies.id_processus});
+        const item = {}
+        item.id_processus = cookies.id_processus;
+        item.id_revue_processus = id_revue_processus;
+        let revueProcessus = await axios.post(Url+"/getPlanActionByRevueProcessus",{item});
         let planAction = []
         let newData = []
         if(revueProcessus.data.length>0){
@@ -74,6 +79,7 @@ const Revue = ({MenuCollapse,theme,logo})=>{
                     theData.id = planAction.id
                     theData.sujet = planAction.sujet
                     theData.allCommentaire = planAction.plan_action_commentaires
+                    theData.activate = planAction.activate
                     // console.log(theData.allCommentaire)
                     if(theData.allCommentaire.length>0) theData.commentaire = theData.allCommentaire[theData.allCommentaire.length-1].commentaire
                     theData.action = ticket.action
@@ -106,7 +112,7 @@ const Revue = ({MenuCollapse,theme,logo})=>{
         if(!valideTicket){
             Warning("Ticket inexistant")
         }
-        const dataTicket = data.filter(data=>data.nb_ticket===item.nb_ticket)
+        const dataTicket = data.filter(data=>data.nb_ticket===item.nb_ticket && data.activate === 1)
         console.log(dataTicket)
         
         if(item.sujet===""){
@@ -188,6 +194,12 @@ const Revue = ({MenuCollapse,theme,logo})=>{
         await axios.post(Url+"/updatePlanAction",{item})
         getData()
     }
+
+    const handleDelete = async (id) => {
+        const item = id
+        await axios.post(Url+"/desactivePlanAction",{item})
+        getData()
+    }
    
     return(
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
@@ -234,7 +246,7 @@ const Revue = ({MenuCollapse,theme,logo})=>{
                         data.length>0 ?
                         <tbody className={!theme ? "text-dark" : "text-white"}>
                             { 
-                                data.map((data,index)=>(
+                                data.filter(data=>data.activate === 1).map((data,index)=>(
                                     <tr key={index}>
                                         <td>{data.sujet}</td>
                                         <td>{data.action}</td>
@@ -242,7 +254,15 @@ const Revue = ({MenuCollapse,theme,logo})=>{
                                         <td>{data.pdca}</td>
                                         <td>
                                             <div className="row">
-                                                <div className="col-3 mx-1">
+                                                <div className="col-2">
+                                                <OverlayTrigger placement="top" overlay={<Tooltip>Modifier sujet</Tooltip>}>
+                                                    <button className="btn btn-warning rounded-3 shadow" onClick={()=>handleUpdateSujet(data.id, data.sujet)} 
+                                                    data-bs-target="#sujet" data-bs-toggle="modal">
+                                                        <i className="bi bi-pencil-square"></i>
+                                                    </button>
+                                                </OverlayTrigger>
+                                                </div>
+                                                <div className="col-2">
                                                 <OverlayTrigger placement="top" overlay={<Tooltip>Modifier commentaire</Tooltip>}>
                                                     <button className="btn btn-secondary rounded-3 shadow" onClick={()=>handleAddCommentaire(data.id)} 
                                                     data-bs-target="#commentaire" data-bs-toggle="modal">
@@ -250,11 +270,10 @@ const Revue = ({MenuCollapse,theme,logo})=>{
                                                     </button>
                                                 </OverlayTrigger>
                                                 </div>
-                                                <div className="col-3 mx-1">
-                                                <OverlayTrigger placement="top" overlay={<Tooltip>Modifier sujet</Tooltip>}>
-                                                    <button className="btn btn-warning rounded-3 shadow" onClick={()=>handleUpdateSujet(data.id, data.sujet)} 
-                                                    data-bs-target="#sujet" data-bs-toggle="modal">
-                                                        <i className="bi bi-pencil-square"></i>
+                                                <div className="col-2">
+                                                <OverlayTrigger placement="top" overlay={<Tooltip>Supprimer plan d'action</Tooltip>}>
+                                                <button className="btn btn-danger rounded-3 shadow" onClick={() => handleDelete(data.id)} >
+                                                <i className="bi bi-trash-fill"></i>
                                                     </button>
                                                 </OverlayTrigger>
                                                 </div>

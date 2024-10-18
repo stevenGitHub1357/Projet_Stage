@@ -139,17 +139,8 @@ INSERT INTO objectif.recuperation (type_recuperation) VALUES
 	('Excel à importer');
 
 
-
-
----Revue direction
-INSERT INTO objectif.revue_direction (id_parametrage,revue_direction, libelle) VALUES
-	(39, 'FAC', 'Fiche d''amelioration continue'),
-	(40, 'FNC', 'Fiche non conformitée')
-	
-;
-
 ---Performance
-INSERT INTO revue_direction.performance_objectif (id_parametrage,performance, libelle) VALUES
+INSERT INTO revue_direction.performance_objectif (id_parametrage,type_demande, libelle) VALUES
 	(39, 'FAC', 'Fiche d''amelioration continue'),
 	(40, 'FNC', 'Fiche non conformitée')
 ;

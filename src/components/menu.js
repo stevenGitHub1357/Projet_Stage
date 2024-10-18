@@ -221,12 +221,12 @@ const Menu =()=>{
                                                 <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu1.labelle_menu} key={subIndex}>
                                                     <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
                                                                 to={urlReact+subMenu1.route} >
-                                                        {/* <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+subIndex} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                        <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+subIndex} aria-expanded="false" aria-controls="collapseExample">
                                                             {!MenuCollapse ? <span className="titleMenu "> {subMenu1.labelle_menu}</span>:<></>}
-                                                        {/* </div> */}
-                                                        {/* <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+subIndex} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                        </div>
+                                                        <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+subIndex} aria-expanded="false" aria-controls="collapseExample">
                                                             {true ? <i className={subMenu1.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu1.labelle_menu}></i>:<></>}
-                                                        {/* </div> */}
+                                                        </div>
                                                     </NavLink>
                                                     <div className="collapse" id={"collapseMenu2"+subIndex}>
                                                         {listMenuSlice.filter(subMenu2 => subMenu2.base=== subMenu1.id_menu).length > 0 &&  (
@@ -235,12 +235,12 @@ const Menu =()=>{
                                                                     <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu2.labelle_menu} key={subIndex2}>
                                                                         <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
                                                                                     to={urlReact+subMenu2.route} >
-                                                                            {/* <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample">
                                                                                 {!MenuCollapse ? <span className="titleMenu "> {subMenu2.labelle_menu}</span>:<></>}
-                                                                            {/* </div> */}
-                                                                            {/* <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                                            </div>
+                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample">
                                                                                 {true ? <i className={subMenu2.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu2.labelle_menu}></i>:<></>}
-                                                                            {/* </div> */}
+                                                                            </div>
                                                                         </NavLink>
                                                                         <div className="collapse" id={"collapseMenu3"+subIndex2}>
                                                                         {listMenuSlice.filter(subMenu3 => subMenu3.base=== subMenu2.id_menu).length > 0 && (
@@ -249,12 +249,12 @@ const Menu =()=>{
                                                                                     <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu3.labelle_menu} key={subIndex3}>
                                                                                         <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
                                                                                                     to={urlReact+subMenu3.route} >
-                                                                                            {/* <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu4"+subIndex3} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu4"+subIndex3} aria-expanded="false" aria-controls="collapseExample">
                                                                                                 {!MenuCollapse ? <span className="titleMenu "> {subMenu3.labelle_menu}</span>:<></>}
-                                                                                            {/* </div> */}
-                                                                                            {/* <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu4"+subIndex3} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                                                            </div>
+                                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu4"+subIndex3} aria-expanded="false" aria-controls="collapseExample">
                                                                                                 {true ? <i className={subMenu3.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu3.labelle_menu}></i>:<></>}
-                                                                                            {/* </div> */}
+                                                                                            </div>
                                                                                         </NavLink>
                                                                                         {/*Si plus de 3 sous-menu ajout code ici*/} 
                                                                                     </span>
@@ -329,12 +329,12 @@ const Menu =()=>{
                             <ul className="col-2 float-end float-right" data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>
                                 <NavLink className="btn btn-dark nav-link lien rounded-1 text-black d-flex justify-content-between"  to={urlReact+menu.route} data-bs-toggle="collapse" 
                                         data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample"> 
-                                        {/* <div className="col-8" data-bs-toggle="collapse" data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample"> */}
+                                        <div className="col-8" data-bs-toggle="collapse" data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample">
                                             {true ? <span className="titleMenu "> {menu.labelle_menu}</span>:<></>}
-                                        {/* </div> */}
-                                        {/* <div className="col-4" data-bs-toggle="collapse" data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample"> */}
+                                        </div>
+                                        <div className="col-4" data-bs-toggle="collapse" data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample">
                                             {true ? <i className={menu.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu}></i>:<></>}
-                                        {/* </div> */}
+                                        </div>
                                 </NavLink>
                                 <div className="collapse" id={"collapseMenu"+index}>
                                     { listMenuSlice.filter(subMenu1 => subMenu1.base=== menu.id_menu).length > 0 && (
@@ -344,12 +344,12 @@ const Menu =()=>{
                                                 <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu1.labelle_menu} key={subIndex}>
                                                     <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
                                                                 to={urlReact+subMenu1.route} >
-                                                        {/* <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+subIndex} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                        <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+subIndex} aria-expanded="false" aria-controls="collapseExample">
                                                             {true ? <span className="titleMenu "> {subMenu1.labelle_menu}</span>:<></>}
-                                                        {/* </div>
-                                                        <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+subIndex} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                        </div>
+                                                        <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+subIndex} aria-expanded="false" aria-controls="collapseExample">
                                                             {true ? <i className={subMenu1.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu1.labelle_menu}></i>:<></>}
-                                                        {/* </div> */}
+                                                        </div>
                                                     </NavLink>
                                                     
                                                     <div className="collapse" id={"collapseMenu2"+subIndex}>
@@ -359,12 +359,12 @@ const Menu =()=>{
                                                                     <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu2.labelle_menu} key={subIndex2}>
                                                                         <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
                                                                                     to={urlReact+subMenu2.route} >
-                                                                            {/* <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample">
                                                                                 {!MenuCollapse ? <span className="titleMenu "> {subMenu2.labelle_menu}</span>:<></>}
-                                                                            {/* </div>
-                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                                            </div>
+                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample">
                                                                                 {!MenuCollapse ? <i className={subMenu2.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu2.labelle_menu}></i>:<></>}
-                                                                            {/* </div> */}
+                                                                            </div>
                                                                         </NavLink>
                                                                     </span>
                                                                 ))}
@@ -405,12 +405,12 @@ const Menu =()=>{
                                                     <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
                                                                 to={urlReact+menu.route} data-bs-toggle="collapse" 
                                                                 data-bs-target={"#collapseMenu2"+index} aria-expanded="false" aria-controls="collapseExample" >
-                                                        {/* <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+index} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                        <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+index} aria-expanded="false" aria-controls="collapseExample">
                                                             {true ? <span className="titleMenu "> {menu.labelle_menu}</span>:<></>}
-                                                        {/* </div> */}
-                                                        {/* <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+index} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                        </div>
+                                                        <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+index} aria-expanded="false" aria-controls="collapseExample">
                                                             {true ? <i className={menu.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu}></i>:<></>}
-                                                        {/* </div> */}
+                                                        </div>
                                                     </NavLink>
                                                     <div className="collapse" id={"collapseMenu2"+index}>
                                                         {listMenuSlice.filter(subMenu2 => subMenu2.base=== menu.id_menu).length > 0 &&  (
@@ -419,12 +419,12 @@ const Menu =()=>{
                                                                     <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu2.labelle_menu} key={subIndex2}>
                                                                         <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
                                                                                     to={urlReact+subMenu2.route} >
-                                                                            {/* <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample">
                                                                                 {true ? <span className="titleMenu "> {subMenu2.labelle_menu}</span>:<></>}
-                                                                            {/* </div>
-                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                                            </div>
+                                                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu3"+subIndex2} aria-expanded="false" aria-controls="collapseExample">
                                                                                 {true ? <i className={subMenu2.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu2.labelle_menu}></i>:<></>}
-                                                                            {/* </div> */}
+                                                                            </div>
                                                                         </NavLink>
                                                                         <div className="collapse" id={"collapseMenu3"+subIndex2}>
                                                                             {listMenuSlice.filter(subMenu3 => subMenu3.base=== subMenu2.id_menu).length > 0 &&  (
@@ -433,12 +433,12 @@ const Menu =()=>{
                                                                                         <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu3.labelle_menu} key={subIndex3}>
                                                                                             <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
                                                                                                         to={urlReact+subMenu3.route} >
-                                                                                                {/* <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu4"+subIndex3} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                                                                <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu4"+subIndex3} aria-expanded="false" aria-controls="collapseExample">
                                                                                                     {true ? <span className="titleMenu "> {subMenu3.labelle_menu}</span>:<></>}
-                                                                                                {/* </div> */}
-                                                                                                {/* <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu4"+subIndex3} aria-expanded="false" aria-controls="collapseExample"> */}
+                                                                                                </div>
+                                                                                                <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu4"+subIndex3} aria-expanded="false" aria-controls="collapseExample">
                                                                                                     {true ? <i className={subMenu3.icon} data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu3.labelle_menu}></i>:<></>}
-                                                                                                {/* </div> */}
+                                                                                                </div>
                                                                                             </NavLink>
                                                                                         </span>
                                                                                     ))}

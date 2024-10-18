@@ -3,6 +3,7 @@ const pool = bd_pool.pool
 const {kanboard} = require("../../config/dbRevueDirection.config")
 const { Sequelize } = require("sequelize");
 const { Plan_action, Plan_action_commentaire } = require("../../models/Revue_direction/Plan_action");
+const { Revue_processus } = require("../../models/Revue_direction/Revue_processus")
 
 const getTicketById = (req,res,next) =>{
     const ticket = req.body.item
@@ -149,8 +150,70 @@ const getTicketById = (req,res,next) =>{
     })
   };
 
+
+  const getPlanActionByRevueProcessus = (req,res,next) =>{
+    const {id_processus, id_revue_processus} = req.body.item
+    Revue_processus.findAll(
+      {
+        where : 
+        {
+          id_processus : id_processus,
+          id : id_revue_processus
+        },
+        include : 
+        [
+          {
+            model: Plan_action,
+            include: [{
+              model: Plan_action_commentaire,
+            }]
+          }
+        ]
+      }
+    )
+    .then(function(results) {
+      if (results.length > 0) {
+        res.status(200).json(results);
+      } else {
+        res.status(200).json();
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  };
+
+
+  const desactivePlanAction = (req,res,next) =>{
+    const id = req.body.item
+    Plan_action.update(
+      { 
+        activate : 0
+      },
+      {
+        where : 
+        {
+          id : id
+        }
+      }
+    )
+    .then(function(results) {
+      res.status(200).send(results);
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  }
+
+
+  
+
   
 
 
 
-module.exports = {getTicketById, getTicketByManyId, getPlanAction, insertPlanAction, insertPlanActionCommentaire, updatePlanAction}
+module.exports = {getTicketById, getTicketByManyId, getPlanAction, getPlanActionByRevueProcessus, 
+                  insertPlanAction, insertPlanActionCommentaire, 
+                  updatePlanAction, desactivePlanAction}

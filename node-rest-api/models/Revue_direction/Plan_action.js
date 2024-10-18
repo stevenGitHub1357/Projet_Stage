@@ -27,6 +27,9 @@ const Plan_action = defautl_db.defaultSequelize.define('plan_action', {
   createdat: {
     type: Sequelize.DATE,
   },
+  activate: {
+    type: Sequelize.INTEGER,
+  },
 },{
   tableName:"plan_action",
   schema:"revue_direction",

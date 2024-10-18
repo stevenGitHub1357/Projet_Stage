@@ -68,8 +68,6 @@ async function start() {
                         // console.log(current)
                         const check = current.length
                         
-                        current = current[0];
-                        obj.id = current.id
                         let insertDate_demande = obj.date_demande.getFullYear()+"-"+String(obj.date_demande.getMonth() + 1)+"-"+obj.date_demande.getDate();
                         let insertDate_cloture = null;
                         if(obj.date_cloture !== null){
@@ -80,6 +78,8 @@ async function start() {
                             query = "INSERT INTO revue_direction.performance(id_base, type_demande, titre, objectif, realise, date_demande, date_cloture, statut, id_statut) VALUES ("+obj.id_base+",'"+obj.type_demande+"','"+obj.titre.replace(/'/g,"''")+"','"+obj.objectif.replace(/'/g,"''")+"',"+obj.realise+",'"+insertDate_demande+"',"+insertDate_cloture+",'"+obj.statut+"', "+obj.id_statut+")";
                             await db_kpi.query(query)    
                         }else{
+                            current = current[0];
+                            obj.id = current.id
                             query = "UPDATE revue_direction.performance SET titre='"+obj.titre.replace(/'/g,"''")+"',type_demande='"+obj.type_demande+"', objectif='"+obj.objectif.replace(/'/g,"''")+"', realise="+obj.realise+", date_demande='"+insertDate_demande+"', date_cloture="+insertDate_cloture+", statut='"+obj.statut+"', id_statut = "+obj.id_statut+" WHERE id_base="+obj.id_base+" and type_demande='"+obj.type_demande+"'"; 
                             // console.log(current)
                             // console.log(obj)

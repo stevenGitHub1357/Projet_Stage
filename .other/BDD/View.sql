@@ -50,18 +50,82 @@ Where p.activate != 0
 	group by id_processus , libelle_processus
 	ORDER BY poids DESC;
 
---Perfromance_objectif_detail
+
+
+--Performance
+	--Perfromance_objectif_detail
 CREATE or replace VIEW revue_direction.performance_objectif_detail as
 SELECT 
 	p.id as id, p.id_processus as id_processus, p.objectifs as objectifs, p.poids as poids, p.cible as cible, 
-	p.id_unite as id_unite, u.type_unite as type_unite,
+	p.id_unite as id_unite, u.type_unite as type_unite, u.abbrv as abbrv,
 	p.recuperation as id_recuperation, r.type_recuperation as type_recuperation,
 	p.support as support, p.activate as activate,
-    po.performance as performance, po.libelle as libelle
+    po.type_demande as type_demande, po.libelle as libelle
     from objectif.parametrage as p
-left JOIN revue_direction.performance_objectif as po on po.id = p.id_parametrage
+left JOIN revue_direction.performance_objectif as po on p.id = po.id_parametrage
 JOIN objectif.unite as u on u.id = p.id_unite
 JOIN objectif.recuperation as r on r.id = p.recuperation;
+
+	--Performance_commentaire_final
+CREATE or replace VIEW revue_direction.performance_commentaire_final AS
+SELECT DISTINCT ON (id_revue_processus,id_performance) *
+	FROM revue_direction.performance_commentaire pc 
+ORDER BY id_revue_processus,id_performance desc;
+
+	--Performance_commentaire_objectif_final
+CREATE or replace VIEW revue_direction.performance_objectif_commentaire_final AS
+SELECT DISTINCT ON (id_revue_processus,id_objectif) *
+	FROM revue_direction.performance_objectif_commentaire pc 
+ORDER BY id_revue_processus,id_objectif,createdat desc;
+
+	--Performance_objectif_processus
+	DROP VIEW revue_direction.performance_objectif_processus;
+	CREATE or replace VIEW revue_direction.performance_objectif_processus as
+select 	
+		pod.id as id,
+		rp.id as id_revue_processus,
+		rp.id_processus as id_processus,
+		rp.date_cloture as date_cloture_revue_processus, rp.createdat as date_create_revue_processus,
+		pod.objectifs as objectifs, pod.poids as poids, pod.cible as cible, pod.abbrv as abbrv,
+		pod.type_demande as type_demande, pod.libelle as libelle ,pod.activate as activate,
+
+		CASE 
+	        WHEN sum(p.realise)/count(p.realise) IS NOT NULL  
+	        	THEN sum(p.realise)/count(p.realise)
+	       	 	ELSE 0
+	    END AS realise,
+		CASE 
+	        WHEN pod.cible SIMILAR TO '[-+]?[0-9]*\.?[0-9]+' and (cast(pod.cible as decimal(10,2))*(sum(p.realise)/count(p.realise)))/100 is not null  
+	        	THEN (cast(pod.cible as decimal(10,2))*(sum(p.realise)/count(p.realise)))/100
+	       	 	ELSE 0 
+	    END AS taux,
+		CASE 
+	        WHEN pcf.commentaire IS NOT NULL  
+	        	THEN pcf.commentaire
+	       	 	ELSE '-'
+	    END AS commentaire
+    from revue_direction.performance_objectif_detail pod 
+left join revue_direction.revue_processus rp on pod.id_processus = rp.id_processus  
+left join revue_direction.performance p on p.type_demande = pod.type_demande and p.date_demande >= rp.createdat and p.date_demande < rp.date_cloture
+left join revue_direction.performance_objectif_commentaire_final as pcf on pcf.id_revue_processus = rp.id and pcf.id_objectif = pod.id 
+	group by 
+		rp.id,rp.id_processus ,rp.date_cloture ,rp.createdat ,
+		pod.id, pod.objectifs ,pod.poids ,pod.cible ,pod.abbrv ,pod.type_demande ,pod.libelle, pod.activate,
+		pcf.commentaire 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 --Performance
@@ -82,12 +146,6 @@ select count(*) as realise_cloture, type_demande, EXTRACT(year from date_demande
 where id_statut=0 
 	group by annee, type_demande, annee;
 
-	--commentaire
-	CREATE OR replace VIEW revue_direction.performance_commentaire_final as 
-SELECT DISTINCT ON (type_demande) *
-	FROM revue_direction.performance_commentaire ffc
-ORDER BY type_demande,createat desc 
-
 	--synthese
 	CREATE OR replace VIEW revue_direction.performance_synthese as
 select ffd.annee as annee, ffd.type_demande as type_demande, 
@@ -101,8 +159,28 @@ select ffd.annee as annee, ffd.type_demande as type_demande,
 	        ELSE ffrc.realise_cloture*100/ffd.declarer
 	    END as taux
 	from revue_direction.performance_declare ffd 
-left join revue_direction.performance_realise_cloture as ffrc on ffrc.annee = ffd.annee and ffrc.type_demande = ffd.type_demande
-left join revue_direction.performance_commentaire_final as ffcf on ffcf.annee = ffd.annee and ffcf.type_demande = ffd.type_demande
+left join revue_direction.performance_cloture as ffrc on ffrc.annee = ffd.annee and ffrc.type_demande = ffd.type_demande;
+
+
+
+select 	rp.id as id_revue_processus,
+		rp.id_processus as id_processus,
+		rp.date_cloture as date_cloture_revue_processus, rp.createdat as date_create_revue_processus,
+		pod.objectifs as objectif, pod.poids as poids, pod.cible as cible, pod.abbrv as unite,
+		pod.type_demande as type_demande, pod.libelle as libelle_type_demande,
+		sum(p.realise)/count(p.realise) as realise,
+		 CASE 
+	        WHEN pod.cible SIMILAR TO '[-+]?[0-9]*\.?[0-9]+'  
+	        	THEN (cast(pod.cible as decimal(10,2))*(sum(p.realise)/count(p.realise)))/100
+	       	 	ELSE NULL 
+	    END AS taux
+    from revue_direction.revue_processus rp 
+left join revue_direction.performance_objectif_detail pod on pod.id_processus = rp.id_processus  
+left join revue_direction.performance p on p.type_demande = pod.type_demande and p.date_demande >= rp.createdat and p.date_demande < rp.date_cloture 
+	
+	group by 
+		rp.id,rp.id_processus ,rp.date_cloture ,rp.createdat ,
+		pod.objectifs ,pod.poids ,pod.cible ,pod.abbrv ,pod.type_demande ,pod.libelle
 
 
 
