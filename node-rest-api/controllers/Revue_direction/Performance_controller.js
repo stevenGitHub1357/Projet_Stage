@@ -2,7 +2,7 @@ const bd_pool = require("../../config/default.config")
 const pool = bd_pool.pool
 const {kanboard} = require("../../config/dbRevueDirection.config")
 const { Sequelize } = require("sequelize");
-const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommentaire, PerformanceObjectifCommentaire } = require("../../models/Revue_direction/Performance");
+const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommentaire, PerformanceObjectifCommentaire, PerfSynthese, Performance } = require("../../models/Revue_direction/Performance");
 
 
 
@@ -131,9 +131,96 @@ const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommen
   };
 
 
+  const getPerformanceByDemande = (req,res,next) =>{
+    const type_demande = req.body.item
+    Performance.findAll({
+      where : 
+      {
+        type_demande : type_demande,
+      }
+    })
+    .then(function(results) {
+      if (results.length > 0) {
+        res.status(200).json(results);
+      } else {
+        res.status(200).json();
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  };
+
+
+  const getPerformanceSyntheseByDemande = (req,res,next) =>{
+    const type_demande = req.body.item
+    PerfSynthese.findAll({
+      where : 
+      {
+        type_demande : type_demande,
+      }
+    })
+    .then(function(results) {
+      if (results.length > 0) {
+        res.status(200).json(results);
+      } else {
+        res.status(200).json();
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  };
+
+  const getPerformanceCommentaire = (req,res,next) =>{
+    const {id_revue_processus, type_demande} = req.body.item
+    PerformanceCommentaire.findAll({
+      where : 
+      {
+        id_revue_processus : id_revue_processus,
+        type_demande : type_demande,
+      }
+    })
+    .then(function(results) {
+      if (results.length > 0) {
+        res.status(200).json(results);
+      } else {
+        res.status(200).json();
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  };
+
+
+  const insertPerformanceCommentaire = (req,res,next) =>{
+    const {id_revue_processus,type_demande,commentaire} = req.body.item
+    // console.log()
+    PerformanceCommentaire.create(
+      { 
+        id_revue_processus : id_revue_processus,
+        type_demande : type_demande,
+        commentaire: commentaire
+      }
+    )
+    .then(function(results) {
+      res.status(200).send(results);
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  };
+
+
 
 
 
 module.exports = {getPerformanceObjectifDetail, getPerformanceObjectifDetailByProcessus, getPerformanceObjectifByRevueProcessus, 
                   getPerformanceCommentaireByRevuePerformance, getPerformanceObjectifCommentaireByRevue, 
-                  insertPerformanceObjectifCommentaire}
+                  insertPerformanceObjectifCommentaire, getPerformanceByDemande, getPerformanceSyntheseByDemande,
+                  insertPerformanceCommentaire, getPerformanceCommentaire}

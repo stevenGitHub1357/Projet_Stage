@@ -1,8 +1,8 @@
-DROP VIEW IF EXISTS data_kpi.fnc_fac_synthese;
-DROP VIEW IF EXISTS data_kpi.fnc_fac_commentaire_final;
-DROP VIEW IF EXISTS data_kpi.fac_efficace;
-DROP VIEW IF EXISTS data_kpi.fnc_fac_realise_cloture;
-DROP VIEW IF EXISTS data_kpi.fnc_fac_declare;
+DROP VIEW IF EXISTS revue_direction.perf_synthese;
+DROP VIEW IF EXISTS revue_direction.perf_commentaire_final;
+DROP VIEW IF EXISTS revue_direction.perf_efficace;
+DROP VIEW IF EXISTS revue_direction.perf_cloture;
+DROP VIEW IF EXISTS revue_direction.perf_declare;
 
 
 DROP VIEW IF EXISTS objectif.parametrage_objectif_synthese;
@@ -114,155 +114,86 @@ left join revue_direction.performance_objectif_commentaire_final as pcf on pcf.i
 		pcf.commentaire 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
---Performance
-DROP VIEW IF EXISTS revue_direction.performance_synthese;
-DROP VIEW IF EXISTS revue_direction.performance_commentaire_final;
-DROP VIEW IF EXISTS revue_direction.cloture;
-DROP VIEW IF EXISTS revue_direction.performance_declare;
-	---declarer
-	CREATE OR replace VIEW revue_direction.performance_declare as
-select count(*) as declarer, type_demande, EXTRACT(year from date_demande) as annee 
-	from revue_direction.performance ff  
-	group by annee, type_demande, annee;
-
-	--realise_cloture
-	CREATE OR replace VIEW revue_direction.performance_cloture as 
-select count(*) as realise_cloture, type_demande, EXTRACT(year from date_demande) as annee 
-	from revue_direction.performance ff 
-where id_statut=0 
-	group by annee, type_demande, annee;
-
-	--synthese
-	CREATE OR replace VIEW revue_direction.performance_synthese as
-select ffd.annee as annee, ffd.type_demande as type_demande, 
-	    ffd.declarer as declarer,
-		CASE 
-	        WHEN ffrc.realise_cloture is null  THEN 0
-	        ELSE ffrc.realise_cloture
-	    END as realise_cloture,
-	    CASE 
-	        WHEN ffrc.realise_cloture is null  THEN 0
-	        ELSE ffrc.realise_cloture*100/ffd.declarer
-	    END as taux
-	from revue_direction.performance_declare ffd 
-left join revue_direction.performance_cloture as ffrc on ffrc.annee = ffd.annee and ffrc.type_demande = ffd.type_demande;
-
-
-
-select 	rp.id as id_revue_processus,
-		rp.id_processus as id_processus,
-		rp.date_cloture as date_cloture_revue_processus, rp.createdat as date_create_revue_processus,
-		pod.objectifs as objectif, pod.poids as poids, pod.cible as cible, pod.abbrv as unite,
-		pod.type_demande as type_demande, pod.libelle as libelle_type_demande,
-		sum(p.realise)/count(p.realise) as realise,
-		 CASE 
-	        WHEN pod.cible SIMILAR TO '[-+]?[0-9]*\.?[0-9]+'  
-	        	THEN (cast(pod.cible as decimal(10,2))*(sum(p.realise)/count(p.realise)))/100
-	       	 	ELSE NULL 
-	    END AS taux
-    from revue_direction.revue_processus rp 
-left join revue_direction.performance_objectif_detail pod on pod.id_processus = rp.id_processus  
-left join revue_direction.performance p on p.type_demande = pod.type_demande and p.date_demande >= rp.createdat and p.date_demande < rp.date_cloture 
+	DROP VIEW IF EXISTS revue_direction.perf_synthese;
+	DROP VIEW IF EXISTS revue_direction.perf_commentaire_final;
+	DROP VIEW IF EXISTS revue_direction.perf_efficace;
+	DROP VIEW IF EXISTS revue_direction.perf_cloture;
+	DROP VIEW IF EXISTS revue_direction.perf_declare;
 	
-	group by 
-		rp.id,rp.id_processus ,rp.date_cloture ,rp.createdat ,
-		pod.objectifs ,pod.poids ,pod.cible ,pod.abbrv ,pod.type_demande ,pod.libelle
+	---Performance_declarer
+	CREATE OR replace VIEW revue_direction.perf_declare as
+select 
+	count(*) as declarer, p.type_demande as type_demande, 
+	pop.id_revue_processus as id_revue_processus,
+    pop.date_create_revue_processus as date_create_revue,
+    EXTRACT(year from pop.date_create_revue_processus) as annee, 
+    TO_CHAR(pop.date_create_revue_processus, 'Month') as mois,
+	pop.abbrv as abbrv, pop.cible as cible
+	from revue_direction.performance p 
+join revue_direction.performance_objectif_processus as pop on pop.type_demande = p.type_demande
+GROUP BY p.type_demande,  pop.date_create_revue_processus, pop.id_revue_processus, pop.abbrv, pop.cible;
 
+	---Performance_cloturer
+	CREATE OR replace VIEW revue_direction.perf_cloture as
+select 
+	count(*) as cloture, p.type_demande as type_demande, 
+    pop.date_create_revue_processus as date_create_revue,
+	pop.id_revue_processus as id_revue_processus,
+    EXTRACT(year from pop.date_create_revue_processus) as annee, 
+    TO_CHAR(pop.date_create_revue_processus, 'Month') as mois
+	from revue_direction.performance p 
+join revue_direction.performance_objectif_processus as pop on pop.type_demande = p.type_demande
+WHERE id_statut=0
+GROUP BY p.type_demande,  pop.date_create_revue_processus, pop.id_revue_processus;
 
+	---Performance_efficace
+	CREATE OR replace VIEW revue_direction.perf_efficace as
+select 
+	count(*) as efficace, p.type_demande as type_demande, 
+	pop.id_revue_processus as id_revue_processus,
+    pop.date_create_revue_processus as date_create_revue,
+    EXTRACT(year from pop.date_create_revue_processus) as annee, 
+    TO_CHAR(pop.date_create_revue_processus, 'Month') as mois,
+    pop.cible as cible, pop.abbrv as abbrv
+	from revue_direction.performance p 
+join revue_direction.performance_objectif_processus as pop on pop.type_demande = p.type_demande
+WHERE id_statut=0 and p.realise >= cast(pop.cible as decimal(10,2))
+GROUP BY p.type_demande,  pop.date_create_revue_processus, pop.cible, pop.abbrv, pop.id_revue_processus;
 
+	---Perfromance_commentaire
+	CREATE OR replace VIEW revue_direction.perf_commentaire_final as 
+select DISTINCT ON (id_revue_processus, type_demande) *
+	from revue_direction.performance_commentaire c
+ORDER BY id_revue_processus, type_demande, createdat DESC;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
----MQ
-	---FNC_FAC_declarer
-	CREATE OR replace VIEW data_kpi.fnc_fac_declare as
-select count(*) as declarer, type_demande, EXTRACT(year from date_demande) as annee 
-	from data_kpi.fnc_fac ff  
-	group by annee, type_demande, annee;
-
-	--FNC_FAC_realise_cloture
-	CREATE OR replace VIEW data_kpi.fnc_fac_realise_cloture as 
-select count(*) as realise_cloture, type_demande, EXTRACT(year from date_demande) as annee 
-	from data_kpi.fnc_fac ff 
-where id_statut=0 
-	group by annee, type_demande, annee;
-
-		--FAC_efficace
-	CREATE OR replace VIEW data_kpi.fac_efficace as 
-select count(*) as efficace, type_demande, EXTRACT(year from date_demande) as annee 
-	from data_kpi.fnc_fac ff 
-where id_statut=0 and realise>=90
-	group by annee, type_demande, annee;
-
-	--FNC_FAC_commentaire
-	CREATE OR replace VIEW data_kpi.fnc_fac_commentaire_final as 
-SELECT DISTINCT ON (annee,type_demande) *
-	FROM data_kpi.fnc_fac_commentaire ffc
-ORDER BY annee,type_demande,createat desc 
-
-	--FNC_FAC_synthese
-	CREATE OR replace VIEW data_kpi.fnc_fac_synthese as
-select ffd.annee as annee, ffd.type_demande as type_demande, 
-	    ffd.declarer as declarer,
+	---Performance_synthese
+	CREATE OR replace VIEW revue_direction.perf_synthese as
+select pd.type_demande as type_demande, pd.id_revue_processus as id_revue_processus,
+		pd.mois as mois, pd.annee as annee,
+	    pd.declarer as declarer,
 		CASE 
-	        WHEN ffrc.realise_cloture is null  THEN 0
-	        ELSE ffrc.realise_cloture
-	    END as realise_cloture,
+	        WHEN pc.cloture is null  THEN 0
+	        ELSE pc.cloture
+	    END as cloture,
 	    CASE 
-	        WHEN ffrc.realise_cloture is null  THEN 0
-	        ELSE ffrc.realise_cloture*100/ffd.declarer
+	        WHEN pc.cloture is null  THEN 0
+	        ELSE pc.cloture*100/pd.declarer
 	    END as taux,
 	    CASE 
-	        WHEN face.efficace is null THEN 0
-	        ELSE face.efficace
-	    END as fac_efficace,
-		commentaire 
-	from data_kpi.fnc_fac_declare ffd 
-left join data_kpi.fnc_fac_realise_cloture as ffrc on ffrc.annee = ffd.annee and ffrc.type_demande = ffd.type_demande
-left join data_kpi.fac_efficace as face on face.annee = ffd.annee and face.type_demande = ffd.type_demande
-left join data_kpi.fnc_fac_commentaire_final as ffcf on ffcf.annee = ffd.annee and ffcf.type_demande = ffd.type_demande
+	        WHEN pe.efficace is null THEN 0
+	        ELSE pe.efficace
+	    END as efficace,
+		pd.abbrv as abbrv, pd.cible as cible,
+		pcf.commentaire as commentaire
+	from revue_direction.perf_declare pd 
+left join revue_direction.perf_cloture as pc on pc.id_revue_processus = pd.id_revue_processus and pc.type_demande = pd.type_demande
+left join revue_direction.perf_efficace as pe on pe.id_revue_processus = pd.id_revue_processus and pe.type_demande = pd.type_demande
+left join revue_direction.perf_commentaire_final as pcf on pcf.id_revue_processus = pd.id_revue_processus and pcf.type_demande = pd.type_demande;
+
+
+
+
+
+
+
 

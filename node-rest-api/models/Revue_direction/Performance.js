@@ -64,34 +64,6 @@ const PerformanceObjectifDetail = defautl_db.defaultSequelize.define('performanc
       timestamps: false,
     });
 
-  
-    const PerformanceCommentaire = defautl_db.defaultSequelize.define('performance_commentaire', {
-      id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-        allowNull: false,
-      },
-      id_revue_processus: {
-        type: Sequelize.INTEGER,
-      },
-      id_performance: {
-        type: Sequelize.INTEGER,
-      },
-      commentaire: {
-        type: Sequelize.STRING(1000),
-        allowNull: false,
-      },
-      createdat: {
-        type: Sequelize.DATE,
-      },
-    },{
-      tableName: "performance_commentaire",
-      schema: "revue_direction",
-      createdAt : "createdat",
-      timestamps: false,
-      noPrimaryKey: true, 
-    });
 
     const PerformanceObjectifProcessus = defautl_db.defaultSequelize.define('performance_objectif_processus', {
       id: {
@@ -183,6 +155,112 @@ const PerformanceObjectifDetail = defautl_db.defaultSequelize.define('performanc
       noPrimaryKey: true, 
     });
 
+
+
+    
+const Performance = defautl_db.defaultSequelize.define('performance', {
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false,
+    },
+    titre: {
+        type: Sequelize.STRING(1000)
+    },
+    objectif: {
+        type: Sequelize.STRING(1000)
+    },
+    realise: {
+        type: Sequelize.DECIMAL(10,5)
+    },
+    date_demande: {
+        type: Sequelize.DATE,
+    },
+    date_cloture: {
+        type: Sequelize.DATE,
+    },
+    statut: {
+        type: Sequelize.STRING(300),
+    }
+},{
+  tableName: "performance",
+  schema: "revue_direction",
+  freezeTableName: true,
+  createdAt: "createat",
+  updatedAt: "updateat",
+});
+
+
+const PerfSynthese = defautl_db.defaultSequelize.define('perf_synthese', {
+  annee: {
+    type: Sequelize.INTEGER
+  },
+  mois: {
+    type: Sequelize.STRING(200)
+  },
+  id_revue_processus: {
+    type: Sequelize.INTEGER
+  },
+  type_demande: {
+    type: Sequelize.STRING(1000)
+  },
+  declarer: {
+    type: Sequelize.INTEGER
+  },
+  cloture: {
+    type: Sequelize.INTEGER,
+  },
+  taux: {
+    type: Sequelize.DECIMAL(10,5),
+  },
+  efficace: {
+    type: Sequelize.INTEGER,
+  },
+  abbrv: {
+    type: Sequelize.STRING(200),
+  },
+  cible: {
+    type: Sequelize.INTEGER,
+  },
+  commentaire: {
+    type: Sequelize.STRING(1000)
+  },
+},{
+tableName: "perf_synthese",
+schema: "revue_direction",
+freezeTableName: true,
+timestamps: false,
+});
+
+const PerformanceCommentaire = defautl_db.defaultSequelize.define('performance_commentaire', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false,
+  },
+  id_revue_processus: {
+    type: Sequelize.INTEGER
+  },
+  type_demande: {
+    type: Sequelize.STRING(1000)
+  },
+  commentaire: {
+    type: Sequelize.STRING(1000)
+  },
+  },{
+  tableName: "performance_commentaire",
+  schema: "revue_direction",
+  freezeTableName: true,
+  createdAt: "createdat",
+  updatedAt: false,
+});
+
+PerfSynthese.removeAttribute('id');
+
+module.exports = {}  
+
   
-module.exports = { PerformanceObjectifDetail, PerformanceCommentaire, PerformanceObjectifProcessus, PerformanceObjectifCommentaire}  
+module.exports = { PerformanceObjectifDetail, PerformanceObjectifProcessus, PerformanceObjectifCommentaire, Performance, PerfSynthese, PerformanceCommentaire}  
   

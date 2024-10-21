@@ -284,8 +284,12 @@ const Menu =()=>{
                                 <NavLink className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  to={urlReact+"acceuilProcessus"} data-bs-toggle="collapse" 
                                         data-bs-target={"#collapseProcessus"+index} aria-expanded="false" aria-controls="collapseExample" 
                                         onClick={() => changeProcessus(processus.id, index)} > 
-                                            {!MenuCollapse ? <span className="titleMenu "> {processus.libelle_processus}</span>:<></>}
-                                            {true ? <span>{processus.abbrv}</span>:<></>}
+                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseProcessus"+index} aria-expanded="false" aria-controls="collapseExample">
+                                                {!MenuCollapse ? <span className="titleMenu "> {processus.libelle_processus}</span>:<></>}
+                                            </div>
+                                            <div data-bs-toggle="collapse" data-bs-target={"#collapseMenu2"+index} aria-expanded="false" aria-controls="collapseExample">
+                                                {true ? <span>{processus.abbrv}</span>:<></>}
+                                            </div>
                                 </NavLink>
                                  
                                 <div className="collapse" id={"collapseProcessus"+index}>

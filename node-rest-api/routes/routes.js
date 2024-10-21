@@ -127,6 +127,10 @@ router.post("/getPerformanceObjectifByRevueProcessus", performance.getPerformanc
 router.post("/getPerformanceCommentaireByRevuePerformance", performance.getPerformanceCommentaireByRevuePerformance)
 router.post("/insertPerformanceObjectifCommentaire", performance.insertPerformanceObjectifCommentaire)
 router.post("/getPerformanceObjectifCommentaireByRevue", performance.getPerformanceObjectifCommentaireByRevue)
+router.post("/getPerformanceByDemande", performance.getPerformanceByDemande)
+router.post("/getPerformanceSyntheseByDemande", performance.getPerformanceSyntheseByDemande)
+router.post("/insertPerformanceCommentaire", performance.insertPerformanceCommentaire)
+router.post("/getPerformanceCommentaire", performance.getPerformanceCommentaire)
 
 
 

@@ -255,7 +255,7 @@ CREATE TABLE IF NOT EXISTS revue_direction.performance_objectif_commentaire(
 CREATE TABLE IF NOT EXISTS revue_direction.performance_commentaire(
   id SERIAL PRIMARY KEY,
   id_revue_processus INTEGER REFERENCES revue_direction.revue_processus(id),
-  id_performance INTEGER REFERENCES revue_direction.performance(id),
+  type_demande VARCHAR(200),
   commentaire VARCHAR(200),
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

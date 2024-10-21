@@ -8,6 +8,9 @@ import { TitlePage } from "../templates/templates";
 import axios from "axios";
 import { Cookies,useCookies } from "react-cookie";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import PerformanceConsultation from "./Component/PerformanceConsultation";
+import PerformanceSynthese from "./Component/PerformanceSynthese"
+// import PerformanceConsultation from "./Component"
 var Url = Global_url
 // // import "./homeStyle.scss"
 // ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,BarElement,Title,Tooltip,Legend);
@@ -17,10 +20,12 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
     const dispatch = useDispatch()
     let [data,setData] = useState([])
     let [annee,setAnnee] = useState(2023)
-    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus'])
+    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus','id_revue_direction', 'type_demande'])
     const commentaire = useRef();
     const [current, setCurrent] = useState([])
     const[listCommentaire, setListCommentaire] = useState([])
+    const [consultation, setConsultation] = useState([])
+    const [synthese, setSynthese] = useState([])
     const id_revue_processus = 1;
     console.log(current)
 
@@ -46,6 +51,10 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
     useEffect(()=>{
         getData()
     },[])
+
+    useEffect(()=>{
+        setIsModalOpen(false)
+    })
 
     async function getData(){
         const item = {}
@@ -90,9 +99,30 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
 
     }
 
-    const handleDetail  = () => {
+    const handleDetail  = async (data) => {
+        const item = data.type_demande
+        console.log(item)
+        setCookie(data.type_demande)
+        setCurrent(data)
+        setIsModalOpen(true)
+        // await axios.post(Url+"/getPerformanceByDemande",{item}).then(res=>{
+        //     if(res.data.length){
+        //         setConsultation(res.data)
+        //         console.log(res.data)
+        //     }
+        // })  
+        // await axios.post(Url+"/getPerformanceSyntheseByDemande", {item}).then(res=>{
+        //     if(res.data.length){
+        //         setSynthese(res.data)
+        //         console.log(res.data)
+        //     }
+        // })
 
     }
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+
    
     return(
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
@@ -133,9 +163,9 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                                 </OverlayTrigger>
                                                 </div>
                                                 <div className="col-3 mx-1">
-                                                <OverlayTrigger placement="top" overlay={<Tooltip>Detail</Tooltip>}>
-                                                    <button className="btn btn-warning rounded-3 shadow" onClick={()=>handleDetail(data.id)} 
-                                                    data-bs-target="#sujet" data-bs-toggle="modal">
+                                                <OverlayTrigger placement="top" overlay={<Tooltip>Detail {data.type_demande}</Tooltip>}>
+                                                    <button className="btn btn-warning rounded-3 shadow" onClick={()=>handleDetail(data)} 
+                                                    data-bs-target="#detail" data-bs-toggle="modal">
                                                         <i className="bi bi-pencil-square"></i>
                                                     </button>
                                                 </OverlayTrigger>
@@ -197,7 +227,34 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                         </div>
                     </div>
                 </div>
+
+
+                <div className="modal fade" id="detail" data-backdrop="static" data-keyboard="false">
+                    <div className="modal-dialog modal-lg modal-dialog-right ">
+                        <div className={"modal-content"}>
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">Objectifs : {current.objectifs}</h5>
+                            </div>
+                            <div className="modal-body">
+                                <PerformanceConsultation isOpen={isModalOpen} current={current} />
+                                <PerformanceSynthese isOpen={isModalOpen} current={current}/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
+
+                {/* <div>
+                    <button onClick={handleOpenModal}>Ouvrir le Modale</button>
+
+                        {isModalOpen && (
+                            <div className="modal">
+                                <button onClick={handleCloseModal}>Fermer</button>
+                                <PerformanceConsultation isOpen={isModalOpen} />
+                            </div>
+                        )}
+                </div> */}
+
         </div>
 
         
