@@ -108,6 +108,40 @@ const getTicketById = (req,res,next) =>{
     })
   };
 
+  const insertManyPlanAction = (req,res,next) =>{
+    // console.log()
+    const all = [];
+    const plan = req.body.item;
+    const revue = req.body.newRevue;
+    console.log("Plan ",plan)
+    console.log("Revue ",revue)
+    if(plan.length>0){
+      plan.map(plan=>{
+        const newPlan = {}
+        newPlan.id_revue_processus = revue.id
+        newPlan.sujet = plan.sujet
+        newPlan.nb_ticket = plan.ticket
+        newPlan.commentaire = plan.commentaire
+        all.push(newPlan)
+      })
+      console.log(all)
+      Plan_action.bulkCreate(all,
+        {
+          ignoreDuplicates:true,
+          validate:true,
+          returning:true
+        }
+      )
+      .then(function(results) {
+        res.status(200).send(results);
+      })
+      .catch(function(error) {
+        console.error(error);
+        res.status(400).json({ error });
+      })
+    }
+  };
+
   const updatePlanAction = (req,res,next) =>{
     const {id,sujet} = req.body.item
     // console.log()
@@ -215,5 +249,5 @@ const getTicketById = (req,res,next) =>{
 
 
 module.exports = {getTicketById, getTicketByManyId, getPlanAction, getPlanActionByRevueProcessus, 
-                  insertPlanAction, insertPlanActionCommentaire, 
+                  insertPlanAction, insertManyPlanAction, insertPlanActionCommentaire, 
                   updatePlanAction, desactivePlanAction}

@@ -6,7 +6,7 @@ import processusReducer from "../feature/processus.slice"
 import todosReducer  from "../feature/todo"
 import { objectifReducer, parametrageObjectifReducer, recuperationReducer, uniteReducer} from "../feature/objectifs.slice"
 import { importReducer,exportReducer} from "../feature/importExport.slice"
-import revueDirectionReducer from "../feature/revueDirection.slice"
+import {revueDirectionReducer, planActionReducer} from "../feature/revueDirection.slice"
 
 export default configureStore({
     reducer:{
@@ -22,5 +22,6 @@ export default configureStore({
         unite: uniteReducer,
         recuperation: recuperationReducer,
         revueDirection: revueDirectionReducer,
+        planAction: planActionReducer,
     }
 })

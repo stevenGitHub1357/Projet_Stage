@@ -128,7 +128,6 @@ const PerformanceSynthese =({MenuCollapse,theme,logo,cible,isOpen, current})=>{
                             {
                                 syntheseListe.map((synthese, index) => (
                                     <td>
-                                        <div>
                                         <form onSubmit={handleSaveComment}>
                                             <div className="row mb-4">
                                                 <div className="col-8 mx-3" style={{color:"white"}}>
@@ -138,20 +137,11 @@ const PerformanceSynthese =({MenuCollapse,theme,logo,cible,isOpen, current})=>{
                                                 </div>
                                                 
                                                 <div className="col-1 mx-2 mt-4">
-                                                    <button className="btn btn-success rounded-1 shadow" type="submit" data-bs-dismiss="modal">Ajouter</button>
+                                                    <button className="btn btn-success rounded-1 shadow" type="submit" data-bs-dismiss="modal">Modifier</button>
                                                 </div> 
                                             </div>
                                         </form>
-                                        </div>
-                                        <div className="col-2">
-                                            <OverlayTrigger placement="top" overlay={<Tooltip>Modifier commentaire</Tooltip>}>
-                                                <button className="btn btn-secondary rounded-3 shadow" onClick={()=>handleAddCommentaire(synthese)} 
-                                                data-bs-target="#commentaire" data-bs-toggle="modal">
-                                                    <i class="bi bi-chat-left-text"></i>
-                                                </button>
-                                            </OverlayTrigger>
-                                        </div>
-                                        </td>
+                                    </td>
                                 ))
                             }
                         </tr>

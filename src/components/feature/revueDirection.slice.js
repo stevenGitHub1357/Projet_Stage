@@ -45,5 +45,50 @@ const revueDirectionSlice = createSlice({
 })
 
 
+const planActionSlice = createSlice({
+    name:"planAction",
+    initialState:{
+        planAction:[{}],
+    },
+    reducers:{
+        setPlanActionData:(state,{payload})=>{
+            console.log(payload)
+            state.planAction = payload
+        },
+        addPlanAction:(state,{payload})=>{
+            console.log(payload)
+            if(payload !== undefined){
+                state.planAction.push(payload)
+            }
+        },
+        deletePlanAction: (state,{payload})=>{
+            console.log(payload)
+            state.planAction = state.planAction.filter((todo,index) => index !== payload)
+            console.log(state.planAction)
+        },
+        updateRevueDirection:(state,{payload}) =>{
+            state.revueDirection = state.revueDirection.map((revueDirection) =>{
+                if(revueDirection.id === payload.id){
+                    return{
+                        ...revueDirection,
+                        ticket: payload.ticket,
+                        sujet: payload.sujet,
+                        action: payload.action,
+                        pdca: payload.pdca,
+                        commentaire: payload.commentaire,
+                    }
+                }else{
+                    return revueDirection
+                }
+            })
+        },
+        
+    }
+})
+
+export const {setPlanActionData,addPlanAction,deletePlanAction} = planActionSlice.actions
+export const planActionReducer = planActionSlice.reducer
+
+
 export const {setRevueDirectionData,addRevueDirection,deleteRevueDirection,updateRevueDirectionData, setRevueDirectionEtape} = revueDirectionSlice.actions
-export default revueDirectionSlice.reducer
+export const revueDirectionReducer = revueDirectionSlice.reducer

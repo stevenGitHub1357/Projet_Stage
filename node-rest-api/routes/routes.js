@@ -114,6 +114,7 @@ router.post("/getTicketByManyId", plan_action.getTicketByManyId)
 router.get("/getPlanAction", plan_action.getPlanAction)
 router.post("/getPlanActionByRevueProcessus", plan_action.getPlanActionByRevueProcessus)
 router.post("/insertPlanAction", plan_action.insertPlanAction)
+router.post("/insertManyPlanAction", plan_action.insertManyPlanAction)
 router.post("/insertPlanActionCommentaire", plan_action.insertPlanActionCommentaire)
 router.post("/updatePlanAction", plan_action.updatePlanAction)
 router.post("/desactivePlanAction", plan_action.desactivePlanAction)
@@ -131,6 +132,16 @@ router.post("/getPerformanceByDemande", performance.getPerformanceByDemande)
 router.post("/getPerformanceSyntheseByDemande", performance.getPerformanceSyntheseByDemande)
 router.post("/insertPerformanceCommentaire", performance.insertPerformanceCommentaire)
 router.post("/getPerformanceCommentaire", performance.getPerformanceCommentaire)
+
+
+//--Efficaciter--//
+const efficacite = require("../controllers/Revue_direction/Efficacite_controller.js")
+router.post("/insertEfficacite", efficacite.insertEfficacite)
+router.post("/updateEfficacite", efficacite.updateEfficacite)
+router.post("/getEfficaciteByRevue", efficacite.getEfficaciteByRevue)
+router.post("/getRisqueByProcessus", efficacite.getRisqueByProcessus)
+router.post("/getEnjeuxByProcessus", efficacite.getEnjeuxByProcessus)
+router.post("/getOpportuniterByProcessus", efficacite.getOpportuniterByProcessus)
 
 
 

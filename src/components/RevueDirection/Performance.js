@@ -164,9 +164,9 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                                 </div>
                                                 <div className="col-3 mx-1">
                                                 <OverlayTrigger placement="top" overlay={<Tooltip>Detail {data.type_demande}</Tooltip>}>
-                                                    <button className="btn btn-warning rounded-3 shadow" onClick={()=>handleDetail(data)} 
+                                                    <button className="btn btn-dark rounded-3 shadow" onClick={()=>handleDetail(data)} 
                                                     data-bs-target="#detail" data-bs-toggle="modal">
-                                                        <i className="bi bi-pencil-square"></i>
+                                                        <i class="bi bi-info-lg"></i>
                                                     </button>
                                                 </OverlayTrigger>
                                                 </div>

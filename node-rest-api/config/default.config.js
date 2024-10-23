@@ -31,5 +31,6 @@ const defaultSequelize = new Sequelize('kpi', 'postgres', 'postgres', {
   },
 });
 
+
 module.exports = {defaultSequelize, pool};
 

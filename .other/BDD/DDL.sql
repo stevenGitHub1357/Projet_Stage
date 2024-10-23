@@ -25,7 +25,7 @@ DROP VIEW IF EXISTS detail_user_processus;
 DROP VIEW IF EXISTS detail_user_role;
 DROP VIEW IF EXISTS menu_role_processus;
 
-
+DROP TABLE IF EXISTS revue_direction.efficacite;
 DROP TABLE IF EXISTS revue_direction.performance_objectif_commentaire;
 DROP TABLE IF EXISTS revue_direction.performance_commentaire;
 DROP TABLE IF EXISTS revue_direction.performance_objectif;
@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS data_kpi.fnc_fac_commentaire(
   --revue_processus
 CREATE TABLE IF NOT EXISTS revue_direction.revue_processus(
   id SERIAL PRIMARY KEY,
-  id_processus INTEGER REFERENCES public.processus(id),
+  id_processus INTEGER REFERENCES public.processus(id) default 1,
   date_cloture TIMESTAMP DEFAULT (NOW() + INTERVAL '1 year'),
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   statut VARCHAR(200)
@@ -260,6 +260,19 @@ CREATE TABLE IF NOT EXISTS revue_direction.performance_commentaire(
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
+---Efficacite
+  --plan_action
+CREATE TABLE IF NOT EXISTS revue_direction.efficacite(
+  id SERIAL PRIMARY KEY,
+  id_revue_processus INTEGER REFERENCES revue_direction.revue_processus(id),
+  id_ticket VARCHAR(200),
+  num_ticket VARCHAR(200),
+  activate INTEGER DEFAULT 1,
+  types INTEGER default 1,
+  commentaire VARCHAR(2000) default '-',
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 
 

@@ -26,6 +26,7 @@ const Revue = ({MenuCollapse,theme,logo})=>{
     const ticket = useRef();
     const action = useRef();
     const pdca = useRef();
+    const pilote = useRef();
     const commentaire = useRef();
     const sujetModif = useRef();
     const [idSujetModif, setIdSujetModif] = useState();
@@ -36,8 +37,10 @@ const Revue = ({MenuCollapse,theme,logo})=>{
     const colonneTable = [
         {id:1, nom:"Sujet"},
         {id:2, nom:"Action"},
-        {id:3, nom:"Commentaire"},
+        {id:3, nom:"Pilote"},
         {id:4, nom:"PDCA"},
+        {id:5, nom:"Commentaire"},
+        
     ]
 
     const datas = [
@@ -84,6 +87,7 @@ const Revue = ({MenuCollapse,theme,logo})=>{
                     if(theData.allCommentaire.length>0) theData.commentaire = theData.allCommentaire[theData.allCommentaire.length-1].commentaire
                     theData.action = ticket.action
                     theData.pdca = ticket.pdca
+                    theData.pilote = ticket.pilote
                     // console.log(theData)
                     newData.push(theData)
                 })
@@ -140,6 +144,7 @@ const Revue = ({MenuCollapse,theme,logo})=>{
             if(infoTicket.data.length>0){
                 action.current.value = infoTicket.data[0].action
                 pdca.current.value = infoTicket.data[0].pdca
+                pilote.current.value = infoTicket.data[0].pilote
                 setValideTicket(true)
             }else{
                 action.current.value = "Ticket inexistant"
@@ -219,9 +224,13 @@ const Revue = ({MenuCollapse,theme,logo})=>{
                             <label style={{textAlign :"center"}}><strong>Action :</strong></label>
                             <textarea className="form-control col-12" style={{backgroundColor:"lightgray"}} type="text" name="action" placeholder="Action" ref={action} readOnly></textarea>
                         </div>
+                        <div className="col-3 mx-2">
+                            <label style={{textAlign :"center"}}><strong>Pilote :</strong></label>
+                            <textarea className="form-control col-12" style={{backgroundColor:"lightgray"}} type="text" name="pilote" placeholder="Pilote" ref={pilote} readOnly></textarea>
+                        </div>
                         <div className="col-2 mx-2">
                             <label style={{textAlign :"center"}}><strong>PDCA :</strong></label>
-                            <input className="form-control col-12" style={{backgroundColor:"lightgray"}} type="text" name="pdca" placeholder="PDCA" ref={pdca} readOnly></input>
+                            <input className="form-control col-12" style={{backgroundColor:"lightgray"}}  type="text" name="pdca" placeholder="PDCA" ref={pdca} readOnly></input>
                         </div>
                         
                                 <div className="col-1 mx-2 mt-4">
@@ -250,8 +259,9 @@ const Revue = ({MenuCollapse,theme,logo})=>{
                                     <tr key={index}>
                                         <td>{data.sujet}</td>
                                         <td>{data.action}</td>
-                                        <td>{data.commentaire}</td>
+                                        <td>{data.pilote}</td>
                                         <td>{data.pdca}</td>
+                                        <td>{data.commentaire}</td>
                                         <td>
                                             <div className="row">
                                                 <div className="col-2">
