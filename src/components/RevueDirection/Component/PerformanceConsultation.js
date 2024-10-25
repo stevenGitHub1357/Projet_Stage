@@ -25,9 +25,13 @@ const PerformanceConsultation = ({MenuCollapse,theme,logo,cible, isOpen, current
     },[isOpen])
 
     async function getData(){
-        const item = current.type_demande;
+        const item = {}
+        console.log(current)
+        item.type_demande = current.type_demande;
+        item.date_cloture = current.date_cloture_revue_processus
+        item.date_create = current.date_create_revue_processus
         console.log(item)
-        await axios.post(Url+"/getPerformanceByDemande",{item}).then(res=>{
+        await axios.post(Url+"/getPerformanceByDemandeRevue",{item}).then(res=>{
             if(res.data.length){
                 setConsultation(res.data)
                 console.log(res.data)

@@ -115,7 +115,7 @@ router.get("/getPlanAction", plan_action.getPlanAction)
 router.post("/getPlanActionByRevueProcessus", plan_action.getPlanActionByRevueProcessus)
 router.post("/insertPlanAction", plan_action.insertPlanAction)
 router.post("/insertManyPlanAction", plan_action.insertManyPlanAction)
-router.post("/insertPlanActionCommentaire", plan_action.insertPlanActionCommentaire)
+// router.post("/insertPlanActionCommentaire", plan_action.insertPlanActionCommentaire)
 router.post("/updatePlanAction", plan_action.updatePlanAction)
 router.post("/desactivePlanAction", plan_action.desactivePlanAction)
 
@@ -132,6 +132,9 @@ router.post("/getPerformanceByDemande", performance.getPerformanceByDemande)
 router.post("/getPerformanceSyntheseByDemande", performance.getPerformanceSyntheseByDemande)
 router.post("/insertPerformanceCommentaire", performance.insertPerformanceCommentaire)
 router.post("/getPerformanceCommentaire", performance.getPerformanceCommentaire)
+router.post("/getPerformanceByDemandeRevue", performance.getPerformanceByDemandeRevue)
+router.post("/insertPerformanceObjectifRevue", performance.insertPerformanceObjectifRevue)
+router.post("/updatePerformanceObjectifRevue", performance.updatePerformanceObjectifRevue)
 
 
 //--Efficaciter--//

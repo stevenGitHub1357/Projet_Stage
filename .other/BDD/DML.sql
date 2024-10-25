@@ -138,7 +138,9 @@ INSERT INTO objectif.recuperation (type_recuperation) VALUES
 	('Manuel'),
 	('Excel à importer');
 
-
+---Revue_processus
+INSERT INTO revue_direction.revue_processus VALUES
+	(1,2,null,now,1)
 ---Performance
 INSERT INTO revue_direction.performance_objectif (id_parametrage,type_demande, libelle) VALUES
 	(39, 'FAC', 'Fiche d''amelioration continue'),

@@ -2,7 +2,7 @@ const bd_pool = require("../../config/default.config")
 const pool = bd_pool.pool
 const {kanboard} = require("../../config/dbRevueDirection.config")
 const { Sequelize } = require("sequelize");
-const { Plan_action, Plan_action_commentaire } = require("../../models/Revue_direction/Plan_action");
+const { Plan_action } = require("../../models/Revue_direction/Plan_action");
 const { Revue_processus } = require("../../models/Revue_direction/Revue_processus")
 
 const getTicketById = (req,res,next) =>{
@@ -40,6 +40,7 @@ const getTicketById = (req,res,next) =>{
 
   const getTicketByManyId = (req,res,next) =>{
     const ticket = req.body.item
+    console.log(ticket)
     kanboard.query(
       `
         SELECT t.id as id,t.title as action,us.name as pilote,c.title as pdca, t.date_due as delai from tasks t 
@@ -71,9 +72,9 @@ const getTicketById = (req,res,next) =>{
 
   const getPlanAction = (req,res,next) =>{
     Plan_action.findAll({
-      include: [
-        Plan_action_commentaire
-      ]
+      // include: [
+      //   Plan_action_commentaire
+      // ]
     })
     .then(function(results) {
       if (results.length > 0) {
@@ -90,13 +91,14 @@ const getTicketById = (req,res,next) =>{
 
 
   const insertPlanAction = (req,res,next) =>{
-    const {id_revue_processus,sujet,nb_ticket} = req.body.item
+    const {id_revue_processus,sujet,nb_ticket,commentaire} = req.body.item
     // console.log()
     Plan_action.create(
       { 
         id_revue_processus : id_revue_processus,
         sujet : sujet,
-        nb_ticket : nb_ticket
+        nb_ticket : nb_ticket,
+        commentaire : commentaire
       }
     )
     .then(function(results) {
@@ -143,11 +145,13 @@ const getTicketById = (req,res,next) =>{
   };
 
   const updatePlanAction = (req,res,next) =>{
-    const {id,sujet} = req.body.item
+    const {id,sujet,nb_ticket,commentaire} = req.body.item
     // console.log()
     Plan_action.update(
       {
         sujet : sujet,
+        nb_ticket : nb_ticket,
+        commentaire : commentaire
       },
       {
         where : 
@@ -166,23 +170,23 @@ const getTicketById = (req,res,next) =>{
   };
 
 
-  const insertPlanActionCommentaire = (req,res,next) =>{
-    const {id_plan_action,commentaire} = req.body.item
-    // console.log()
-    Plan_action_commentaire.create(
-      { 
-        id_plan_action : id_plan_action,
-        commentaire: commentaire
-      }
-    )
-    .then(function(results) {
-      res.status(200).send(results);
-    })
-    .catch(function(error) {
-      console.error(error);
-      res.status(400).json({ error });
-    })
-  };
+  // const insertPlanActionCommentaire = (req,res,next) =>{
+  //   const {id_plan_action,commentaire} = req.body.item
+  //   // console.log()
+  //   Plan_action_commentaire.create(
+  //     { 
+  //       id_plan_action : id_plan_action,
+  //       commentaire: commentaire
+  //     }
+  //   )
+  //   .then(function(results) {
+  //     res.status(200).send(results);
+  //   })
+  //   .catch(function(error) {
+  //     console.error(error);
+  //     res.status(400).json({ error });
+  //   })
+  // };
 
 
   const getPlanActionByRevueProcessus = (req,res,next) =>{
@@ -198,9 +202,9 @@ const getTicketById = (req,res,next) =>{
         [
           {
             model: Plan_action,
-            include: [{
-              model: Plan_action_commentaire,
-            }]
+            // include: [{
+            //   model: Plan_action_commentaire,
+            // }]
           }
         ]
       }
@@ -249,5 +253,5 @@ const getTicketById = (req,res,next) =>{
 
 
 module.exports = {getTicketById, getTicketByManyId, getPlanAction, getPlanActionByRevueProcessus, 
-                  insertPlanAction, insertManyPlanAction, insertPlanActionCommentaire, 
+                  insertPlanAction, insertManyPlanAction,
                   updatePlanAction, desactivePlanAction}

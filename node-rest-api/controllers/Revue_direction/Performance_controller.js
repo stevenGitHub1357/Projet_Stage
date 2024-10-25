@@ -1,8 +1,8 @@
 const bd_pool = require("../../config/default.config")
 const pool = bd_pool.pool
 const {kanboard} = require("../../config/dbRevueDirection.config")
-const { Sequelize } = require("sequelize");
-const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommentaire, PerformanceObjectifCommentaire, PerfSynthese, Performance } = require("../../models/Revue_direction/Performance");
+const { Sequelize, Op } = require("sequelize");
+const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommentaire, PerformanceObjectifCommentaire, PerfSynthese, Performance, PerformanceObjectifRevue } = require("../../models/Revue_direction/Performance");
 
 
 
@@ -152,6 +152,38 @@ const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommen
     })
   };
 
+  const getPerformanceByDemandeRevue = (req,res,next) =>{
+    const {type_demande,date_create,date_cloture} = req.body.item
+    console.log(req.body.item)
+    const startDate = new Date(date_create);
+    let endDate;
+
+    if (date_cloture === null || date_cloture === '') {
+      endDate = new Date();
+    } else {
+      endDate = new Date(date_cloture);
+    }
+    Performance.findAll({
+      where: {
+        type_demande: type_demande,
+        date_demande: {
+          [Op.between]: [startDate, endDate]
+        }
+      }
+    })
+    .then(function(results) {
+      if (results.length > 0) {
+        res.status(200).json(results);
+      } else {
+        res.status(200).json();
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  };
+
 
   const getPerformanceSyntheseByDemande = (req,res,next) =>{
     const type_demande = req.body.item
@@ -217,10 +249,62 @@ const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommen
   };
 
 
+  const insertPerformanceObjectifRevue = (req,res,next) =>{
+    const {id_revue_processus,id_parametrage, realise, taux, fichier, commentaire} = req.body.item
+    // console.log()
+    PerformanceObjectifRevue.create(
+      { 
+        id_revue_processus : id_revue_processus,
+        id_parametrage : id_parametrage,
+        realise : realise,
+        taux : taux,
+        fichier : fichier,
+        commentaire: commentaire
+      }
+    )
+    .then(function(results) {
+      res.status(200).send(results);
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  };
+
+
+  const updatePerformanceObjectifRevue = (req,res,next) =>{
+    const {id_revue_processus,id_parametrage, realise, taux, fichier, commentaire} = req.body.item
+    // console.log()
+    PerformanceObjectifRevue.update(
+      { 
+        realise : realise,
+        taux : taux,
+        fichier : fichier,
+        commentaire: commentaire
+      },
+      {
+        where : 
+        {
+            id_revue_processus : id_revue_processus,
+            id_parametrage : id_parametrage
+        }
+      }
+    )
+    .then(function(results) {
+      res.status(200).send(results);
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  }
+
+
 
 
 
 module.exports = {getPerformanceObjectifDetail, getPerformanceObjectifDetailByProcessus, getPerformanceObjectifByRevueProcessus, 
                   getPerformanceCommentaireByRevuePerformance, getPerformanceObjectifCommentaireByRevue, 
                   insertPerformanceObjectifCommentaire, getPerformanceByDemande, getPerformanceSyntheseByDemande,
-                  insertPerformanceCommentaire, getPerformanceCommentaire}
+                  insertPerformanceCommentaire, getPerformanceCommentaire, getPerformanceByDemandeRevue,
+                  updatePerformanceObjectifRevue, insertPerformanceObjectifRevue}

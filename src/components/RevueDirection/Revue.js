@@ -1,61 +1,121 @@
 import React, { useEffect, useRef, useState } from "react";
-import {Chart as ChartJS,CategoryScale,LinearScale,BarElement,Title,Legend, LineElement, PointElement,} from 'chart.js';
+import {Chart as ChartJS,CategoryScale,LinearScale,BarElement,Title,Tooltip,Legend, LineElement, PointElement,} from 'chart.js';
 import { Bar, Line } from "react-chartjs-2";
 import faker from "faker";
-import { OverlayTrigger,Tooltip } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-
 import Global_url from "../../global_url";
-import axios from "axios";
 import { TitlePage } from "../templates/templates";
-import { Danger, Success, Warning } from "../service/service-alert";
-import { Cookies, useCookies } from "react-cookie";
-import { getAllByAltText } from "@testing-library/react";
+import axios from "axios";
+import { addPlanActionRevue, deletePlanActionRevue, setPlanActionRevueData } from "../feature/revueDirection.slice";
+import { useCookies } from "react-cookie";
 var Url = Global_url
 // import "./homeStyle.scss"
-// ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,BarElement,Title,Tooltip,Legend);
+ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,BarElement,Title,Tooltip,Legend);
 
-const Revue = ({MenuCollapse,theme,logo})=>{
+const Revue = ({MenuCollapse,theme,logo,cible})=>{
 
     const dispatch = useDispatch()
+    let [listData,setListData] = useState([])
+    let [annee,setAnnee] = useState(2023)
+    const[afterAddDelete,setAfterAddDelete] = useState(false)
     const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus'])
-    let [listData,setListeData] = useState([])
-    let [listCommentaire, setListCommentaire] = useState([])
-    let [currentRevue, setCurrentRevue] = useState([])
-    const sujet = useRef();
+    const [currentPlan, setCurrentPlan] = useState(-1)
+    const [currentPlanId, setCurrentPlanId] = useState(-1)
+    const [insert, setInsert] = useState(true)
+    const indexItem = useRef();
     const ticket = useRef();
+    const sujet = useRef();
     const action = useRef();
-    const pdca = useRef();
     const pilote = useRef();
+    const pdca = useRef();
     const commentaire = useRef();
-    const sujetModif = useRef();
-    const [idSujetModif, setIdSujetModif] = useState();
-    const [valideTicket,setValideTicket] = useState(false)
-
+    const verification = useRef();
+    const idCurrent = useRef();
     const id_revue_processus = 1
+    const id_processus = 2
 
     const colonneTable = [
         {id:1, nom:"Sujet"},
-        {id:2, nom:"Action"},
-        {id:3, nom:"Pilote"},
-        {id:4, nom:"PDCA"},
-        {id:5, nom:"Commentaire"},
-        
+        {id:2, nom:"N.Ticket"},
+        {id:3, nom:"Action"},
+        {id:4, nom:"Pilote"},
+        {id:5, nom:"PDCA"},
+        {id:6, nom:"Commentaire"},
     ]
 
-    const datas = [
-        {id:1, sujet:"sujet1", action:"action1", commentaire:"commentaire1",pdca:"A"},
-        {id:2, sujet:"sujet1", action:"action1", commentaire:"commentaire1",pdca:"A"},
-        {id:3, sujet:"sujet1", action:"action1", commentaire:"commentaire1",pdca:"A"},
-    ]
+    const data = useSelector((state) => state.planActionRevue.planActionRevue)
 
-    const [data, setData] = useState(datas);
-    const [revueProcessus, setRevuProcessus] = useState(datas);
-
+    // console.log(data)
     useEffect(()=>{
         getData()
     },[])
 
+    const handleAddLine = () =>{
+        dispatch(addPlanActionRevue({}))
+        setAfterAddDelete(true)
+    }
+    const handleDeleteLine = async (id) =>{
+        const item = id
+        console.log("delete"+item)
+        await axios.post(Url+"/desactivePlanAction",{item})
+        // getDataFromFront(true,index)
+        setAfterAddDelete(true)
+        getData()
+    }
+    const handleGetCurrentPlan = (index, id) => {
+        console.log("index current :"+index+" "+id)
+        // getDataFromFront(true,-2)
+        setCurrentPlan(Number(index))
+        setCurrentPlanId(Number(id))
+        setAfterAddDelete(false)
+        setInsert(true)
+    }
+    const getUpdatePlan = async () => {
+        console.log("Update Insert")
+        if(ticket.current.value !== ""){
+            const intTicket = Number(ticket.current.value)
+            const infoTicket = await axios.post(Url+"/getTicketById",{item:intTicket});
+            // console.log(infoTicket)
+            if(infoTicket.data.length>0){
+                action.current.value = infoTicket.data[0].action
+                pdca.current.value = infoTicket.data[0].pdca
+                pilote.current.value = infoTicket.data[0].pilote
+            }else{
+                action.current.value = ""
+                pdca.current.value = ""
+                pilote.current.value = ""
+            }
+        }else{
+            action.current.value = ""
+            pdca.current.value = ""
+            pilote.current.value = ""
+        }
+        // console.log(data)
+        console.log(currentPlanId)
+        let current = data.filter(data=> data.id === Number(currentPlanId))
+        
+        let item = {}
+        item.sujet = sujet.current.value
+        item.nb_ticket = ticket.current.value
+        item.id_revue_processus = id_revue_processus
+        item.commentaire = commentaire.current.value
+        if(current.length<=0 && insert === true){
+            item = await axios.post(Url+"/insertPlanAction",{item})
+            item = item.data
+            console.log("insert ",item)
+            setCurrentPlanId(item.id)
+            setInsert(false)
+            getData()
+        }else{
+            current=current[0]
+            console.log(current)
+            item.id = current.id
+            item = await axios.post(Url+"/updatePlanAction",{item})
+            console.log('update',item)
+            getData()
+        }
+        
+    }
     async function getData(){
         console.log(cookies.id_processus)
         const item = {}
@@ -64,187 +124,73 @@ const Revue = ({MenuCollapse,theme,logo})=>{
         let revueProcessus = await axios.post(Url+"/getPlanActionByRevueProcessus",{item});
         let planAction = []
         let newData = []
+        // console.log(revueProcessus)
         if(revueProcessus.data.length>0){
             revueProcessus = revueProcessus.data[0]
             planAction = revueProcessus.plan_actions;
+            // console.log(planAction)
             if(planAction.length>0){
-                const allTicketId = planAction.map(planAction=>planAction.nb_ticket)
-                let allTicket = await axios.post(Url+"/getTicketByManyId",{item:allTicketId});
-                allTicket = allTicket.data
-                
-                planAction.map(planAction => {
-                    let ticket = allTicket.filter(ticket=>ticket.id === Number(planAction.nb_ticket));
-                    ticket = ticket[0]
-                    // console.log(planAction)
-                    // console.log(ticket)
-                    let theData = {};
-                    theData.nb_ticket = planAction.nb_ticket
-                    theData.id = planAction.id
-                    theData.sujet = planAction.sujet
-                    theData.allCommentaire = planAction.plan_action_commentaires
-                    theData.activate = planAction.activate
-                    // console.log(theData.allCommentaire)
-                    if(theData.allCommentaire.length>0) theData.commentaire = theData.allCommentaire[theData.allCommentaire.length-1].commentaire
-                    theData.action = ticket.action
-                    theData.pdca = ticket.pdca
-                    theData.pilote = ticket.pilote
-                    // console.log(theData)
-                    newData.push(theData)
-                })
-                console.log(allTicket)
+                const allTicketId = planAction.filter(planAction=>planAction.nb_ticket !== "").map(planAction=>planAction.nb_ticket)
+                // console.log(allTicketId)
+                let allTicket = []
+                if(allTicketId.length>0){
+                    allTicket = await axios.post(Url+"/getTicketByManyId",{item:allTicketId});
+                    allTicket = allTicket.data
+                }
+                    
+                    planAction.filter(planAction=>planAction.activate!==0).map(planAction => {
+                        let ticket = allTicket.filter(ticket=>ticket.id === Number(planAction.nb_ticket));
+                        ticket = ticket[0]
+                        // console.log(planAction)
+                        // console.log(ticket)
+                        let theData = {};
+                        theData.nb_ticket = planAction.nb_ticket
+                        theData.id = planAction.id
+                        theData.sujet = planAction.sujet
+                        theData.allCommentaire = planAction.plan_action_commentaires
+                        theData.commentaire = planAction.commentaire
+                        theData.activate = planAction.activate
+                        // console.log(theData.allCommentaire)
+                        // if(theData.allCommentaire.length>0) theData.commentaire = theData.allCommentaire[theData.allCommentaire.length-1].commentaire
+                        // console.log(ticket)
+                        if(ticket !== undefined){
+                            theData.action = ticket.action
+                            theData.pdca = ticket.pdca
+                            theData.pilote = ticket.pilote
+                        }else   {
+                            theData.action = ""
+                            theData.pdca = ""
+                            theData.pilote = ""
+                        }
+                        // console.log(theData)
+                        newData.push(theData)
+                    })
             }
+                // console.log(newData)
+            
         }  
+        newData = newData.sort((a, b) => a.id - b.id)
         console.log(newData)
-        setRevuProcessus(revueProcessus)
-        setData(newData) 
+        if(newData.length===0){
+            newData.push({})
+        }
+        dispatch(setPlanActionRevueData(newData))
+        return newData 
     }
 
     const border = {
         border: !theme ? "": "black 1px solid"
     }
-
-
-    const handleAddSujet = async (e) => {
-        e.preventDefault();
-        let item = {};
-        console.log("addSujet")
-        item.sujet = e.currentTarget.elements.sujet.value
-        item.nb_ticket = e.currentTarget.elements.ticket.value
-        item.id_revue_processus = revueProcessus.id
-        console.log(valideTicket)
-        console.log(item)
-        if(!valideTicket){
-            Warning("Ticket inexistant")
-        }
-        const dataTicket = data.filter(data=>data.nb_ticket===item.nb_ticket && data.activate === 1)
-        console.log(dataTicket)
-        
-        if(item.sujet===""){
-            Warning("Sujet ne peut pas étre vide")
-        }
-        else if(dataTicket.length>0){
-            Warning("Ticket déja utiliser")
-        }else{
-            await axios.post(Url+"/insertPlanAction",{item})
-            ticket.current.value = ""
-            sujet.current.value = ""
-            action.current.value = ""
-            pdca.current.value = ""
-            Success("Nouveau plan d'action ajouter")
-        }
-        console.log(item)
-        getData()
-    }
-
-    const GetInfoTicket = async () => {
-        console.log("Ticket",ticket.current.value)
-        if(ticket.current.value !== ""){
-            const infoTicket = await axios.post(Url+"/getTicketById",{item:ticket.current.value});
-            console.log(infoTicket)
-            if(infoTicket.data.length>0){
-                action.current.value = infoTicket.data[0].action
-                pdca.current.value = infoTicket.data[0].pdca
-                pilote.current.value = infoTicket.data[0].pilote
-                setValideTicket(true)
-            }else{
-                action.current.value = "Ticket inexistant"
-                pdca.current.value = "Ticket inexistant"
-                setValideTicket(false)
-            }
-        }else{
-            setValideTicket(false)
-            action.current.value = "Action"
-            pdca.current.value = "PDCA"
-        }
-        
-    }
-
-    const handleAddCommentaire = async (id) => {
-        console.log(id)
-        console.log(data)
-        let commentaire = data.filter(data => data.id === id);
-        setCurrentRevue(commentaire[0])
-        commentaire = commentaire[0].allCommentaire
-        setListCommentaire(commentaire)
-    }
-
-    const handleAddComment = async (e) => {
-        e.preventDefault();
-        let item = {};
-        console.log("addCommenatire")
-        item.commentaire = e.currentTarget.elements.commentaire.value
-        item.id_plan_action = Number(e.currentTarget.elements.id_plan.value)
-        console.log(item)
-        if(item.commentaire === ""){
-            Warning("Commentaire ne peut pas étre vide")
-        }else{
-            await axios.post(Url+"/insertPlanActionCommentaire",{item})
-            commentaire.current.value = ""
-            getData()
-        }        
-    }
-
-    const handleUpdateSujet = async (id,sujet) => {
-        console.log("sujetModif")
-        sujetModif.current.value = sujet
-        setIdSujetModif(id) 
-    }
-
-    const handleSaveNewSujet = async (e) => {
-        e.preventDefault();
-        const item = {}
-        item.id = idSujetModif;
-        item.sujet = sujetModif.current.value;
-        console.log(item)
-        await axios.post(Url+"/updatePlanAction",{item})
-        getData()
-    }
-
-    const handleDelete = async (id) => {
-        const item = id
-        await axios.post(Url+"/desactivePlanAction",{item})
-        getData()
-    }
    
     return(
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
-                <TitlePage title="Revue du plan d'action" process={true} listProcess={false} theme={theme}/>
-                <form onSubmit={handleAddSujet}>
-                    <div className="row mb-4">
-                        
-                        <div className="col-2 mx-2">
-                            <label style={{textAlign :"center"}}><strong>Ticket :</strong></label>
-                            <input className="form-control col-12" type="text" name="ticket" placeholder="N.Ticket" onChange={()=>GetInfoTicket(ticket)} ref={ticket}></input>
-                        </div>
-                        <div className="col-3 mx-2">
-                            <label style={{textAlign :"center"}}><strong>Sujet :</strong></label>
-                            <textarea className="form-control col-12" type="text" name="sujet" placeholder="Sujet" ref={sujet}></textarea>
-                        </div>
-                        <div className="col-3 mx-2">
-                            <label style={{textAlign :"center"}}><strong>Action :</strong></label>
-                            <textarea className="form-control col-12" style={{backgroundColor:"lightgray"}} type="text" name="action" placeholder="Action" ref={action} readOnly></textarea>
-                        </div>
-                        <div className="col-3 mx-2">
-                            <label style={{textAlign :"center"}}><strong>Pilote :</strong></label>
-                            <textarea className="form-control col-12" style={{backgroundColor:"lightgray"}} type="text" name="pilote" placeholder="Pilote" ref={pilote} readOnly></textarea>
-                        </div>
-                        <div className="col-2 mx-2">
-                            <label style={{textAlign :"center"}}><strong>PDCA :</strong></label>
-                            <input className="form-control col-12" style={{backgroundColor:"lightgray"}}  type="text" name="pdca" placeholder="PDCA" ref={pdca} readOnly></input>
-                        </div>
-                        
-                                <div className="col-1 mx-2 mt-4">
-                                    <button className="btn btn-success rounded-1 shadow" type="submit" >Ajouter</button>
-                                </div>
-                           
-                    </div>
-                </form>
+            <TitlePage title="Revue du plan d'action" process={true} listProcess={false} theme={theme}/>
                 <table className="table table-bordered text-center" style={border} id="table_user">
                     <thead className="text-success">
-                        <tr key={0}>
+                        <tr>
                             {
                                 colonneTable.map((col, index) => (
-                                    <th key={index} style={{backgroundColor:"lightgray"}}>
+                                    <th style={{backgroundColor:"lightgray"}} >
                                         {col.nom}
                                     </th>
                                 ))       
@@ -255,41 +201,61 @@ const Revue = ({MenuCollapse,theme,logo})=>{
                         data.length>0 ?
                         <tbody className={!theme ? "text-dark" : "text-white"}>
                             { 
-                                data.filter(data=>data.activate === 1).map((data,index)=>(
-                                    <tr key={index}>
-                                        <td>{data.sujet}</td>
-                                        <td>{data.action}</td>
-                                        <td>{data.pilote}</td>
-                                        <td>{data.pdca}</td>
-                                        <td>{data.commentaire}</td>
-                                        <td>
-                                            <div className="row">
-                                                <div className="col-2">
-                                                <OverlayTrigger placement="top" overlay={<Tooltip>Modifier sujet</Tooltip>}>
-                                                    <button className="btn btn-warning rounded-3 shadow" onClick={()=>handleUpdateSujet(data.id, data.sujet)} 
-                                                    data-bs-target="#sujet" data-bs-toggle="modal">
-                                                        <i className="bi bi-pencil-square"></i>
-                                                    </button>
-                                                </OverlayTrigger>
-                                                </div>
-                                                <div className="col-2">
-                                                <OverlayTrigger placement="top" overlay={<Tooltip>Modifier commentaire</Tooltip>}>
-                                                    <button className="btn btn-secondary rounded-3 shadow" onClick={()=>handleAddCommentaire(data.id)} 
-                                                    data-bs-target="#commentaire" data-bs-toggle="modal">
-                                                        <i class="bi bi-chat-left-text"></i>
-                                                    </button>
-                                                </OverlayTrigger>
-                                                </div>
-                                                <div className="col-2">
-                                                <OverlayTrigger placement="top" overlay={<Tooltip>Supprimer plan d'action</Tooltip>}>
-                                                <button className="btn btn-danger rounded-3 shadow" onClick={() => handleDelete(data.id)} >
-                                                <i className="bi bi-trash-fill"></i>
-                                                    </button>
-                                                </OverlayTrigger>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                data.map((item,index)=>(
+
+                                        currentPlan !== index  ? (
+                                        <tr>
+                                            <td><textarea className="form-control" type="text" name="sujet" value={item.sujet} onClick={() => handleGetCurrentPlan(index,item.id)}></textarea></td>
+                                            <td><input className="form-control" type="text" name="ticket" value={item.nb_ticket} onClick={() => handleGetCurrentPlan(index,item.id)}></input></td>
+                                            <td><textarea className="form-control" type="text" name="action" value={item.action} style={{backgroundColor:"lightgray"}} readOnly></textarea></td>
+                                            <td><input className="form-control" type="text" name="pilote" value={item.pilote} style={{backgroundColor:"lightgray"}} readOnly></input></td>
+                                            <td><input className="form-control" type="text" name="pdca" value={item.pdca} style={{backgroundColor:"lightgray"}} readOnly></input></td>
+                                            <td><textarea className="form-control" type="text" name="commentaire" value={item.commentaire} onClick={() => handleGetCurrentPlan(index,item.id)}></textarea></td>
+                                            <td>
+                                                <input className="form-control" type="hidden" name="index" value={index}></input>
+                                                <button className="btn btn-dark rounded-3 shadow" onClick={() => handleDeleteLine(item.id)}>    
+                                                    <i className="bi bi-dash-square"></i>
+                                                </button>  
+                                                {
+                                                    index+1 === data.length ?
+                                                        
+                                                        <button className="btn btn-secondary rounded-3 shadow" onClick={handleAddLine}>
+                                                            <i className="bi bi-plus-square"></i>
+                                                        </button> 
+                                                    :
+                                                        <></>
+                                                }
+                                            </td>
+                                        </tr>
+                                        
+                                        ):(
+                                        <tr>
+                                            <td><textarea className="form-control" type="text" name="sujet" ref={sujet} onChange={() => getUpdatePlan()}></textarea></td>
+                                            <td><input className="form-control" type="text" name="ticket" onChange={() => getUpdatePlan()} ref={ticket}></input></td>
+                                            <td><textarea className="form-control" type="text" name="action" style={{backgroundColor:"lightgray"}} readOnly ref={action}></textarea></td>
+                                            <td><input className="form-control" type="text" name="pilote" ref={pilote} style={{backgroundColor:"lightgray"}} readOnly></input></td>
+                                            <td><input className="form-control" type="text" name="pdca" style={{backgroundColor:"lightgray"}} readOnly ref={pdca}></input></td>
+                                            <td><textarea className="form-control" type="text" name="commentaire" ref={commentaire} onChange={() => getUpdatePlan()}></textarea></td>
+                                            <td>
+                                                <input className="form-control" type="hidden" name="index" ref={indexItem} value={item.index}></input>
+                                                <input className="form-control" type="hidden" name="idCurrent" ref={idCurrent} value={item.id}></input>
+                                                <button className="btn btn-dark rounded-3 shadow" onClick={() => handleDeleteLine(item.id)}>    
+                                                    <i className="bi bi-dash-square"></i>
+                                                </button>  
+                                                {
+                                                    index+1 === data.length ?
+                                                        
+                                                        <button className="btn btn-secondary rounded-3 shadow" onClick={handleAddLine}>
+                                                            <i className="bi bi-plus-square"></i>
+                                                        </button> 
+                                                    :
+                                                        <></>
+                                                }
+                                            </td>
+                                        </tr>
+                                        
+                                        )
+                                    
                                 ))
 
                             
@@ -298,77 +264,6 @@ const Revue = ({MenuCollapse,theme,logo})=>{
                         :<></>
                     }
                 </table>
-            <>
-            <div className="modal fade" id="commentaire" >
-                <div className="modal-dialog modal-md modal-dialog-right ">
-                    <div className={"modal-content bg-dark"}>
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel" style={{color:"white"}}>Sujet : {currentRevue.sujet}</h5>
-                        </div>
-                        <form onSubmit={handleAddComment}>
-                            <div className="row mb-4">
-                                <div className="col-8 mx-3" style={{color:"white"}}>
-                                    <textarea className="form-control col-12 mt-4" type="text" name="commentaire" placeholder="Nouveau commentaire" ref={commentaire}></textarea>
-                                    <input className="form-control col-12 mt-4" type="hidden" name="id_plan" value={currentRevue.id}></input>
-                                </div>
-                                
-                                <div className="col-1 mx-2 mt-4">
-                                    <button className="btn btn-success rounded-1 shadow" type="submit" data-bs-dismiss="modal">Ajouter</button>
-                                </div> 
-                            </div>
-                        </form>
-                        <div className="modal-body">
-                            <table  className="table table-bordered text-center" style={border} id="table_comment">
-                                <thead>
-                                    <tr>
-                                        <th style={{backgroundColor:"lightgray"}}>Commentaire</th>
-                                        <th style={{backgroundColor:"lightgray"}}>Date d'ajout</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                        {
-                                            listCommentaire.map((comment, index)=>(
-                                                <tr>
-                                                    <td>
-                                                        {comment.commentaire}
-                                                    </td>
-                                                    <td>
-                                                        {comment.createdat}
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="modal fade" id="sujet" >
-                <div className="modal-dialog modal-md modal-dialog-right ">
-                    <div className={"modal-content bg-dark"}>
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel" style={{color:"white"}}>Modification de sujet</h5>
-                        </div>
-                        
-                        <div className="modal-body">
-                            <form onSubmit={handleSaveNewSujet}>
-                                <div className="row mb-4">
-                                    <div className="col-8 mx-3" style={{color:"white"}}>
-                                        <textarea className="form-control col-12 mt-4" type="text" name="sujet" placeholder="modification de sujet" ref={sujetModif}></textarea>
-                                        <input className="form-control col-12 mt-4" type="hidden" name="id_plan" value={currentRevue.id}></input>
-                                    </div>
-                                    
-                                    <div className="col-1 mx-2 mt-4">
-                                        <button className="btn btn-success rounded-1 shadow" type="submit" data-bs-dismiss="modal">Modifier</button>
-                                    </div> 
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            </>
         </div>
 
         

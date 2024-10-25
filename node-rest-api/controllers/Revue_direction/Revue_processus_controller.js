@@ -97,9 +97,9 @@ const { Plan_action, Plan_action_commentaire } = require("../../models/Revue_dir
         [
           {
             model: Plan_action,
-            include: [{
-              model: Plan_action_commentaire,
-            }]
+            // include: [{
+            //   model: Plan_action_commentaire,
+            // }]
           }
         ],
         order: [['createdat', 'DESC']],

@@ -116,6 +116,18 @@ const PerformanceObjectifDetail = defautl_db.defaultSequelize.define('performanc
       taux : {
         type: Sequelize.DECIMAL
       },
+      type_recuperation : {
+        type: Sequelize.STRING(2000)
+      },
+      fichier : {
+        type: Sequelize.STRING(2000)
+      },
+      existe : {
+        type: Sequelize.INTEGER
+      },
+      id_recuperation : {
+        type: Sequelize.DECIMAL
+      },
       commentaire:{
         type: Sequelize.STRING(2000)
       }
@@ -127,7 +139,7 @@ const PerformanceObjectifDetail = defautl_db.defaultSequelize.define('performanc
     });
 
 
-    const PerformanceObjectifCommentaire = defautl_db.defaultSequelize.define('performance_objectif_commentaire', {
+    const PerformanceObjectifRevue = defautl_db.defaultSequelize.define('performance_objectif_revue', {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -137,20 +149,24 @@ const PerformanceObjectifDetail = defautl_db.defaultSequelize.define('performanc
       id_revue_processus: {
         type: Sequelize.INTEGER,
       },
-      id_objectif: {
+      id_parametrage: {
         type: Sequelize.INTEGER,
       },
-      commentaire: {
-        type: Sequelize.STRING(1000),
-        allowNull: false,
+      realise: {
+        type: Sequelize.INTEGER,
       },
-      createdat: {
-        type: Sequelize.DATE,
+      taux: {
+        type: Sequelize.INTEGER,
+      },
+      fichier: {
+        type: Sequelize.STRING(2000),
+      },
+      commentaire: {
+        type: Sequelize.STRING(2000),
       },
     },{
-      tableName: "performance_objectif_commentaire",
+      tableName: "performance_objectif_revue",
       schema: "revue_direction",
-      createdAt : "createdat",
       timestamps: false,
       noPrimaryKey: true, 
     });
@@ -262,5 +278,5 @@ PerfSynthese.removeAttribute('id');
 module.exports = {}  
 
   
-module.exports = { PerformanceObjectifDetail, PerformanceObjectifProcessus, PerformanceObjectifCommentaire, Performance, PerfSynthese, PerformanceCommentaire}  
+module.exports = { PerformanceObjectifDetail, PerformanceObjectifProcessus, Performance, PerfSynthese, PerformanceCommentaire, PerformanceObjectifRevue}  
   

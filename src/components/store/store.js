@@ -7,6 +7,7 @@ import todosReducer  from "../feature/todo"
 import { objectifReducer, parametrageObjectifReducer, recuperationReducer, uniteReducer} from "../feature/objectifs.slice"
 import { importReducer,exportReducer} from "../feature/importExport.slice"
 import {revueDirectionReducer, planActionReducer} from "../feature/revueDirection.slice"
+import { planActionRevueReducer } from "../feature/revueDirection.slice"
 
 export default configureStore({
     reducer:{
@@ -23,5 +24,6 @@ export default configureStore({
         recuperation: recuperationReducer,
         revueDirection: revueDirectionReducer,
         planAction: planActionReducer,
+        planActionRevue: planActionRevueReducer
     }
 })

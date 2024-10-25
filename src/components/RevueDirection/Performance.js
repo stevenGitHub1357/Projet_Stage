@@ -27,7 +27,11 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
     const [consultation, setConsultation] = useState([])
     const [synthese, setSynthese] = useState([])
     const id_revue_processus = 1;
-    console.log(current)
+    const taux = useRef()
+    const realise = useRef()
+    const commentaireC = useRef()
+    const [actuel, setActuel] = useState({})
+    // console.log(current)
 
     const colonneTable = [
         {id:1, nom:"Objectifs prévue"},
@@ -120,6 +124,17 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
 
     }
 
+    const handleActuel = (data) => {
+        setActuel(data)
+        console.log(data)
+
+    }
+
+    const handleActualise = () => {
+        console.log("actualise")
+        
+
+    }
     const [isModalOpen, setIsModalOpen] = useState(false);
 
 
@@ -148,20 +163,41 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                         <td>{data.objectifs}</td>
                                         <td>{data.poids}</td>
                                         <td>{data.cible+""+data.abbrv}</td>
-                                        <td>{data.realise+""+data.abbrv}</td>
-                                        <td>{data.taux+""+data.abbrv}</td>
-                                        <td>{data.commentaire}</td>
+
+                                        {   
+                                            actuel.id !== data.id ?(
+                                                data.id_recuperation !== 2 ?
+                                                <>
+                                                    <td><input type="text" className="form-control" value={data.realise} name="realise" onClick={() => handleActuel(data)}></input>{data.abbrv}</td>
+                                                    <td><input type="text" className="form-control" value={data.taux} name="taux" onClick={() => handleActuel(data)}></input>{data.abbrv}</td>
+                                                    <td><td><textarea type="text" className="form-control" value={data.commentaire} name="commentaire" onClick={() => handleActuel(data)}></textarea></td></td>
+                                            
+                                                </>
+                                                :
+                                                <>
+                                                    <td>{data.realise+""+data.abbrv}</td>
+                                                    <td>{data.taux+""+data.abbrv}</td>
+                                                    <td><td><textarea type="text" className="form-control" value={data.commentaire} name="commentaire" onClick={() => handleActuel(data)}></textarea></td></td>
+                                            
+                                                </>
+                                                
+                                            ):(
+                                                <>
+                                                    <td><input type="text" className="form-control"  name="realise" onChange={() => handleActualise()} ref={realise}></input>{data.abbrv}</td>
+                                                    <td><input type="text" className="form-control"  name="taux" onChange={() => handleActualise()} ref={taux}></input>{data.abbrv}</td>
+                                                    <td><td><textarea type="text" className="form-control"  name="commentaire" onChange={() => handleActualise()} ref={commentaire}></textarea></td></td>
+                                            
+                                                </>
+                                            )
+                                        }
+                                        
+                                        
+                                        
                                         <td>
                                             <div className="row">
                                                 
-                                                <div className="col-3 mx-1">
-                                                <OverlayTrigger placement="top" overlay={<Tooltip>Modifier commentaire</Tooltip>}>
-                                                    <button className="btn btn-secondary rounded-3 shadow" onClick={()=>handleCallAddCommentaire(data.id)} 
-                                                    data-bs-target="#commentaire" data-bs-toggle="modal">
-                                                        <i class="bi bi-chat-left-text"></i>
-                                                    </button>
-                                                </OverlayTrigger>
-                                                </div>
+                                            {
+                                                data.id_recuperation === 2 ?
                                                 <div className="col-3 mx-1">
                                                 <OverlayTrigger placement="top" overlay={<Tooltip>Detail {data.type_demande}</Tooltip>}>
                                                     <button className="btn btn-dark rounded-3 shadow" onClick={()=>handleDetail(data)} 
@@ -170,6 +206,26 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                                     </button>
                                                 </OverlayTrigger>
                                                 </div>
+                                                :
+                                                <>
+                                                <div className="col-3 mx-2">
+                                                <OverlayTrigger placement="top" overlay={<Tooltip>Telecharger la piece jointe {data.type_demande}</Tooltip>}>
+                                                    <button className="btn btn-dark rounded-3 shadow" onClick={()=>handleDetail(data)} 
+                                                    data-bs-target="#download" data-bs-toggle="modal">
+                                                        <i class="bi bi-download"></i>
+                                                    </button>
+                                                </OverlayTrigger>
+                                                </div>
+                                                <div className="col-3 mx-2">
+                                                <OverlayTrigger placement="top" overlay={<Tooltip>Ajouter une piece jointe {data.type_demande}</Tooltip>}>
+                                                    <button className="btn btn-secondary rounded-3 shadow" onClick={()=>handleDetail(data)} 
+                                                    data-bs-target="#upload" data-bs-toggle="modal">
+                                                        <i class="bi bi-upload"></i>
+                                                    </button>
+                                                </OverlayTrigger>
+                                                </div>
+                                                </>
+                                            }
                                             </div>
                                         </td>
                                     </tr>
@@ -182,51 +238,7 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                     }
                 </table>
 
-                <div className="modal fade" id="commentaire" >
-                    <div className="modal-dialog modal-md modal-dialog-right ">
-                        <div className={"modal-content bg-dark"}>
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel" style={{color:"white"}}>Objectifs : {current.objectifs}</h5>
-                            </div>
-                            <form onSubmit={handleAddComment}>
-                                <div className="row mb-4">
-                                    <div className="col-8 mx-3" style={{color:"white"}}>
-                                        <textarea className="form-control col-12 mt-4" type="text" name="commentaire" placeholder="Nouveau commentaire" ref={commentaire}></textarea>
-                                        <input className="form-control col-12 mt-4" type="hidden" name="id_plan" value={current.id}></input>
-                                    </div>
-                                    
-                                    <div className="col-1 mx-2 mt-4">
-                                        <button className="btn btn-success rounded-1 shadow" type="submit" data-bs-dismiss="modal">Ajouter</button>
-                                    </div> 
-                                </div>
-                            </form>
-                            <div className="modal-body">
-                                <table  className="table table-bordered text-center" style={border} id="table_comment">
-                                    <thead>
-                                        <tr>
-                                            <th style={{backgroundColor:"lightgray"}}>Commentaire</th>
-                                            <th style={{backgroundColor:"lightgray"}}>Date d'ajout</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                            {
-                                                listCommentaire.map((comment, index)=>(
-                                                    <tr>
-                                                        <td>
-                                                            {comment.commentaire}
-                                                        </td>
-                                                        <td>
-                                                            {comment.createdat}
-                                                        </td>
-                                                    </tr>
-                                                ))
-                                            }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
 
 
                 <div className="modal fade" id="detail" data-backdrop="static" data-keyboard="false">
@@ -243,18 +255,20 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                     </div>
                 </div>
                 
-
-                {/* <div>
-                    <button onClick={handleOpenModal}>Ouvrir le Modale</button>
-
-                        {isModalOpen && (
-                            <div className="modal">
-                                <button onClick={handleCloseModal}>Fermer</button>
-                                <PerformanceConsultation isOpen={isModalOpen} />
+                <div className="modal fade" id="upload" data-backdrop="static" data-keyboard="false">
+                    <div className="modal-dialog modal-md modal-dialog-right ">
+                        <div className={"modal-content"}>
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">Objectifs : {current.objectifs}</h5>
                             </div>
-                        )}
-                </div> */}
-
+                            <div className="modal-body">
+                                <input className="btn btn-secondary float-right col-12" type="file" accept=".xlsx" onChange={""}/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
         </div>
 
         

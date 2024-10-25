@@ -86,6 +86,53 @@ const planActionSlice = createSlice({
     }
 })
 
+
+const planActionRevueSlice = createSlice({
+    name:"planActionRevue",
+    initialState:{
+        planActionRevue:[{}],
+    },
+    reducers:{
+        setPlanActionRevueData:(state,{payload})=>{
+            console.log("ici")
+            console.log(payload)
+            state.planActionRevue = payload
+        },
+        addPlanActionRevue:(state,{payload})=>{
+            console.log(payload)
+            if(payload !== undefined){
+                state.planActionRevue.push(payload)
+            }
+        },
+        deletePlanActionRevue: (state,{payload})=>{
+            console.log(payload)
+            state.planActionRevue = state.planActionRevue.filter((todo,index) => index !== payload)
+            console.log(state.planActionRevue)
+        },
+        updateRevueDirection:(state,{payload}) =>{
+            state.revueDirection = state.revueDirection.map((revueDirection) =>{
+                if(revueDirection.id === payload.id){
+                    return{
+                        ...revueDirection,
+                        ticket: payload.ticket,
+                        sujet: payload.sujet,
+                        action: payload.action,
+                        pdca: payload.pdca,
+                        commentaire: payload.commentaire,
+                    }
+                }else{
+                    return revueDirection
+                }
+            })
+        },
+        
+    }
+})
+
+export const {setPlanActionRevueData,addPlanActionRevue,deletePlanActionRevue} = planActionRevueSlice.actions
+export const planActionRevueReducer = planActionRevueSlice.reducer
+
+
 export const {setPlanActionData,addPlanAction,deletePlanAction} = planActionSlice.actions
 export const planActionReducer = planActionSlice.reducer
 

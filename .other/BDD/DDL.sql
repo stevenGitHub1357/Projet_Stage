@@ -28,6 +28,7 @@ DROP VIEW IF EXISTS menu_role_processus;
 DROP TABLE IF EXISTS revue_direction.efficacite;
 DROP TABLE IF EXISTS revue_direction.performance_objectif_commentaire;
 DROP TABLE IF EXISTS revue_direction.performance_commentaire;
+DROP TABLE IF EXISTS revue_direction.performance_objectif_revue;
 DROP TABLE IF EXISTS revue_direction.performance_objectif;
 DROP TABLE IF EXISTS revue_direction.performance;
 DROP TABLE IF EXISTS revue_direction.plan_action_commentaire;
@@ -145,51 +146,17 @@ CREATE TABLE IF NOT EXISTS objectif.parametrage(
   updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
---objectif_revue_direction
-CREATE TABLE IF NOT EXISTS objectif.revue_direction(
-  id SERIAL PRIMARY KEY,
-  id_parametrage INTEGER REFERENCES objectif.parametrage(id),
-  revue_direction VARCHAR(500),
-  libelle VARCHAR(500)
-);
 
----data_kpi
 
-  ---fnc_fac---
 
-CREATE TABLE IF NOT EXISTS data_kpi.fnc_fac(
-  id SERIAL PRIMARY KEY,
-  type_demande VARCHAR(100) DEFAULT 'FAC',
-  titre VARCHAR(1000),
-  objectif VARCHAR(1000),
-  realise DOUBLE precision,
-  date_demande DATE,
-  date_cloture DATE,
-  statut VARCHAR(1000),
-  id_statut INTEGER default 0,
-  createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS data_kpi.fnc_fac_commentaire(
-  id SERIAL PRIMARY KEY,
-  annee INTEGER,
-  type_demande VARCHAR(100),
-  commentaire VARCHAR(300),
-  createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 
 --revue_direction
--- DROP TABLE IF EXISTS revue_direction.plan_action_commentaire;
--- DROP TABLE IF EXISTS revue_direction.plan_action;
--- DROP TABLE IF EXISTS revue_direction.revue_processus;
   --revue_processus
 CREATE TABLE IF NOT EXISTS revue_direction.revue_processus(
   id SERIAL PRIMARY KEY,
   id_processus INTEGER REFERENCES public.processus(id) default 1,
-  date_cloture TIMESTAMP DEFAULT (NOW() + INTERVAL '1 year'),
+  date_cloture TIMESTAMP,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   statut VARCHAR(200)
 );
@@ -201,6 +168,7 @@ CREATE TABLE IF NOT EXISTS revue_direction.plan_action(
   sujet VARCHAR(2000),
   nb_ticket VARCHAR(200),
   activate INTEGER DEFAULT 1,
+  commentaire VARCHAR(2000),
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -213,19 +181,22 @@ CREATE TABLE IF NOT EXISTS revue_direction.plan_action_commentaire(
 
 
   --performance
--- DROP VIEW IF EXISTS revue_direction.performance_objectif_processus;
--- DROP VIEW IF EXISTS revue_direction.performance_commentaire_final;
--- DROP VIEW IF EXISTS revue_direction.performance_objectif_detail;
-
--- DROP TABLE IF EXISTS revue_direction.performance_commentaire;
--- DROP TABLE IF EXISTS revue_direction.performance_objectif;
--- DROP TABLE IF EXISTS revue_direction.performance;
 
 CREATE TABLE IF NOT EXISTS revue_direction.performance_objectif(
   id SERIAL PRIMARY KEY,
   id_parametrage INTEGER REFERENCES objectif.parametrage(id),
   type_demande VARCHAR(500),
   libelle VARCHAR(500)
+);
+
+CREATE TABLE IF NOT EXISTS revue_direction.performance_objectif_revue(
+  id SERIAL PRIMARY KEY,
+  id_revue_processus INTEGER REFERENCES revue_direction.revue_processus(id),
+  id_parametrage INTEGER REFERENCES objectif.parametrage(id),
+  realise DOUBLE precision default 0,
+  taux DOUBLE precision default 0,
+  fichier VARCHAR(500),
+  commentaire VARCHAR(200)
 );
 
 
@@ -244,13 +215,13 @@ CREATE TABLE IF NOT EXISTS revue_direction.performance(
   updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS revue_direction.performance_objectif_commentaire(
-  id SERIAL PRIMARY KEY,
-  id_revue_processus INTEGER REFERENCES revue_direction.revue_processus(id),
-  id_objectif INTEGER REFERENCES objectif.parametrage(id),
-  commentaire VARCHAR(200),
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- CREATE TABLE IF NOT EXISTS revue_direction.performance_objectif_commentaire(
+--   id SERIAL PRIMARY KEY,
+--   id_revue_processus INTEGER REFERENCES revue_direction.revue_processus(id),
+--   id_objectif INTEGER REFERENCES objectif.parametrage(id),
+--   commentaire VARCHAR(200),
+--   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
 
 CREATE TABLE IF NOT EXISTS revue_direction.performance_commentaire(
   id SERIAL PRIMARY KEY,
