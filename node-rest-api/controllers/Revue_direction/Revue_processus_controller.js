@@ -42,15 +42,7 @@ const { Plan_action, Plan_action_commentaire } = require("../../models/Revue_dir
         {
           id_processus : id_processus
         },
-        include : 
-        [
-          {
-            model: Plan_action,
-            include: [{
-              model: Plan_action_commentaire,
-            }]
-          }
-        ]
+        order: [['id', 'DESC']],
       }
     )
     .then(function(results) {

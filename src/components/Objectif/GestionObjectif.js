@@ -607,7 +607,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                 
                                 {/* <div className="row"> */}
                                 {/* <input onClick={handleUpdate} className="col-2" type="checkbox" name="validateProcessus"></input> */}
-                                <select className="col-12"  name="processus">
+                                <select className="col-12 form-control"  name="processus">
                                     <option key={0} value="0">Processus</option> 
                                     {
                                         processus.filter(process => process.id !== 0).map((processus, index) => (
@@ -623,22 +623,22 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                 </select>
                                 {/* </div> */}
                             </div> 
-                            <div className="col-3"><input onClick={handleUpdate} className="col-11" type="texte" size="40" name="objectifs" placeholder="objectif" id="inputParametrage"></input></div>
+                            <div className="col-3"><input onClick={handleUpdate} className="col-11 form-control" type="texte" size="40" name="objectifs" placeholder="objectif" id="inputParametrage"></input></div>
                             
                             {modaleFiltre === true ? (
                                 <>
                                 <div className="col-1">
-                                    <input onClick={handleUpdate} className="col-12" type="text" name="poidsMin" placeholder="Poids min" id="inputParametrage"></input>
-                                    <input onClick={handleUpdate} className="col-12" type="text" name="poidsMax" placeholder="Poids max" id="inputParametrage"></input>
+                                    <input onClick={handleUpdate} className="col-12 form-control" type="text" name="poidsMin" placeholder="Poids min" id="inputParametrage"></input>
+                                    <input onClick={handleUpdate} className="col-12 form-control" type="text" name="poidsMax" placeholder="Poids max" id="inputParametrage"></input>
                                 </div>
                                 <div className="col-1">
-                                    <input onClick={handleUpdate} className="col-12" type="text" name="cibleMin" placeholder="Cible min" id="inputParametrage"></input>
-                                    <input onClick={handleUpdate} className="col-12" type="text" name="cibleMax" placeholder="Cible max" id="inputParametrage"></input>
+                                    <input onClick={handleUpdate} className="col-12 form-control" type="text" name="cibleMin" placeholder="Cible min" id="inputParametrage"></input>
+                                    <input onClick={handleUpdate} className="col-12 form-control" type="text" name="cibleMax" placeholder="Cible max" id="inputParametrage"></input>
                                 </div>
                                 <div className="col-2">
                                     {/* <div className="row"> */}
                                     {/* <input onClick={handleUpdate} className="col-2" type="checkbox" name="validateUnite" id="inputParametrage"></input> */}
-                                    <select className="col-12"  name="unite">
+                                    <select className="col-12 form-control"  name="unite">
                                         <option key={0} value={0}>Uniter</option>
                                         {
                                             uniteParam.length>0 &&
@@ -659,7 +659,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                     {/* <div className="row"> */}
                                     {/* <input onClick={handleUpdate} className="col-2" type="checkbox" name="validateRecuperation"></input> */}
                                     
-                                    <select className="col-12" name="recuperation">
+                                    <select className="col-12 form-control" name="recuperation">
                                         <option key={0} value={0}>Recuperation</option>
                                         {
                                             recuperationParam.length>0 &&
@@ -673,7 +673,7 @@ const GestionObjectif = ({MenuCollapse,theme,page}) => {
                                             ))
                                         }
                                     </select>
-                                    <input onClick={handleUpdate} className="col-12" type="text" name="support" placeholder="Support" id="inputParametrage"></input>
+                                    <input onClick={handleUpdate} className="col-12 form-control" type="text" name="support" placeholder="Support" id="inputParametrage"></input>
                                     {/* </div> */}
                                 </div>
                                 

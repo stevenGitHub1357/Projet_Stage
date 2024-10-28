@@ -41,31 +41,23 @@ const PerformanceSynthese =({MenuCollapse,theme,logo,cible,isOpen, current})=>{
 
     }
 
-
-    const handleAddCommentaire = async (item) => {
-        console.log(item)
-        const data = axios.post(Url+"/getPerformanceCommentaire", {item})
-        console.log(data)
-        let commentaire = data
-        setCurrentRevue(item)
-        setListCommentaire(commentaire)
-    }
-
-    const handleSaveComment = async (e) => {
-        e.preventDefault();
-        let item = {};
+    const handleCommentaire = async () => {
+        let item = current;
         console.log("addCommenatire")
-        item.commentaire = e.currentTarget.elements.commentaire.value
-        item.id_revue_processus = Number(e.currentTarget.elements.id_revue_processus.value)
-        item.type_demande = e.currentTarget.elements.type_demande.value
-        console.log(item)
-        if(item.commentaire === ""){
-            Warning("Commentaire ne peut pas étre vide")
+        const comment = commentaire.current.value
+        item.commentaire = comment
+        console.log(comment)
+        console.log(current) 
+        console.log(syntheseListe)
+        if(syntheseListe[syntheseListe.length-1].commentaire===null){
+            console.log("insert", item)
+            axios.post(Url+"/insertPerformanceCommentaire", {item})
         }else{
-            // await axios.post(Url+"/insertPerformanceCommentaire",{item})
-            commentaire.current.value = ""
-            getData()
-        }        
+            console.log("update", item)
+            axios.post(Url+"/updatePerformanceCommentaire", {item})
+        }
+        getData()
+             
     }
 
 
@@ -128,19 +120,15 @@ const PerformanceSynthese =({MenuCollapse,theme,logo,cible,isOpen, current})=>{
                             {
                                 syntheseListe.map((synthese, index) => (
                                     <td>
-                                        <form onSubmit={handleSaveComment}>
                                             <div className="row mb-4">
                                                 <div className="col-8 mx-3" style={{color:"white"}}>
-                                                    <textarea className="form-control col-12 mt-4" type="text" name="commentaire" placeholder="Nouveau commentaire"  defaultValue={synthese.commentaire}></textarea>
+                                                    <textarea className="form-control col-12 mt-4" type="text" name="commentaire" placeholder="Nouveau commentaire"   
+                                                    onChange={()=> handleCommentaire()} ref={commentaire}
+                                                    defaultValue={synthese.commentaire}></textarea>
                                                     <input className="form-control col-12 mt-4" type="hidden" name="id_revue_processus" value={synthese.id_revue_processus}></input>
                                                     <input className="form-control col-12 mt-4" type="hidden" name="type_demande" value={current.type_demande}></input>
                                                 </div>
-                                                
-                                                <div className="col-1 mx-2 mt-4">
-                                                    <button className="btn btn-success rounded-1 shadow" type="submit" data-bs-dismiss="modal">Modifier</button>
-                                                </div> 
                                             </div>
-                                        </form>
                                     </td>
                                 ))
                             }

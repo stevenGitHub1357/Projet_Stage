@@ -10,6 +10,7 @@ import { Cookies,useCookies } from "react-cookie";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import PerformanceConsultation from "./Component/PerformanceConsultation";
 import PerformanceSynthese from "./Component/PerformanceSynthese"
+import { act } from "react";
 // import PerformanceConsultation from "./Component"
 var Url = Global_url
 // // import "./homeStyle.scss"
@@ -20,17 +21,18 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
     const dispatch = useDispatch()
     let [data,setData] = useState([])
     let [annee,setAnnee] = useState(2023)
-    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus','id_revue_direction', 'type_demande'])
+    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus','id_revue_direction', 'type_demande', 'id_revue_processus'])
     const commentaire = useRef();
     const [current, setCurrent] = useState([])
     const[listCommentaire, setListCommentaire] = useState([])
     const [consultation, setConsultation] = useState([])
     const [synthese, setSynthese] = useState([])
-    const id_revue_processus = 1;
+    const id_revue_processus = cookies.id_revue_processus;
     const taux = useRef()
     const realise = useRef()
-    const commentaireC = useRef()
+    const fichier = useRef()
     const [actuel, setActuel] = useState({})
+    const id_process = cookies.id_processus
     // console.log(current)
 
     const colonneTable = [
@@ -53,8 +55,9 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
     
 
     useEffect(()=>{
+        console.log('Cookie a changé:', cookies.id_processus);
         getData()
-    },[])
+    },[cookies.id_revue_processus])
 
     useEffect(()=>{
         setIsModalOpen(false)
@@ -69,6 +72,8 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                 setData(res.data)
                 console.log(res.data)
                 // setCurrent(res.data[0])
+            }else{
+                setData([])
             }
         })  
     }
@@ -77,50 +82,14 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
         border: !theme ? "": "black 1px solid"
     }
 
-    const handleCallAddCommentaire = async (id) => {
-        const curr = data.filter(data=> data.id === id)
-        const item = {}
-        item.id_objectif = curr[0].id
-        item.id_revue_processus = id_revue_processus
-
-        await axios.post(Url+"/getPerformanceObjectifCommentaireByRevue",{item}).then(res=>{
-            if(res.data.length){
-                setListCommentaire(res.data)
-            }
-        }) 
-
-        console.log(curr[0])
-        setCurrent(curr[0])
-    }
-
-    const handleAddComment = async () => {
-        const item = {}
-        item.id_objectif = current.id
-        item.id_revue_processus = id_revue_processus
-        item.commentaire = commentaire.current.value
-        await axios.post(Url+"/insertPerformanceObjectifCommentaire",{item})
-        getData()
-
-    }
+    
 
     const handleDetail  = async (data) => {
         const item = data.type_demande
         console.log(item)
-        setCookie(data.type_demande)
+        // setCookie(data.type_demande)
         setCurrent(data)
         setIsModalOpen(true)
-        // await axios.post(Url+"/getPerformanceByDemande",{item}).then(res=>{
-        //     if(res.data.length){
-        //         setConsultation(res.data)
-        //         console.log(res.data)
-        //     }
-        // })  
-        // await axios.post(Url+"/getPerformanceSyntheseByDemande", {item}).then(res=>{
-        //     if(res.data.length){
-        //         setSynthese(res.data)
-        //         console.log(res.data)
-        //     }
-        // })
 
     }
 
@@ -130,9 +99,39 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
 
     }
 
-    const handleActualise = () => {
+    const handleActualise = async (fichierVer) => {
         console.log("actualise")
-        
+        let item = actuel
+        item.id_parametrage = actuel.id;
+
+        if(fichierVer === true){
+            let fichierAct = fichier.current.value;
+            fichierAct = fichierAct.split("\\")
+            fichierAct = fichierAct[fichierAct.length-1]
+            console.log(fichierAct);
+            item.fichier = fichierAct;
+        }else{
+            item.commentaire = commentaire.current.value;
+            if(actuel.id_recuperation!==2){
+                item.realise = realise.current.value;
+                item.taux = taux.current.value;
+            }
+        }
+
+        console.log(item)
+        if(item.existe===0){
+            console.log("insertion",item)
+            item = await axios.post(Url+"/insertPerformanceObjectifRevue",{item})
+            console.log(item)
+            setActuel(item)
+
+        }
+        else if(item.existe===1){
+            console.log("update",item)
+            item = await axios.post(Url+"/updatePerformanceObjectifRevue",{item})
+
+        }
+        getData()
 
     }
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -141,7 +140,7 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
    
     return(
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
-            <TitlePage title="Revue de la performance du processus" process={true} listProcess={false} theme={theme}/>
+            <TitlePage title="Revue de la performance du processus" process={true} listProcess={false} revueDirection={true} theme={theme}/>
                 <table className="table table-bordered text-center" style={border} id="table_user">
                     <thead className="text-success ">
                         <tr>
@@ -168,8 +167,8 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                             actuel.id !== data.id ?(
                                                 data.id_recuperation !== 2 ?
                                                 <>
-                                                    <td><input type="text" className="form-control" value={data.realise} name="realise" onClick={() => handleActuel(data)}></input>{data.abbrv}</td>
-                                                    <td><input type="text" className="form-control" value={data.taux} name="taux" onClick={() => handleActuel(data)}></input>{data.abbrv}</td>
+                                                    <td className="col-1"><input type="text" className="form-control" value={data.realise} name="realise" onClick={() => handleActuel(data)}></input>{data.abbrv}</td>
+                                                    <td className="col-1"><input type="text" className="form-control" value={data.taux} name="taux" onClick={() => handleActuel(data)}></input>{data.abbrv}</td>
                                                     <td><td><textarea type="text" className="form-control" value={data.commentaire} name="commentaire" onClick={() => handleActuel(data)}></textarea></td></td>
                                             
                                                 </>
@@ -182,11 +181,18 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                                 </>
                                                 
                                             ):(
+                                                data.id_recuperation !== 2 ?
                                                 <>
-                                                    <td><input type="text" className="form-control"  name="realise" onChange={() => handleActualise()} ref={realise}></input>{data.abbrv}</td>
-                                                    <td><input type="text" className="form-control"  name="taux" onChange={() => handleActualise()} ref={taux}></input>{data.abbrv}</td>
+                                                    <td className="col-1"><input type="text" className="form-control"  name="realise" onChange={() => handleActualise()} ref={realise}></input>{data.abbrv}</td>
+                                                    <td className="col-1"><input type="text" className="form-control"  name="taux" onChange={() => handleActualise()} ref={taux}></input>{data.abbrv}</td>
                                                     <td><td><textarea type="text" className="form-control"  name="commentaire" onChange={() => handleActualise()} ref={commentaire}></textarea></td></td>
                                             
+                                                </>
+                                                :
+                                                <>
+                                                    <td>{data.realise+""+data.abbrv}</td>
+                                                    <td>{data.taux+""+data.abbrv}</td>
+                                                    <td><td><textarea type="text" className="form-control"  name="commentaire" onChange={() => handleActualise()} ref={commentaire}></textarea></td></td>
                                                 </>
                                             )
                                         }
@@ -210,7 +216,7 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                                 <>
                                                 <div className="col-3 mx-2">
                                                 <OverlayTrigger placement="top" overlay={<Tooltip>Telecharger la piece jointe {data.type_demande}</Tooltip>}>
-                                                    <button className="btn btn-dark rounded-3 shadow" onClick={()=>handleDetail(data)} 
+                                                    <button className="btn btn-dark rounded-3 shadow" onClick={() => handleActuel(data)} 
                                                     data-bs-target="#download" data-bs-toggle="modal">
                                                         <i class="bi bi-download"></i>
                                                     </button>
@@ -218,7 +224,7 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                                 </div>
                                                 <div className="col-3 mx-2">
                                                 <OverlayTrigger placement="top" overlay={<Tooltip>Ajouter une piece jointe {data.type_demande}</Tooltip>}>
-                                                    <button className="btn btn-secondary rounded-3 shadow" onClick={()=>handleDetail(data)} 
+                                                    <button className="btn btn-secondary rounded-3 shadow" onClick={() => handleActuel(data)}
                                                     data-bs-target="#upload" data-bs-toggle="modal">
                                                         <i class="bi bi-upload"></i>
                                                     </button>
@@ -262,7 +268,10 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                 <h5 className="modal-title" id="exampleModalLabel">Objectifs : {current.objectifs}</h5>
                             </div>
                             <div className="modal-body">
-                                <input className="btn btn-secondary float-right col-12" type="file" accept=".xlsx" onChange={""}/>
+                                <div className="row">
+                                    <input className="btn btn-secondary float-right col-9 mx-2" type="file" accept=".xlsx" ref={fichier}/>
+                                    <button data-bs-dismiss="modal" className="col-lg-2 mx-1 btn btn-outline-success btn-md col-3 mx-2" onClick={() => handleActualise(true)}>Valider</button>
+                                </div>
                             </div>
                         </div>
                     </div>

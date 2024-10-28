@@ -99,7 +99,7 @@ SELECT
 
     from objectif.parametrage as p
 left JOIN revue_direction.performance_objectif as po on p.id = po.id_parametrage
-left join revue_direction.performance_objectif_revue as por on  po.id_parametrage = por.id_parametrage	
+left join revue_direction.performance_objectif_revue as por on  p.id = por.id_parametrage	
 JOIN objectif.unite as u on u.id = p.id_unite
 JOIN objectif.recuperation as r on r.id = p.recuperation;
 

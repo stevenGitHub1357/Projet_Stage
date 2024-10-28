@@ -277,7 +277,7 @@ const Menu =()=>{
                     
 {/* MenuProcesus */}
 
-                        {
+                        {/* {
                         listProcessusUserSlice.filter(processus => processus.id!==0 && processus.id!==listProcessusUserSlice[listProcessusUserSlice.length-1].id).length>0 &&
                         listProcessusUserSlice.filter(processus => processus.id!==0 && processus.id!==listProcessusUserSlice[listProcessusUserSlice.length-1].id).map((processus, index)  => (
                             <li  className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={processus.libelle_processus} key={index} >
@@ -309,7 +309,7 @@ const Menu =()=>{
                                     ):<></>}
                                 </div>
                             </li>
-                        ))}
+                        ))} */}
                     {/* </div>       */}
                     </ul>
                 </div>

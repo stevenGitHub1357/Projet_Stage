@@ -24,9 +24,9 @@ const getRisqueByProcessus = (req,res,next) =>{
       }
       if (Object.keys(result).length > 0) {
         res.status(200).send(result.rows);
-    } else {
-        res.status(200).send();
-    }
+      } else {
+          res.status(200).send();
+      }
       
     })
   
@@ -44,9 +44,9 @@ const getEnjeuxByProcessus = (req,res,next) =>{
         }
         if (Object.keys(result).length > 0) {
           res.status(200).send(result.rows);
-      } else {
-          res.status(200).send();
-      }
+        } else {
+            res.status(200).send();
+        }
         
       })
     
@@ -63,9 +63,9 @@ const getOpportuniterByProcessus = (req,res,next) =>{
         }
         if (Object.keys(result).length > 0) {
           res.status(200).send(result.rows);
-      } else {
-          res.status(200).send();
-      }
+        } else {
+            res.status(200).send();
+        }
         
       })
 };

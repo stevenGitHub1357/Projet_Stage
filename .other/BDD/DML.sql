@@ -24,7 +24,7 @@ INSERT INTO public.users (matricule,nom,prenom,mot_de_passe,default_mdp) VALUES
 
 
 -- menus
-INSERT INTO public.menus (id_menu,labelle_menu,icon,route,position,"rang",base) VALUES
+INSERT INTO public.menus (id_menu,labelle_menu,icon,route,position,rang,base) VALUES
 	(1000,'Accueil','bi bi-bookmark-heart-fill','accueil',1,0,0),
 	(1100,'Parametrage','bi bi-bookmark-heart-fill','parametrage',3,0,0),
 		(1110,'Utilisateur','bi bi-person-circle','utilisateur',3,2,1100),	
@@ -33,19 +33,25 @@ INSERT INTO public.menus (id_menu,labelle_menu,icon,route,position,"rang",base) 
 		(1120,'Menu','bi bi-list','menu',3,2,1100),
 			(1121,'Ajout','bi bi-file-earmark-plus','ajoutU',3,2,1120),
 			(1122,'Liste','bi bi-list','listeU',3,2,1120),	
-	(1200,'Vue global','bi bi-file-earmark-plus','global',2,2,0),
+	-- (1200,'Vue global','bi bi-file-earmark-plus','global',2,2,0),
 	(1300,'Profils','bi bi-person-circle','profils',3,1,0),
-	(1400,'Graphique','bi bi-calendar2-range','graphe',2,2,0),
+	-- (1400,'Graphique','bi bi-calendar2-range','graphe',2,2,0),
 	(1500,'Parametrage objectifs','bi bi-calendar2-range','gestionObjectifs',1,1,0),
 		(1510,'Liste objectif','bi bi-calendar2-range','gestionObjectifs',1,2,1500),
 		(1520,'Import et insertion','bi bi-calendar2-range','multiParametrageObjectifs',1,2,1500),
-	(1600,'Revue de direction','bi bi-easel','revueDirection',1,3,0);
+	-- (1600,'Revue de direction','bi bi-easel','revueDirection',1,3,0),
+	(2100,'Revue du plan','bi bi-inboxes','revue',1,4,0),
+	(2200,'Efficacitée','bi bi-journal-check','efficacite',1,5,0),
+	(2300, 'Revue performance', 'bi bi-graph-up-arrow', 'performance',1,6,0),
+	(2400, 'Résultats des audits', 'bi bi-list-check', 'resultat',1,7,0),
+	(2500, 'Plan d''action', 'bi bi-layers', 'plan',1,8,0)
+	;
 
 
 -- role
-INSERT INTO public."role" (id_role, type_role,date_create) VALUES
+INSERT INTO public.role (id_role, type_role,date_create) VALUES
 	(0,'All','2024-04-11 13:32:58.054');
-INSERT INTO public."role" (type_role,date_create) VALUES
+INSERT INTO public.role (type_role,date_create) VALUES
 	('Developpeur','2024-04-11 13:32:58.054'),
 	('Administrateur','2024-04-11 13:32:58.054'),
 	('Direction','2024-04-08 16:18:04.678'),
@@ -60,11 +66,11 @@ INSERT INTO public.processus (id,libelle_processus,num_processus,abbrv, excel) V
 INSERT INTO public.processus (libelle_processus,num_processus,abbrv, excel) VALUES
 	('Production','1','PRO', 'PRODUCTION'),
 	('Méthode et qualité','2','MQ', 'METHODES ET QUALITE'),
-	('Développement','3','DEV', 'DEVELOPPEMENT'),
-	('Infra-tech','4','INF', 'INFRA-TECH'),
+	('Développement','6','DEV', 'DEVELOPPEMENT'),
+	('Infra-tech','7','INF', 'INFRA-TECH'),
 	('Service généraux','5','SER', 'SERVICES GENERAUX'),
-	('Ressources humaines','6','RES', 'RESSOURCES HUMAINES'),
-	('Administration','7','ADM', 'ADMINISTRATION'),
+	('Ressources humaines','3','RES', 'RESSOURCES HUMAINES'),
+	('Administration','4','ADM', 'ADMINISTRATION'),
 	('Approvisionnement','8','APPRO', 'APPROVISIONNEMENT'),
 	('Facturation', '9','FACT', 'FACTURATION'),
 	('Generale','8','GEN','GENERALE');
@@ -101,13 +107,18 @@ INSERT INTO public.menu_role (id_menu, id_role) VALUES
 		(1120,0),
 			(1121,1), (1121,2),
 			(1122,1), (1122,2),
-	(1200, 1),
+	-- (1200, 1),
 	(1300, 0),
-	(1400, 0),
+	-- (1400, 0),
 	(1500, 0),
 		(1510, 0),
 		(1520, 0),
-	(1600, 0);
+	-- (1600, 0),
+	(2100, 0),
+	(2200, 0),
+	(2300, 0),
+	(2400, 0),
+	(2500, 0);
 
 -- menu_process
 INSERT INTO public.menu_processus (id_menu, id_processus) VALUES
@@ -119,13 +130,18 @@ INSERT INTO public.menu_processus (id_menu, id_processus) VALUES
 		(1120,0),
 			(1121,0), 
 			(1122,0),
-	(1200, 0),
+	-- (1200, 0),
 	(1300, 0),
-	(1400, 0),
+	-- (1400, 0),
 	(1500, 0),
 		(1510, 0),
 		(1520, 0),
-	(1600, 0);
+	-- (1600, 0),
+	(2100, 0),
+	(2200, 0),
+	(2300, 0),
+	(2400, 0),
+	(2500, 0);;
 
 
 INSERT INTO objectif.unite (type_unite,abbrv) VALUES
@@ -140,7 +156,7 @@ INSERT INTO objectif.recuperation (type_recuperation) VALUES
 
 ---Revue_processus
 INSERT INTO revue_direction.revue_processus VALUES
-	(1,2,null,now,1)
+	(1,2,null,'2024-04-28 11:37:45.946',1);
 ---Performance
 INSERT INTO revue_direction.performance_objectif (id_parametrage,type_demande, libelle) VALUES
 	(39, 'FAC', 'Fiche d''amelioration continue'),

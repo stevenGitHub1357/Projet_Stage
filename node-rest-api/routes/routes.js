@@ -131,6 +131,7 @@ router.post("/getPerformanceObjectifCommentaireByRevue", performance.getPerforma
 router.post("/getPerformanceByDemande", performance.getPerformanceByDemande)
 router.post("/getPerformanceSyntheseByDemande", performance.getPerformanceSyntheseByDemande)
 router.post("/insertPerformanceCommentaire", performance.insertPerformanceCommentaire)
+router.post("/updatePerformanceCommentaire", performance.updatePerformanceCommentaire)
 router.post("/getPerformanceCommentaire", performance.getPerformanceCommentaire)
 router.post("/getPerformanceByDemandeRevue", performance.getPerformanceByDemandeRevue)
 router.post("/insertPerformanceObjectifRevue", performance.insertPerformanceObjectifRevue)

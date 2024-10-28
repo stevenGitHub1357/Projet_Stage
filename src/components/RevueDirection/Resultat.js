@@ -49,7 +49,7 @@ const Resultat = ({MenuCollapse,theme,logo,cible})=>{
    
     return(
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
-            <TitlePage title="Résultats des audits" process={true} listProcess={false}  theme={theme}/>
+            <TitlePage title="Résultats des audits" process={true} listProcess={false}  theme={theme} revueDirection={true}/>
                 <table className="table table-bordered text-center" style={border} id="table_user">
                     <thead className="text-success ">
                         <tr>

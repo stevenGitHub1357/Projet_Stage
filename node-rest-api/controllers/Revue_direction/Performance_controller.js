@@ -43,13 +43,13 @@ const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommen
   };
 
   const getPerformanceObjectifByRevueProcessus = (req,res,next) =>{
-    const {id_revue_processus,id_processus} = req.body.item
+    const {id_revue_processus} = req.body.item
     PerformanceObjectifProcessus.findAll({
       where : 
       {
-        id_processus : id_processus,
         id_revue_processus : id_revue_processus
-      }
+      },
+      order: [['id', 'DESC']],
     })
     .then(function(results) {
       if (results.length > 0) {
@@ -248,6 +248,29 @@ const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommen
     })
   };
 
+  const updatePerformanceCommentaire = (req,res,next) =>{
+    const {id_revue_processus,type_demande,commentaire} = req.body.item
+    // console.log()
+    PerformanceCommentaire.update(
+      { 
+        commentaire: commentaire
+      },
+      {
+      where : {
+          id_revue_processus : id_revue_processus,
+          type_demande : type_demande,
+        }
+      }
+    )
+    .then(function(results) {
+      res.status(200).send(results);
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  };
+
 
   const insertPerformanceObjectifRevue = (req,res,next) =>{
     const {id_revue_processus,id_parametrage, realise, taux, fichier, commentaire} = req.body.item
@@ -306,5 +329,5 @@ const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommen
 module.exports = {getPerformanceObjectifDetail, getPerformanceObjectifDetailByProcessus, getPerformanceObjectifByRevueProcessus, 
                   getPerformanceCommentaireByRevuePerformance, getPerformanceObjectifCommentaireByRevue, 
                   insertPerformanceObjectifCommentaire, getPerformanceByDemande, getPerformanceSyntheseByDemande,
-                  insertPerformanceCommentaire, getPerformanceCommentaire, getPerformanceByDemandeRevue,
+                  insertPerformanceCommentaire, updatePerformanceCommentaire, getPerformanceCommentaire, getPerformanceByDemandeRevue,
                   updatePerformanceObjectifRevue, insertPerformanceObjectifRevue}

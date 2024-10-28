@@ -4,21 +4,18 @@ CREATE SCHEMA IF NOT EXISTS objectif;
 CREATE SCHEMA IF NOT EXISTS data_kpi;
 CREATE SCHEMA IF NOT EXISTS revue_direction;
 
+DROP VIEW IF EXISTS revue_direction.perf_synthese;
+DROP VIEW IF EXISTS revue_direction.perf_commentaire_final;
+DROP VIEW IF EXISTS revue_direction.perf_efficace;
+DROP VIEW IF EXISTS revue_direction.perf_cloture;
+DROP VIEW IF EXISTS revue_direction.perf_declare;
+
+
 DROP VIEW IF EXISTS revue_direction.performance_objectif_processus;
 DROP VIEW IF EXISTS revue_direction.performance_commentaire_final;
 DROP VIEW IF EXISTS revue_direction.performance_objectif_detail;
+DROP VIEW IF EXISTS revue_direction.performance_cloture;
 
-DROP VIEW IF EXISTS revue_direction.performance_synthese;
-DROP VIEW IF EXISTS revue_direction.performance_commentaire_final;
-DROP VIEW IF EXISTS revue_direction.cloture;
-DROP VIEW IF EXISTS revue_direction.performance_declare;
-DROP VIEW IF EXISTS revue_direction.performance_objectif_detail;
-
-DROP VIEW IF EXISTS data_kpi.fnc_fac_synthese;
-DROP VIEW IF EXISTS data_kpi.fnc_fac_commentaire_final;
-DROP VIEW IF EXISTS data_kpi.fac_efficace;
-DROP VIEW IF EXISTS data_kpi.fnc_fac_realise_cloture;
-DROP VIEW IF EXISTS data_kpi.fnc_fac_declare;
 
 DROP VIEW IF EXISTS objectif.parametrage_objectif_synthese;
 DROP VIEW IF EXISTS detail_user_processus;
@@ -31,7 +28,6 @@ DROP TABLE IF EXISTS revue_direction.performance_commentaire;
 DROP TABLE IF EXISTS revue_direction.performance_objectif_revue;
 DROP TABLE IF EXISTS revue_direction.performance_objectif;
 DROP TABLE IF EXISTS revue_direction.performance;
-DROP TABLE IF EXISTS revue_direction.plan_action_commentaire;
 DROP TABLE IF EXISTS revue_direction.plan_action;
 DROP TABLE IF EXISTS revue_direction.revue_processus;
 DROP TABLE IF EXISTS objectif.revue_direction;
@@ -169,13 +165,6 @@ CREATE TABLE IF NOT EXISTS revue_direction.plan_action(
   nb_ticket VARCHAR(200),
   activate INTEGER DEFAULT 1,
   commentaire VARCHAR(2000),
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS revue_direction.plan_action_commentaire(
-  id SERIAL PRIMARY KEY,
-  id_plan_action INTEGER REFERENCES revue_direction.plan_action(id),
-  commentaire VARCHAR(200),
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
