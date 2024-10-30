@@ -14,6 +14,7 @@ import Performance from "../RevueDirection/Performance";
 import Resultat from "../RevueDirection/Resultat";
 import Plan from "../RevueDirection/Plan";
 import HomeProcessus from "../home/homeProcessus";
+import Planning from "../Planning/Planning";
 
 const Route_menu =({MenuCollapse,theme,logo})=>{
     let Route_Server = Route_Serv;
@@ -34,6 +35,7 @@ const Route_menu =({MenuCollapse,theme,logo})=>{
             <Route path={Route_Server + "resultat/*"} element = {<Resultat MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
             <Route path={Route_Server + "plan/*"} element = {<Plan MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
             <Route path={Route_Server + "acceuilProcessus/*"} element = {<HomeProcessus MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
+            <Route path={Route_Server + "planning"} element = {<Planning MenuCollapse={MenuCollapse} theme={theme} logo={logo} />}></Route>
         </Routes>
     )
 }

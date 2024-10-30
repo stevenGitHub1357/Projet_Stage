@@ -1,5 +1,7 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
+const multer = require('multer');
+const path = require('path');
 
 const deploy = require("../controllers/deploy_controller.js")
 router.get("/getDeploy", deploy.deploy)
@@ -83,21 +85,6 @@ router.get("/getParamObjSynthese",parametrageObjectif.getSynthese)
 router.get("/getRevueDirection",parametrageObjectif.getAllRevueDirection)
 
 
-//-Data KPI-//
-
-//--MET/MQ--//
-
-//---FNC---//
-const fnc_fac = require("../controllers/Data_KPI/fnc_fac_controller.js")
-router.get("/getFNCConsultation", fnc_fac.getConsultation_FNC)
-router.get("/getFACConsultation", fnc_fac.getConsultation_FAC)
-
-router.get("/getFNCSynthese", fnc_fac.getSynthese_FNC)
-router.get("/getFACSynthese", fnc_fac.getSynthese_FAC)
-
-router.post("/insertFNCFACCommentaire", fnc_fac.insertCommentaire_FAC_FNC)
-
-
 //-Revue direction-//
 //--Revue processus--//
 const revue_processus = require("../controllers/Revue_direction/Revue_processus_controller.js")
@@ -136,6 +123,8 @@ router.post("/getPerformanceCommentaire", performance.getPerformanceCommentaire)
 router.post("/getPerformanceByDemandeRevue", performance.getPerformanceByDemandeRevue)
 router.post("/insertPerformanceObjectifRevue", performance.insertPerformanceObjectifRevue)
 router.post("/updatePerformanceObjectifRevue", performance.updatePerformanceObjectifRevue)
+router.post("/insertPerformanceObjectifRevueFichier", performance.insertPerformanceObjectifRevueFichier)
+router.post("/getPerformanceObjectifRevueFichierByObjectif", performance.getPerformanceObjectifRevueFichierByObjectif)
 
 
 //--Efficaciter--//
@@ -146,6 +135,40 @@ router.post("/getEfficaciteByRevue", efficacite.getEfficaciteByRevue)
 router.post("/getRisqueByProcessus", efficacite.getRisqueByProcessus)
 router.post("/getEnjeuxByProcessus", efficacite.getEnjeuxByProcessus)
 router.post("/getOpportuniterByProcessus", efficacite.getOpportuniterByProcessus)
+
+
+//--Planning--//
+const planning = require("../controllers/planning_controller.js");
+router.post("/insertPlanning", planning.insertPlanning)
+router.post("/updatePlanning", planning.updatePlanning)
+router.get("/getPlanning", planning.getPlanning)
+router.get("/getPlanningCategorie", planning.getPlanningCategorie)
+router.post("/insertPlanningCategorie", planning.insertPlanningCategorie)
+router.post("/insertDomaine", planning.insertDomaine)
+
+
+
+//--Upload--//
+const upload_download = require("../controllers/file_controller.js");
+
+// Configuration de multer pour stocker les fichiers
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploadsKPI/default');
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`);
+  }
+});
+
+const upload = multer({ storage });
+
+// Définir une route POST pour uploader un fichier
+router.post('/uploadFile', upload.single('file'), upload_download.uploadFile);
+router.post('/moveFile', upload_download.moveFile);
+router.post('/downloadFile', upload_download.downloadFile);
+module.exports = router;
 
 
 

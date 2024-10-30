@@ -37,7 +37,7 @@ CREATE or replace VIEW menu_role_processus as
 select 
 	m.id_menu as id_menu , m.labelle_menu as labelle_menu, m.icon as icon , 
 	m.route as route , m."position" as position , m.rang as rang , m.base as base,
-	mp.id_processus as id_processus , mr.id_role as id_role 
+	mp.id_processus as id_processus , mr.id_role as id_role, m.etat as etat 
 	from menus as m
 join menu_processus mp on m.id_menu = mp.id_menu  
 join menu_role mr on m.id_menu = mp.id_menu 
@@ -70,7 +70,6 @@ SELECT
 	p.recuperation as id_recuperation, r.type_recuperation as type_recuperation,
 	p.support as support, p.activate as activate,
     po.type_demande as type_demande, po.libelle as libelle,
-	por.fichier as fichier,
 	CASE 
 		WHEN por.id_revue_processus IS NULL  
 			THEN 0
@@ -120,7 +119,6 @@ select
 		pod.objectifs as objectifs, pod.poids as poids, pod.cible as cible, pod.abbrv as abbrv,
 		pod.type_demande as type_demande, pod.libelle as libelle ,pod.activate as activate,
 		pod.id_recuperation as id_recuperation, pod.type_recuperation as type_recuperation,
-		pod.fichier as fichier,
 		CASE 
 	        WHEN sum(p.realise)/count(p.realise) IS NOT NULL
 	        	THEN sum(p.realise)/count(p.realise)
@@ -140,7 +138,7 @@ left join revue_direction.performance p on p.type_demande = pod.type_demande and
 	group by 
 		rp.id,rp.id_processus ,rp.date_cloture ,rp.createdat,
 		pod.id, pod.objectifs ,pod.poids ,pod.cible ,pod.abbrv ,pod.type_demande ,pod.libelle, pod.activate,
-		pod.commentaire, pod.realise, pod.taux, pod.id_recuperation, pod.type_recuperation, pod.fichier, pod.existe ;
+		pod.commentaire, pod.realise, pod.taux, pod.id_recuperation, pod.type_recuperation, pod.existe ;
 
 	
 	---Performance_declarer

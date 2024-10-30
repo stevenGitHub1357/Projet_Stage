@@ -1,7 +1,7 @@
 ----Data Definition Language
 
 CREATE SCHEMA IF NOT EXISTS objectif;
-CREATE SCHEMA IF NOT EXISTS data_kpi;
+CREATE SCHEMA IF NOT EXISTS planning;
 CREATE SCHEMA IF NOT EXISTS revue_direction;
 
 DROP VIEW IF EXISTS revue_direction.perf_synthese;
@@ -22,20 +22,24 @@ DROP VIEW IF EXISTS detail_user_processus;
 DROP VIEW IF EXISTS detail_user_role;
 DROP VIEW IF EXISTS menu_role_processus;
 
+
 DROP TABLE IF EXISTS revue_direction.efficacite;
-DROP TABLE IF EXISTS revue_direction.performance_objectif_commentaire;
 DROP TABLE IF EXISTS revue_direction.performance_commentaire;
 DROP TABLE IF EXISTS revue_direction.performance_objectif_revue;
+DROP TABLE IF EXISTS revue_direction.performance_objectif_revue_fichier;
 DROP TABLE IF EXISTS revue_direction.performance_objectif;
 DROP TABLE IF EXISTS revue_direction.performance;
 DROP TABLE IF EXISTS revue_direction.plan_action;
 DROP TABLE IF EXISTS revue_direction.revue_processus;
+
+DROP TABLE IF EXISTS planning.planning;
+DROP TABLE IF EXISTS planning.planning_categorie;
+
 DROP TABLE IF EXISTS objectif.revue_direction;
-DROP TABLE IF EXISTS data_kpi.fnc_fac_commentaire;
-DROP TABLE IF EXISTS data_kpi.fnc_fac;
 DROP TABLE IF EXISTS objectif.parametrage;
 DROP TABLE IF EXISTS objectif.unite;
 DROP TABLE IF EXISTS objectif.recuperation;
+
 DROP TABLE IF EXISTS menu_processus;
 DROP TABLE IF EXISTS menu_role;
 DROP TABLE IF EXISTS user_processus;
@@ -65,7 +69,8 @@ CREATE TABLE IF NOT EXISTS menus(
   route VARCHAR(200) NOT NULL DEFAULT 'global',
   position INTEGER DEFAULT 1,
   rang INTEGER DEFAULT 1,
-  base INTEGER DEFAULT 0
+  base INTEGER DEFAULT 0,
+  etat INTEGER DEFAULT 10
 );
 
 
@@ -144,7 +149,24 @@ CREATE TABLE IF NOT EXISTS objectif.parametrage(
 
 
 
+--planning
+CREATE TABLE IF NOT EXISTS planning.planning_categorie(
+  id SERIAL PRIMARY KEY,
+  libelle VARCHAR(300),
+  abbrv VARCHAR(300) DEFAULT 'default'
+);
 
+CREATE TABLE IF NOT EXISTS planning.planning(
+  id SERIAL PRIMARY KEY,
+  id_categorie INTEGER REFERENCES planning.planning_categorie(id),
+  titre VARCHAR(200),
+  date_debut DATE DEFAULT CURRENT_TIMESTAMP,
+  date_cloture DATE,
+  date_recolte_debut DATE,
+  date_recolte_fin DATE,
+  updateAt TIMESTAMP,
+  statut VARCHAR(200)
+);
 
 
 --revue_direction
@@ -152,6 +174,7 @@ CREATE TABLE IF NOT EXISTS objectif.parametrage(
 CREATE TABLE IF NOT EXISTS revue_direction.revue_processus(
   id SERIAL PRIMARY KEY,
   id_processus INTEGER REFERENCES public.processus(id) default 1,
+  id_planning INTEGER REFERENCES planning.planning(id) default 1,
   date_cloture TIMESTAMP,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   statut VARCHAR(200)
@@ -184,8 +207,17 @@ CREATE TABLE IF NOT EXISTS revue_direction.performance_objectif_revue(
   id_parametrage INTEGER REFERENCES objectif.parametrage(id),
   realise DOUBLE precision default 0,
   taux DOUBLE precision default 0,
-  fichier VARCHAR(500),
   commentaire VARCHAR(200)
+);
+
+CREATE TABLE IF NOT EXISTS revue_direction.performance_objectif_revue_fichier(
+  id SERIAL PRIMARY KEY,
+  id_revue_processus INTEGER REFERENCES revue_direction.revue_processus(id),
+  id_parametrage INTEGER REFERENCES objectif.parametrage(id),
+  file_name VARCHAR(2000) not null,
+  file_save VARCHAR(2000) not null,
+  folder_path VARCHAR(2000) not null,
+  createdat TIMESTAMP default CURRENT_TIMESTAMP
 );
 
 

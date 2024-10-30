@@ -18,7 +18,7 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
     let [listData,setListData] = useState([])
     let [annee,setAnnee] = useState(2023)
     const[afterAddDelete,setAfterAddDelete] = useState(false)
-    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus'])
+    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus','id_revue_processus','id_processus_efficacite','id_processus'])
     const [currentPlan, setCurrentPlan] = useState(-1)
     const [currentPlanId, setCurrentPlanId] = useState(-1)
     const [insert, setInsert] = useState(true)
@@ -31,8 +31,8 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
     const commentaire = useRef();
     const verification = useRef();
     const idCurrent = useRef();
-    const id_revue_processus = 1
-    const id_processus = 2
+    const id_revue_processus = cookies.id_revue_processus
+    const id_processus = cookies.id_processus
 
     const colonneTable = [
         {id:1, nom:"Sujet"},
@@ -48,7 +48,7 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
     // console.log(data)
     useEffect(()=>{
         getData()
-    },[])
+    },[cookies.id_revue_processus,cookies.id_processus])
 
     const handleAddLine = () =>{
         dispatch(addPlanActionRevue({}))
@@ -165,6 +165,8 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
                         // console.log(theData)
                         newData.push(theData)
                     })
+            }else{
+
             }
                 // console.log(newData)
             
@@ -172,9 +174,18 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
         newData = newData.sort((a, b) => a.id - b.id)
         console.log(newData)
         if(newData.length===0){
-            newData.push({})
+            let theData = {};
+            theData.nb_ticket = ""
+            theData.id = ""
+            theData.sujet = ""
+            theData.commentaire = ""
+            theData.activate = ""
+            newData.push(theData)
         }
+        console.log(newData)
         dispatch(setPlanActionRevueData(newData))
+        setCurrentPlan(-1)
+        setCurrentPlanId(-1)
         return newData 
     }
 
@@ -210,7 +221,7 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
                                             <td><textarea className="form-control" type="text" name="action" value={item.action} style={{backgroundColor:"lightgray"}} readOnly></textarea></td>
                                             <td><input className="form-control" type="text" name="pilote" value={item.pilote} style={{backgroundColor:"lightgray"}} readOnly></input></td>
                                             <td><input className="form-control" type="text" name="pdca" value={item.pdca} style={{backgroundColor:"lightgray"}} readOnly></input></td>
-                                            <td><textarea className="form-control" type="text" name="commentaire" value={item.commentaire} onClick={() => handleGetCurrentPlan(index,item.id)}></textarea></td>
+                                            <td><textarea className="form-control" type="text" value={item.commentaire} onClick={() => handleGetCurrentPlan(index,item.id)}></textarea></td>
                                             <td>
                                                 <input className="form-control" type="hidden" name="index" value={index}></input>
                                                 <button className="btn btn-dark rounded-3 shadow" onClick={() => handleDeleteLine(item.id)}>    

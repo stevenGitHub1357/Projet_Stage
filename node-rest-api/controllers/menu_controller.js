@@ -99,7 +99,7 @@ const getMenuByUser = (req,res,next) =>{
   Menu_role_processus.findAll(
     {
       attributes : [
-        "id_menu", "labelle_menu", "icon", "route", "position", "rang", "base"
+        "id_menu", "labelle_menu", "icon", "route", "position", "rang", "base", "etat"
       ],
       where : {
         id_processus:{
@@ -111,7 +111,7 @@ const getMenuByUser = (req,res,next) =>{
       },
       group : 
       [
-        "id_menu", "labelle_menu", "icon", "route", "position", "rang", "base"
+        "id_menu", "labelle_menu", "icon", "route", "position", "rang", "base", "etat"
       ],
       order :
       [

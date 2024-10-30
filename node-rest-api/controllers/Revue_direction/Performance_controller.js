@@ -2,7 +2,7 @@ const bd_pool = require("../../config/default.config")
 const pool = bd_pool.pool
 const {kanboard} = require("../../config/dbRevueDirection.config")
 const { Sequelize, Op } = require("sequelize");
-const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommentaire, PerformanceObjectifCommentaire, PerfSynthese, Performance, PerformanceObjectifRevue } = require("../../models/Revue_direction/Performance");
+const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommentaire, PerformanceObjectifCommentaire, PerfSynthese, Performance, PerformanceObjectifRevue, PerformanceObjectifRevueFichier } = require("../../models/Revue_direction/Performance");
 
 
 
@@ -273,7 +273,7 @@ const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommen
 
 
   const insertPerformanceObjectifRevue = (req,res,next) =>{
-    const {id_revue_processus,id_parametrage, realise, taux, fichier, commentaire} = req.body.item
+    const {id_revue_processus,id_parametrage, realise, taux, commentaire} = req.body.item
     // console.log()
     PerformanceObjectifRevue.create(
       { 
@@ -281,7 +281,6 @@ const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommen
         id_parametrage : id_parametrage,
         realise : realise,
         taux : taux,
-        fichier : fichier,
         commentaire: commentaire
       }
     )
@@ -296,13 +295,12 @@ const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommen
 
 
   const updatePerformanceObjectifRevue = (req,res,next) =>{
-    const {id_revue_processus,id_parametrage, realise, taux, fichier, commentaire} = req.body.item
+    const {id_revue_processus,id_parametrage, realise, taux, commentaire} = req.body.item
     // console.log()
     PerformanceObjectifRevue.update(
       { 
         realise : realise,
         taux : taux,
-        fichier : fichier,
         commentaire: commentaire
       },
       {
@@ -323,6 +321,50 @@ const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommen
   }
 
 
+  const insertPerformanceObjectifRevueFichier = (req,res,next) =>{
+    const {id_revue_processus,id_parametrage, file_name, file_save, folder_path} = req.body.item
+    // console.log()
+    PerformanceObjectifRevueFichier.create(
+      { 
+        id_revue_processus : id_revue_processus,
+        id_parametrage : id_parametrage,
+        file_name : file_name,
+        file_save : file_save, 
+        folder_path: folder_path
+      }
+    )
+    .then(function(results) {
+      res.status(200).send(results);
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  };
+
+  const getPerformanceObjectifRevueFichierByObjectif = (req,res,next) =>{
+    const {id_revue_processus, id_parametrage} = req.body.item
+    PerformanceObjectifRevueFichier.findAll({
+      where : 
+      {
+        id_revue_processus : id_revue_processus,
+        id_parametrage : id_parametrage,
+      }
+    })
+    .then(function(results) {
+      if (results.length > 0) {
+        res.status(200).json(results);
+      } else {
+        res.status(200).json();
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  };
+
+
 
 
 
@@ -330,4 +372,4 @@ module.exports = {getPerformanceObjectifDetail, getPerformanceObjectifDetailByPr
                   getPerformanceCommentaireByRevuePerformance, getPerformanceObjectifCommentaireByRevue, 
                   insertPerformanceObjectifCommentaire, getPerformanceByDemande, getPerformanceSyntheseByDemande,
                   insertPerformanceCommentaire, updatePerformanceCommentaire, getPerformanceCommentaire, getPerformanceByDemandeRevue,
-                  updatePerformanceObjectifRevue, insertPerformanceObjectifRevue}
+                  updatePerformanceObjectifRevue, insertPerformanceObjectifRevue, insertPerformanceObjectifRevueFichier, getPerformanceObjectifRevueFichierByObjectif}

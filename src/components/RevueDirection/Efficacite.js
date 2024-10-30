@@ -19,10 +19,10 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
     const [opportunite, setOpportunite] = useState([])
     const [enjeux, setEnjeux] = useState([])
     const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus','id_revue_processus','id_processus_efficacite','id_processus'])
-    const [currentType, setCurrentType] = useState(0)
-    const [currentTicket, setCurrentTicket] = useState(0)
+    const [currentType, setCurrentType] = useState(-1)
+    const [currentTicket, setCurrentTicket] = useState(-1)
     const [currentEff, setCurrentEff] = useState({})
-    const commentaire = useRef("-")
+    const commentaire = useRef()
     const id_revue_processus = cookies.id_revue_processus
     const id_processus_efficacite = cookies.id_processus_efficacite
     const id_processus = cookies.id_processus
@@ -57,7 +57,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
 
     useEffect(()=>{
         getData()
-    },[cookies.id_revue_processus])
+    },[cookies.id_revue_processus, cookies.id_processus])
 
     async function getData(){
         console.log(id_revue_processus)
@@ -87,9 +87,10 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                 newItem.num_ticket = item.num_ticket;
                 newItem.id_ticket = item.id+"";
                 newItem.id = 0
-                let eff = effi.filter(effi => effi.id_ticket===newItem.id_ticket && effi.id_revue_processus===id_revue_processus && effi.types===3)
+                newItem.commentaire = ""
+                let eff = effi.filter(effi => effi.id_ticket===newItem.id_ticket && effi.id_revue_processus===Number(id_revue_processus) && effi.types===3)
                 if(eff.length>0){
-                    console.log(eff)
+                    // console.log(eff)
                     eff = eff[0]
                     newItem.id = eff.id;
                     newItem.commentaire = eff.commentaire
@@ -113,9 +114,10 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                 newItem.num_ticket = item.num_ticket;
                 newItem.id_ticket = item.id+"";
                 newItem.id = 0
-                let eff = effi.filter(effi => effi.id_ticket===newItem.id_ticket && effi.id_revue_processus===id_revue_processus && effi.types===2)
+                newItem.commentaire = ""
+                let eff = effi.filter(effi => effi.id_ticket===newItem.id_ticket && effi.id_revue_processus===Number(id_revue_processus) && effi.types===2)
                 if(eff.length>0){
-                    console.log(eff)
+                    // console.log(eff)
                     eff = eff[0]
                     newItem.id = eff.id;
                     newItem.commentaire = eff.commentaire
@@ -139,9 +141,10 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                 newItem.num_ticket = item.num_ticket;
                 newItem.id_ticket = item.id+"";
                 newItem.id = 0
-                let eff = effi.filter(effi => effi.id_ticket===newItem.id_ticket && effi.id_revue_processus===id_revue_processus && effi.types===1)
+                let eff = effi.filter(effi => effi.id_ticket===newItem.id_ticket && effi.id_revue_processus===Number(id_revue_processus) && effi.types===1)
+                newItem.commentaire = ""
                 if(eff.length>0){
-                    console.log(eff)
+                    // console.log(eff)
                     eff = eff[0]
                     newItem.id = eff.id;
                     newItem.commentaire = eff.commentaire
@@ -151,14 +154,18 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                 allRisque.push(newItem)
             })
             
+            console.log(allRisque)
             setOpportunite(allOppo)
             setEnjeux(allEnjeux)
-        //     console.log(allRisque)
             setRisque(allRisque)
+            setCurrentType("")
+            setCurrentEff({})
     }
 
     const handleChangeCurrent = (type, data) =>{
-        console.log(type, data)
+        console.log("handleCurrent")
+        console.log(type)
+        console.log(data)
         setCurrentType(type)
         setCurrentEff(data)
         if(data.id===0){
@@ -168,7 +175,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
 
     const handleChangeComment = async () => {
         
-        console.log(currentType, currentEff)
+        // console.log(currentType, currentEff)
         console.log(commentaire.current.value)
         const item = {}
         item.id_revue_processus = id_revue_processus
@@ -177,18 +184,18 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
         item.types = currentType
         item.commentaire = commentaire.current.value
         item.id = currentEff.id
-        console.log(item)
+        // console.log(item)
 
         
 
-        if(insert===true){
+        if(insert===true && currentEff.id === 0){
             console.log("insert",item)
             axios.post(Url+"/insertEfficacite",{item})
         }else{
             console.log("update",item)
             axios.post(Url+"/updateEfficacite",{item})
         }
-        getData()
+        // getData()
         setInsert(false)
     }
 
@@ -233,7 +240,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                                             <td>{data.action}</td>
                                             <td>{data.pilote}</td>
                                             {
-                                                currentEff.id===data.id && currentType === titre.id ?
+                                                currentEff.id===data.id && currentType === titre.id && currentEff.num_ticket === data.num_ticket ?
                                                 <td><textarea className="form-control" type="texte" name="commentaire" ref={commentaire} onChange={handleChangeComment}></textarea></td>
                                                 :
                                                 <td><textarea className="form-control" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)}></textarea></td>
@@ -258,7 +265,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                                             <td>{data.action}</td>
                                             <td>{data.pilote}</td>
                                             {
-                                                currentEff.id===data.id && currentType === titre.id ?
+                                                currentEff.id===data.id && currentType === titre.id && currentEff.num_ticket === data.num_ticket ?
                                                 <td><textarea className="form-control" type="texte" name="commentaire" ref={commentaire} onChange={handleChangeComment}></textarea></td>
                                                 :
                                                 <td><textarea className="form-control" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)}></textarea></td>
@@ -282,7 +289,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                                             <td>{data.action}</td>
                                             <td>{data.pilote}</td>
                                             {
-                                                currentEff.id===data.id && currentType === titre.id ?
+                                                currentEff.id===data.id && currentType === titre.id && currentEff.num_ticket === data.num_ticket ?
                                                 <td><textarea className="form-control" type="texte" name="commentaire" ref={commentaire} onChange={handleChangeComment}></textarea></td>
                                                 :
                                                 <td><textarea className="form-control" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)}></textarea></td>

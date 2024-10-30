@@ -32,6 +32,10 @@ const Menu = defautl_db.defaultSequelize.define('menus', {
         type: Sequelize.INTEGER,
         defaultValue: 0,
       },
+      etat: {
+        type: Sequelize.INTEGER,
+        defaultValue: 10,
+      },
     },{
       createdAt: false,
       updatedAt: false,
@@ -68,6 +72,10 @@ const Menu = defautl_db.defaultSequelize.define('menus', {
     base: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
+    },
+    etat: {
+      type: Sequelize.INTEGER,
+      defaultValue: 10,
     },
     id_processus: {
       type: Sequelize.INTEGER,

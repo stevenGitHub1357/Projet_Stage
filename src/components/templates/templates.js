@@ -13,6 +13,9 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
     const [processActuel,setProcessusActuel] = useState([]);
     const [revue,setRevue] = useState([]);
     const [revueActuel,setRevueActuel] = useState({});
+    const [listPlanning, setListPlanning] = useState([]);
+    const [currentPlanning, setCurrentPlanning] = useState({})
+    const [listeRevue, setListeRevue] = useState([])
 
      
     useEffect(()=>{
@@ -30,6 +33,9 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
     async function initialisation(){
         // console.log("initialisation template data")
         const processus = await axios.post(Url+"/getProcessusByUser",{id_user:cookies.id_user})
+        const planning = await axios.get(Url+"/getPlanning")
+        // console.log(planning)
+        setListPlanning(planning.data)
         
         console.log(processus)
         if(cookies.id_processus === undefined){
@@ -53,6 +59,7 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
             console.log(revueInit)
             setRevueActuel(revueInit)
         }       
+
     }
 
     async function changeProcessus(id, id_efficace){
@@ -98,9 +105,33 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
         
     }
 
+    async function changePlanning(id){
+        console.log(id)
+        const planning = listPlanning.filter(planning=>planning.id === Number(id));
+        console.log(planning[0].revue_processus)
+        setCurrentPlanning(planning[0])
+        if(planning[0].revue_processus.length>0){
+            setProcessusActuel(planning[0].revue_processus[0].processus)    
+            setCookie('id_revue_processus',planning[0].revue_processus[0].id)
+            setCookie('id_processus',planning[0].revue_processus[0].processus.id)
+            setListeRevue(planning[0].revue_processus)
+        }else{
+            setProcessusActuel({libelle_processus:""})
+            setCookie('id_revue_processus',planning[0].revue_processus[0].id)
+            setCookie('id_processus',0)
+            setListeRevue([])
+        }
+        
+    }
+
     async function changeRevue(id){
-        console.log("change"+id)
-        setCookie('id_revue_processus',id)
+        // console.log(id)
+        
+        let process = listProcessusSlice.filter(process=>process.id===Number(id))
+        console.log(process)
+        setProcessusActuel(process[0])
+        // setCookie('id_revue_processus',rep[0])
+        setCookie('id_processus',id)
     }
 
     const cardIcon = {
@@ -118,7 +149,7 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
         <div className={!theme ? " titlePage shadow-sm d-flex justify-content-between bg-white " : "bg-dark titlePage shadow-sm text-white d-flex justify-content-between"}>
             <span className="text-center">
                 <div className="row mx-2">{title}</div>
-                <div className="row mx-5">{process && processActuel!==undefined ? ` ${processActuel.libelle_processus} (${processActuel.abbrv}) - ${revueActuel.dates}` : null}</div>
+                <div className="row mx-5">{process && processActuel!==undefined ? `${currentPlanning.titre} - ${processActuel.libelle_processus} (${processActuel.abbrv})` : null}</div>
             </span>
             {/* <img src={logo} alt="" width="40" className=""></img> */}
             
@@ -151,15 +182,15 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
             <div className="row">
                 <div className="col-2"></div>
                 <div className="col-4 mx-2 mb-3">
-                <select className="form-control" name="processus" onClick={(e) => changeProcessus(e.target.value)} >
+                <select className="form-control" name="planning" onClick={(e) => changePlanning(e.target.value)} >
                     {
-                        listProcessusSlice.length>0 &&
-                        listProcessusSlice.filter(process=>process.id>0).map((process, index) => (
+                        listPlanning.length>0 &&
+                        listPlanning.filter(planning=>planning.id>0).map((planning, index) => (
                             <option 
                                 key={index}
-                                value={process.id}
+                                value={planning.id}
                             >
-                                {process.libelle_processus} 
+                                {planning.titre} 
                             </option> 
                         ))
                     }
@@ -168,13 +199,13 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
                 <div className="col-4">
                 <select className="form-control" name="revue" onClick={(e) => changeRevue(e.target.value)} >
                     {
-                        revue.length>0 &&
-                        revue.map((revue, index) => (
+                        listeRevue.length>0 &&
+                        listeRevue.map((revue, index) => (
                             <option 
                                 key={index}
-                                value={revue.id}
+                                value={revue.processus.id}
                             >
-                                {revue.dates} 
+                                {revue.processus.libelle_processus} 
                             </option> 
                         ))
                     }

@@ -27,12 +27,14 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
     const[listCommentaire, setListCommentaire] = useState([])
     const [consultation, setConsultation] = useState([])
     const [synthese, setSynthese] = useState([])
+    const [listFile, setListFile] = useState([])
     const id_revue_processus = cookies.id_revue_processus;
     const taux = useRef()
     const realise = useRef()
     const fichier = useRef()
     const [actuel, setActuel] = useState({})
     const id_process = cookies.id_processus
+    const listProcessusSlice = useSelector((state) => state.processus.processus)
     // console.log(current)
 
     const colonneTable = [
@@ -57,7 +59,7 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
     useEffect(()=>{
         console.log('Cookie a changé:', cookies.id_processus);
         getData()
-    },[cookies.id_revue_processus])
+    },[cookies.id_revue_processus,, cookies.id_processus])
 
     useEffect(()=>{
         setIsModalOpen(false)
@@ -85,18 +87,14 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
     
 
     const handleDetail  = async (data) => {
-        const item = data.type_demande
-        console.log(item)
-        // setCookie(data.type_demande)
         setCurrent(data)
         setIsModalOpen(true)
 
     }
 
     const handleActuel = (data) => {
+        // setCurrent(data)
         setActuel(data)
-        console.log(data)
-
     }
 
     const handleActualise = async (fichierVer) => {
@@ -135,6 +133,94 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
 
     }
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [file, setFile] = useState(null);
+    const [message, setMessage] = useState('');
+  
+    const handleFileChange = (e) => {
+      setFile(e.target.files[0]);
+    };
+  
+    const handleUpload = async (e) => {
+      e.preventDefault();
+      if (!file) {
+        setMessage('Veuillez sélectionner un fichier.');
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append('file', file);
+  
+      try {
+        const res = await axios.post(Url+'/uploadFile', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        // console.log(res.data)
+        // setMessage(res.data.message);
+        const item = {}
+        let currentProcess = listProcessusSlice.filter(process=> process.id === Number(cookies.id_processus));
+        currentProcess = currentProcess[0]
+        item.folderPath = currentProcess.abbrv+"/"+id_revue_processus+"/"+current.id
+        item.fileName = res.data.file.filename
+        console.log("item",item)
+            await axios.post(Url+'/moveFile', {item})
+        item.id_revue_processus = id_revue_processus;
+        item.id_parametrage = current.id;
+        item.file_name = res.data.file.originalname;
+        item.file_save = res.data.file.filename;
+        item.folder_path = item.folderPath;
+        console.log(item)
+            await axios.post(Url+'/insertPerformanceObjectifRevueFichier', {item})
+      } catch (error) {
+        setMessage('Échec de l\'upload.');
+      }
+    };
+
+    const handleDownload= async (file) => {
+        
+        try {
+            let currentProcess = listProcessusSlice.filter(process=> process.id === Number(cookies.id_processus));
+            currentProcess = currentProcess[0]
+            let folderPath = currentProcess.abbrv+"/"+id_revue_processus+"/"+current.id
+            let fileName = file.file_save
+            let downloadUrl = Url+"/"+folderPath+"/"+fileName
+            console.log(downloadUrl)
+            // downloadUrl = 'http://192.168.12.236/NODEJS-SERVER-API/uploads/SOCIETE LUMINESS02052023.xlsx'
+            console.log(downloadUrl)
+            let newFileName = file.file_name
+
+            const response = await axios.get(
+                downloadUrl,
+                {
+                  responseType: 'blob', // Important pour récupérer le fichier sous forme de binaire
+                }
+              );
+        
+              // Crée un lien de téléchargement à partir du fichier téléchargé
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', newFileName);
+              document.body.appendChild(link);
+              link.click();
+              link.remove();
+            } catch (error) {
+            setMessage('Échec de l\'upload.');
+            }
+        };
+
+        const handleTableDownload = async (data) => {
+            setCurrent(data)
+            const item = {}
+            item.id_parametrage = data.id
+            item.id_revue_processus = id_revue_processus
+            let listF = await axios.post(Url+'/getPerformanceObjectifRevueFichierByObjectif', {item})
+            listF = listF.data
+            console.log(listF)
+            if(listF.length>0){
+                setListFile(listF)
+            }
+        }
 
 
    
@@ -216,7 +302,7 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                                 <>
                                                 <div className="col-3 mx-2">
                                                 <OverlayTrigger placement="top" overlay={<Tooltip>Telecharger la piece jointe {data.type_demande}</Tooltip>}>
-                                                    <button className="btn btn-dark rounded-3 shadow" onClick={() => handleActuel(data)} 
+                                                    <button className="btn btn-dark rounded-3 shadow" onClick={() => handleTableDownload(data)} 
                                                     data-bs-target="#download" data-bs-toggle="modal">
                                                         <i class="bi bi-download"></i>
                                                     </button>
@@ -268,10 +354,46 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                 <h5 className="modal-title" id="exampleModalLabel">Objectifs : {current.objectifs}</h5>
                             </div>
                             <div className="modal-body">
-                                <div className="row">
-                                    <input className="btn btn-secondary float-right col-9 mx-2" type="file" accept=".xlsx" ref={fichier}/>
-                                    <button data-bs-dismiss="modal" className="col-lg-2 mx-1 btn btn-outline-success btn-md col-3 mx-2" onClick={() => handleActualise(true)}>Valider</button>
-                                </div>
+                            
+                            <h4>Ajouter une piece jointe</h4>
+                            <form className="row" onSubmit={handleUpload}>
+                                <input className="btn btn-secondary float-right col-9 mx-2" type="file" onChange={handleFileChange} ref={fichier}/>
+                                <button data-bs-dismiss="modal" className="col-lg-2 mx-1 btn btn-outline-success btn-md col-3 mx-2" type="submit">Valider</button>
+                            </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div className="modal fade" id="download" data-backdrop="static" data-keyboard="false">
+                    <div className="modal-dialog modal-md modal-dialog-right ">
+                        <div className={"modal-content"}>
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">Objectifs : {current.objectifs}</h5>
+                            </div>
+                            <div className="modal-body">
+                            
+                            <h4>Telecharger une piece jointe</h4>
+                            <table className="table table-bordered text-center">
+                                <thead>
+                                    <tr>
+                                        <th style={{backgroundColor:"lightgray"}}>Nom fichier</th>
+                                        <th style={{backgroundColor:"lightgray"}}>Ajout</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        listFile.map((file,index)=>(
+                                            <tr>
+                                                <td>{file.file_name}</td>
+                                                <td>{file.createdat}</td>
+                                                <td><button className="mx-1 btn btn-secondary" data-bs-dismiss="modal" onClick={()=> handleDownload(file)}><i class="bi bi-download"></i></button></td>
+                                            </tr>
+                                        ))
+                                    }
+                                </tbody>
+                            </table>
                             </div>
                         </div>
                     </div>

@@ -158,13 +158,13 @@ const Plan = ({MenuCollapse,theme,logo,cible})=>{
    
     return(
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
-            <TitlePage title={"Plan d’action suivant"} process={true} listProcess={false}  theme={theme} revueDirection={true}/>
-                <table className="table table-bordered text-center" style={border} id="table_user">
+            <TitlePage title={"Nouveau plan d’action"} process={true} listProcess={false}  theme={theme} revueDirection={true}/>
+                <table className="table table-bordered text-center" style={border} id="plan">
                     <thead className="text-success ">
                         <tr>
                             {
                                 colonneTable.map((col, index) => (
-                                    <th>
+                                    <th style={{backgroundColor:"lightgray"}}>
                                         {col.nom}
                                     </th>
                                 ))       

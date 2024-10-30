@@ -24,6 +24,8 @@ git config user.name "Steven"
 #### Node
 npm install nodemon;
 npm install sequelize; 
+npm install express multer
+
 
 
 #### React

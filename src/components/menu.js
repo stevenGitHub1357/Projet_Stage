@@ -201,8 +201,8 @@ const Menu =()=>{
                         // listMenuSlice.length > 0 &&
                         // listMenuSlice.length > 0 && 
                         
-                        listMenuSlice.filter(menu => menu.base===0 && menu.position===1).length>0 &&
-                        listMenuSlice.filter(menu => menu.base===0 && menu.position===1).map((menu, index)  => (
+                        listMenuSlice.filter(menu => menu.etat===10 && menu.base===0 && menu.position===1).length>0 &&
+                        listMenuSlice.filter(menu => menu.etat===10 && menu.base===0 && menu.position===1).map((menu, index)  => (
                             <li className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>
                                 <NavLink className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  to={urlReact+menu.route} data-bs-toggle="collapse" 
                                         data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample"> 
@@ -328,8 +328,8 @@ const Menu =()=>{
                         <div className="col-2"></div>
                         {
                         // listMenuSlice.length > 0 &&
-                        listMenuSlice.filter(menu => menu.base===0 && menu.position===2).length>0 && 
-                        listMenuSlice.filter(menu => menu.base===0 && menu.position===2).map((menu, index)  => (
+                        listMenuSlice.filter(menu => menu.etat===10 && menu.base===0 && menu.position===2).length>0 && 
+                        listMenuSlice.filter(menu => menu.etat===10 && menu.base===0 && menu.position===2).map((menu, index)  => (
                             <ul className="col-2 float-end float-right" data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>
                                 <NavLink className="btn btn-dark nav-link lien rounded-1 text-black d-flex justify-content-between"  to={urlReact+menu.route} data-bs-toggle="collapse" 
                                         data-bs-target={"#collapseMenu"+index} aria-expanded="false" aria-controls="collapseExample"> 
@@ -404,7 +404,7 @@ const Menu =()=>{
                                         <div className="modal-body">
                                             {
                                             listMenuSlice.length > 0 &&
-                                            listMenuSlice.filter(menu => menu.base===0 && menu.position===3).map((menu, index) =>(
+                                            listMenuSlice.filter(menu => menu.etat===10 && menu.base===0 && menu.position===3).map((menu, index) =>(
                                                 <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={menu.labelle_menu} key={index}>
                                                     <NavLink    className="btn btn-dark nav-link lien rounded-1 text-white d-flex justify-content-between"  
                                                                 to={urlReact+menu.route} data-bs-toggle="collapse" 

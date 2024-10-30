@@ -119,9 +119,6 @@ const PerformanceObjectifDetail = defautl_db.defaultSequelize.define('performanc
       type_recuperation : {
         type: Sequelize.STRING(2000)
       },
-      fichier : {
-        type: Sequelize.STRING(2000)
-      },
       existe : {
         type: Sequelize.INTEGER
       },
@@ -158,9 +155,6 @@ const PerformanceObjectifDetail = defautl_db.defaultSequelize.define('performanc
       taux: {
         type: Sequelize.INTEGER,
       },
-      fichier: {
-        type: Sequelize.STRING(2000),
-      },
       commentaire: {
         type: Sequelize.STRING(2000),
       },
@@ -168,6 +162,37 @@ const PerformanceObjectifDetail = defautl_db.defaultSequelize.define('performanc
       tableName: "performance_objectif_revue",
       schema: "revue_direction",
       timestamps: false,
+      noPrimaryKey: true, 
+    });
+
+
+    const PerformanceObjectifRevueFichier = defautl_db.defaultSequelize.define('performance_objectif_revue_fichier', {
+      id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false,
+      },
+      id_revue_processus: {
+        type: Sequelize.INTEGER,
+      },
+      id_parametrage: {
+        type: Sequelize.INTEGER,
+      },
+      file_name: {
+        type: Sequelize.STRING(2000),
+      },
+      file_save: {
+        type: Sequelize.STRING(2000),
+      },
+      folder_path: {
+        type: Sequelize.STRING(2000),
+      },
+    },{
+      tableName: "performance_objectif_revue_fichier",
+      schema: "revue_direction",
+      updatedAt: false,
+      createdAt : "createdat",
       noPrimaryKey: true, 
     });
 
@@ -278,5 +303,5 @@ PerfSynthese.removeAttribute('id');
 module.exports = {}  
 
   
-module.exports = { PerformanceObjectifDetail, PerformanceObjectifProcessus, Performance, PerfSynthese, PerformanceCommentaire, PerformanceObjectifRevue}  
+module.exports = { PerformanceObjectifDetail, PerformanceObjectifProcessus, Performance, PerfSynthese, PerformanceCommentaire, PerformanceObjectifRevue, PerformanceObjectifRevueFichier}  
   
