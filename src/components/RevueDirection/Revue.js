@@ -8,6 +8,7 @@ import { TitlePage } from "../templates/templates";
 import axios from "axios";
 import { addPlanActionRevue, deletePlanActionRevue, setPlanActionRevueData } from "../feature/revueDirection.slice";
 import { useCookies } from "react-cookie";
+import { Warning,Success } from "../service/service-alert";
 var Url = Global_url
 // import "./homeStyle.scss"
 ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,BarElement,Title,Tooltip,Legend);
@@ -22,6 +23,7 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
     const [currentPlan, setCurrentPlan] = useState(-1)
     const [currentPlanId, setCurrentPlanId] = useState(-1)
     const [insert, setInsert] = useState(true)
+    const [inUpdate, setInUpdate] = useState(false)
     const indexItem = useRef();
     const ticket = useRef();
     const sujet = useRef();
@@ -33,6 +35,8 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
     const idCurrent = useRef();
     const id_revue_processus = cookies.id_revue_processus
     const id_processus = cookies.id_processus
+    const [planActionInitData, setPlanActionInitData] = useState();
+    const [tauxAtteint, setTauxAtteint] = useState(0);
 
     const colonneTable = [
         {id:1, nom:"Sujet"},
@@ -48,16 +52,24 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
     // console.log(data)
     useEffect(()=>{
         getData()
+        setInUpdate(false)
     },[cookies.id_revue_processus,cookies.id_processus])
 
     const handleAddLine = () =>{
-        dispatch(addPlanActionRevue({}))
+        if(data.length !== planActionInitData.length){
+            console.log("noooot")
+            Warning("Plan d'action ne peut pas etre vide");
+        }else{
+            dispatch(addPlanActionRevue({}))
+        }
         setAfterAddDelete(true)
     }
     const handleDeleteLine = async (id) =>{
         const item = id
-        console.log("delete"+item)
-        await axios.post(Url+"/desactivePlanAction",{item})
+        if(id!==undefined){
+            console.log("delete"+item)
+            await axios.post(Url+"/desactivePlanAction",{item})
+        }
         // getDataFromFront(true,index)
         setAfterAddDelete(true)
         getData()
@@ -114,6 +126,8 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
             console.log('update',item)
             getData()
         }
+        
+        setInUpdate(true)
         
     }
     async function getData(){
@@ -180,12 +194,25 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
             theData.sujet = ""
             theData.commentaire = ""
             theData.activate = ""
+            theData.action = ""
+            theData.pilote = ""
+            theData.pdca = ""
             newData.push(theData)
         }
         console.log(newData)
+        let atteint = newData.filter(data=>data.pdca === "A")
+        atteint = atteint.length;
+        let total = newData.length;
+        const taux = (atteint*100)/total
+        setTauxAtteint(taux)
+
         dispatch(setPlanActionRevueData(newData))
-        setCurrentPlan(-1)
-        setCurrentPlanId(-1)
+        setPlanActionInitData(newData)
+        if(!inUpdate){
+            setCurrentPlan(-1)
+            setCurrentPlanId(-1)
+        }
+        
         return newData 
     }
 
@@ -196,6 +223,7 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
     return(
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
             <TitlePage title="Revue du plan d'action" process={true} listProcess={false} theme={theme} revueDirection={true}/>
+                <div className="text-center"><h3>Taux d'atteinte : {tauxAtteint}%</h3></div>
                 <table className="table table-bordered text-center" style={border} id="table_user">
                     <thead className="text-success">
                         <tr>
@@ -216,12 +244,12 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
 
                                         currentPlan !== index  ? (
                                         <tr>
-                                            <td><textarea className="form-control" type="text" name="sujet" value={item.sujet} onClick={() => handleGetCurrentPlan(index,item.id)}></textarea></td>
+                                            <td className="col-4"><textarea className="form-control" type="text" name="sujet" value={item.sujet} onClick={() => handleGetCurrentPlan(index,item.id)}></textarea></td>
                                             <td><input className="form-control" type="text" name="ticket" value={item.nb_ticket} onClick={() => handleGetCurrentPlan(index,item.id)}></input></td>
-                                            <td><textarea className="form-control" type="text" name="action" value={item.action} style={{backgroundColor:"lightgray"}} readOnly></textarea></td>
-                                            <td><input className="form-control" type="text" name="pilote" value={item.pilote} style={{backgroundColor:"lightgray"}} readOnly></input></td>
+                                            <td className="col-3"><textarea className="form-control" type="text" name="action" value={item.action} style={{backgroundColor:"lightgray"}} readOnly></textarea></td>
+                                            <td className="col-2"><input className="form-control" type="text" name="pilote" value={item.pilote} style={{backgroundColor:"lightgray"}} readOnly></input></td>
                                             <td><input className="form-control" type="text" name="pdca" value={item.pdca} style={{backgroundColor:"lightgray"}} readOnly></input></td>
-                                            <td><textarea className="form-control" type="text" value={item.commentaire} onClick={() => handleGetCurrentPlan(index,item.id)}></textarea></td>
+                                            <td className="col-4"><textarea className="form-control" type="text" value={item.commentaire} onClick={() => handleGetCurrentPlan(index,item.id)}></textarea></td>
                                             <td>
                                                 <input className="form-control" type="hidden" name="index" value={index}></input>
                                                 <button className="btn btn-dark rounded-3 shadow" onClick={() => handleDeleteLine(item.id)}>    
@@ -241,15 +269,13 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
                                         
                                         ):(
                                         <tr>
-                                            <td><textarea className="form-control" type="text" name="sujet" ref={sujet} onChange={() => getUpdatePlan()}></textarea></td>
+                                            <td className="col-4"><textarea className="form-control" type="text" name="sujet" ref={sujet} onChange={() => getUpdatePlan()}></textarea></td>
                                             <td><input className="form-control" type="text" name="ticket" onChange={() => getUpdatePlan()} ref={ticket}></input></td>
-                                            <td><textarea className="form-control" type="text" name="action" style={{backgroundColor:"lightgray"}} readOnly ref={action}></textarea></td>
-                                            <td><input className="form-control" type="text" name="pilote" ref={pilote} style={{backgroundColor:"lightgray"}} readOnly></input></td>
+                                            <td className="col-3"><textarea className="form-control" type="text" name="action" style={{backgroundColor:"lightgray"}} readOnly ref={action}></textarea></td>
+                                            <td className="col-2"><input className="form-control" type="text" name="pilote" ref={pilote} style={{backgroundColor:"lightgray"}} readOnly></input></td>
                                             <td><input className="form-control" type="text" name="pdca" style={{backgroundColor:"lightgray"}} readOnly ref={pdca}></input></td>
-                                            <td><textarea className="form-control" type="text" name="commentaire" ref={commentaire} onChange={() => getUpdatePlan()}></textarea></td>
+                                            <td className="col-4"><textarea className="form-control" type="text" name="commentaire" ref={commentaire} onChange={() => getUpdatePlan()}></textarea></td>
                                             <td>
-                                                <input className="form-control" type="hidden" name="index" ref={indexItem} value={item.index}></input>
-                                                <input className="form-control" type="hidden" name="idCurrent" ref={idCurrent} value={item.id}></input>
                                                 <button className="btn btn-dark rounded-3 shadow" onClick={() => handleDeleteLine(item.id)}>    
                                                     <i className="bi bi-dash-square"></i>
                                                 </button>  

@@ -179,12 +179,12 @@ const Plan = ({MenuCollapse,theme,logo,cible})=>{
 
                                         currentPlan !== index  ? (
                                         <tr>
-                                            <td><textarea className="form-control" type="text" name="sujet" value={item.sujet} onClick={() => handleGetCurrentPlan(index)}></textarea></td>
+                                            <td className="col-3"><textarea className="form-control" type="text" name="sujet" value={item.sujet} onClick={() => handleGetCurrentPlan(index)}></textarea></td>
                                             <td><input className="form-control" type="text" name="ticket" value={item.ticket} onClick={() => handleGetCurrentPlan(index)}></input></td>
-                                            <td><textarea className="form-control" type="text" name="action" value={item.action} style={{backgroundColor:"lightgray"}} readOnly></textarea></td>
+                                            <td className="col-3"><textarea className="form-control" type="text" name="action" value={item.action} style={{backgroundColor:"lightgray"}} readOnly></textarea></td>
                                             <td><input className="form-control" type="text" name="pilote" value={item.pilote} style={{backgroundColor:"lightgray"}} readOnly></input></td>
                                             <td><input className="form-control" type="text" name="pdca" value={item.pdca} style={{backgroundColor:"lightgray"}} readOnly></input></td>
-                                            <td><textarea className="form-control" type="text" name="commentaire" value={item.commentaire} onClick={() => handleGetCurrentPlan(index)}></textarea></td>
+                                            <td className="col-3"><textarea className="form-control" type="text" name="commentaire" value={item.commentaire} onClick={() => handleGetCurrentPlan(index)}></textarea></td>
                                             <td>
                                                 <input className="form-control" type="hidden" name="index" value={index}></input>
                                                 <button className="btn btn-dark rounded-3 shadow" onClick={() => handleDeleteLine(index)}>    
@@ -204,12 +204,12 @@ const Plan = ({MenuCollapse,theme,logo,cible})=>{
                                         
                                         ):(
                                         <tr>
-                                            <td><textarea className="form-control" type="text" name="sujet" ref={sujet}></textarea></td>
+                                            <td className="col-3"><textarea className="form-control" type="text" name="sujet" ref={sujet}></textarea></td>
                                             <td><input className="form-control" type="text" name="ticket" onChange={() => getInfoTicket()} ref={ticket}></input></td>
-                                            <td><textarea className="form-control" type="text" name="action" style={{backgroundColor:"lightgray"}} readOnly ref={action}></textarea></td>
+                                            <td className="col-3"><textarea className="form-control" type="text" name="action" style={{backgroundColor:"lightgray"}} readOnly ref={action}></textarea></td>
                                             <td><input className="form-control" type="text" name="pilote" ref={pilote} style={{backgroundColor:"lightgray"}} readOnly></input></td>
                                             <td><input className="form-control" type="text" name="pdca" style={{backgroundColor:"lightgray"}} readOnly ref={pdca}></input></td>
-                                            <td><textarea className="form-control" type="text" name="commentaire" ref={commentaire}></textarea></td>
+                                            <td className="col-3"><textarea className="form-control" type="text" name="commentaire" ref={commentaire}></textarea></td>
                                             <td>
                                                 <input className="form-control" type="hidden" name="index" ref={indexItem}></input>
                                                 <button className="btn btn-dark rounded-3 shadow" onClick={() => handleDeleteLine(index)}>    

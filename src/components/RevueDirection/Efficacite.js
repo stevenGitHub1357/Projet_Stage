@@ -28,6 +28,8 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
     const id_processus = cookies.id_processus
     const [listEfficacite, setListEfficacite] = useState([])
     const [insert, setInsert] = useState(false)
+    const [numPage, setNumPage] = useState(1)
+    const [tauxAtteint, setTauxAtteint] = useState(0)
     
     const titre = [
         {id:1, nom:"RISQUE"},
@@ -61,7 +63,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
 
     async function getData(){
         console.log(id_revue_processus)
-        let item = id_revue_processus
+        let item = cookies.id_revue_processus
         console.log(item)
         let effi = []
         await axios.post(Url+"/getEfficaciteByRevue",{item}).then(res=>{
@@ -71,8 +73,8 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
             }
         })
         console.log(effi)
-        console.log(id_processus)
-        item = id_processus_efficacite+""
+        console.log(id_processus_efficacite)
+        item = cookies.id_processus_efficacite+""
             let listOppo = await axios.post(Url+"/getOpportuniterByProcessus",{item});
             listOppo = listOppo.data
             const allOppo = []
@@ -160,6 +162,11 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
             setRisque(allRisque)
             setCurrentType("")
             setCurrentEff({})
+            let total = allRisque.length;
+            let atteint = allRisque.filter(allRisque=>allRisque.pdca==="A");
+            atteint = atteint.length
+            let taux = (atteint*100)/total
+            setTauxAtteint(taux)
     }
 
     const handleChangeCurrent = (type, data) =>{
@@ -199,6 +206,31 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
         setInsert(false)
     }
 
+    const handleChangePage = (id) => {
+        setNumPage(id)
+        if(id===1){
+            let total = risque.length;
+            let atteint = risque.filter(risque=>risque.pdca==="A");
+            atteint = atteint.length
+            let taux = (atteint*100)/total
+            setTauxAtteint(taux)
+        }
+        if(id===2){
+            let total = enjeux.length;
+            let atteint = enjeux.filter(enjeux=>enjeux.pdca==="A");
+            atteint = atteint.length
+            let taux = (atteint*100)/total
+            setTauxAtteint(taux)
+        }
+        if(id===3){
+            let total = opportunite.length;
+            let atteint = opportunite.filter(opportunite=>opportunite.pdca==="A");
+            atteint = atteint.length
+            let taux = (atteint*100)/total
+            setTauxAtteint(taux)
+        }
+    }
+
     const border = {
         border: !theme ? "": "black 1px solid"
     }
@@ -206,8 +238,22 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
     return(
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>  
             <TitlePage title="Efficacité des actions face aux risques, enjeux et opportunités" process={true} listProcess={false} revueDirection={true}  theme={theme}/>
+            <div className="text-center"><h3>Taux d'atteinte : {tauxAtteint}%</h3></div>
+                <div className="row mt-2 mb-3">
+                    <div className="col-1"></div>
+                    <button className="btn btn-warning rounded-1 shadow col-3 mx-2" onClick={()=>handleChangePage(1)}>
+                        RISQUE
+                    </button>
+                    <button className="btn btn-success rounded-1 shadow col-3 mx-2" onClick={()=>handleChangePage(2)}>
+                        ENJEUX
+                    </button>
+                    <button className="btn btn-secondary rounded-1 shadow col-3 mx-2" onClick={()=>handleChangePage(3)}>
+                        OPPORTUNITES
+                    </button>
+                    
+                </div>
                 {
-                titre.map((titre, indexTitre)=>(
+                titre.filter(titre=>titre.id===Number(numPage)).map((titre, indexTitre)=>(
                     <>
                     <h1>{titre.nom}</h1>
                     <table className="table table-bordered text-center" style={border} id="table_user">
@@ -236,18 +282,18 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                                 { 
                                     risque.map((data,index)=>(
                                         <tr key={index}>
-                                            <td>{data.sujet}</td>
-                                            <td>{data.action}</td>
-                                            <td>{data.pilote}</td>
+                                            <td className="col-3">{data.sujet}</td>
+                                            <td className="col-3">{data.action}</td>
+                                            <td className="col-1">{data.pilote}</td>
                                             {
                                                 currentEff.id===data.id && currentType === titre.id && currentEff.num_ticket === data.num_ticket ?
-                                                <td><textarea className="form-control" type="texte" name="commentaire" ref={commentaire} onChange={handleChangeComment}></textarea></td>
+                                                <td><textarea className="form-control col-4" type="texte" name="commentaire" ref={commentaire} onChange={handleChangeComment}></textarea></td>
                                                 :
-                                                <td><textarea className="form-control" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)}></textarea></td>
+                                                <td><textarea className="form-control col-4" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)}></textarea></td>
                                                 
                                             }
                                             
-                                            <td>{data.pdca}</td>
+                                            <td className="col-1">{data.pdca}</td>
                                         </tr>
                                     ))
 
@@ -261,17 +307,18 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                                 { 
                                     enjeux.map((data,index)=>(
                                         <tr key={index}>
-                                            <td>{data.sujet}</td>
-                                            <td>{data.action}</td>
-                                            <td>{data.pilote}</td>
+                                            <td className="col-3">{data.sujet}</td>
+                                            <td className="col-3">{data.action}</td>
+                                            <td className="col-1">{data.pilote}</td>
                                             {
                                                 currentEff.id===data.id && currentType === titre.id && currentEff.num_ticket === data.num_ticket ?
-                                                <td><textarea className="form-control" type="texte" name="commentaire" ref={commentaire} onChange={handleChangeComment}></textarea></td>
+                                                <td><textarea className="form-control col-4" type="texte" name="commentaire" ref={commentaire} onChange={handleChangeComment}></textarea></td>
                                                 :
-                                                <td><textarea className="form-control" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)}></textarea></td>
+                                                <td><textarea className="form-control col-4" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)}></textarea></td>
                                                 
                                             }
-                                            <td>{data.pdca}</td>
+                                            
+                                            <td className="col-1">{data.pdca}</td>
                                         </tr>
                                     ))
 
@@ -285,17 +332,18 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                                 { 
                                     opportunite.map((data,index)=>(
                                         <tr key={index}>
-                                            <td>{data.sujet}</td>
-                                            <td>{data.action}</td>
-                                            <td>{data.pilote}</td>
+                                            <td className="col-3">{data.sujet}</td>
+                                            <td className="col-3">{data.action}</td>
+                                            <td className="col-1">{data.pilote}</td>
                                             {
                                                 currentEff.id===data.id && currentType === titre.id && currentEff.num_ticket === data.num_ticket ?
-                                                <td><textarea className="form-control" type="texte" name="commentaire" ref={commentaire} onChange={handleChangeComment}></textarea></td>
+                                                <td><textarea className="form-control col-4" type="texte" name="commentaire" ref={commentaire} onChange={handleChangeComment}></textarea></td>
                                                 :
-                                                <td><textarea className="form-control" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)}></textarea></td>
+                                                <td><textarea className="form-control col-4" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)}></textarea></td>
                                                 
                                             }
-                                            <td>{data.pdca}</td>
+                                            
+                                            <td className="col-1">{data.pdca}</td>
                                         </tr>
                                     ))
 

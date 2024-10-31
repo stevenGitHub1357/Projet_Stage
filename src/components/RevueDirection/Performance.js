@@ -35,6 +35,7 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
     const [actuel, setActuel] = useState({})
     const id_process = cookies.id_processus
     const listProcessusSlice = useSelector((state) => state.processus.processus)
+    const [tauxAtteint, setTauxAtteint] = useState(0)
     // console.log(current)
 
     const colonneTable = [
@@ -69,15 +70,24 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
         const item = {}
         item.id_processus = cookies.id_processus
         item.id_revue_processus = id_revue_processus
+        let all = []
+        let total = 0;
         await axios.post(Url+"/getPerformanceObjectifByRevueProcessus",{item}).then(res=>{
             if(res.data.length){
                 setData(res.data)
                 console.log(res.data)
                 // setCurrent(res.data[0])
+                all = res.data
+                all.map(obj=>{
+                    total = total+obj.taux
+                })
             }else{
                 setData([])
             }
         })  
+        let count = all.length;
+        setTauxAtteint(total/count)
+
     }
 
     const border = {
@@ -227,6 +237,7 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
     return(
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
             <TitlePage title="Revue de la performance du processus" process={true} listProcess={false} revueDirection={true} theme={theme}/>
+                <div className="text-center"><h3>Taux d'atteinte : {tauxAtteint}%</h3></div>
                 <table className="table table-bordered text-center" style={border} id="table_user">
                     <thead className="text-success ">
                         <tr>
@@ -245,7 +256,7 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                             { 
                                 data.map((data,index)=>(
                                     <tr>
-                                        <td>{data.objectifs}</td>
+                                        <td className="col-4">{data.objectifs}</td>
                                         <td>{data.poids}</td>
                                         <td>{data.cible+""+data.abbrv}</td>
 
@@ -253,16 +264,22 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                             actuel.id !== data.id ?(
                                                 data.id_recuperation !== 2 ?
                                                 <>
-                                                    <td className="col-1"><input type="text" className="form-control" value={data.realise} name="realise" onClick={() => handleActuel(data)}></input>{data.abbrv}</td>
-                                                    <td className="col-1"><input type="text" className="form-control" value={data.taux} name="taux" onClick={() => handleActuel(data)}></input>{data.abbrv}</td>
-                                                    <td><td><textarea type="text" className="form-control" value={data.commentaire} name="commentaire" onClick={() => handleActuel(data)}></textarea></td></td>
+                                                    <td className="col-1">
+                                                        <td><input type="text" className="form-control" value={data.realise} name="realise" onClick={() => handleActuel(data)}></input></td>
+                                                        <td>{data.abbrv}</td>
+                                                    </td>
+                                                    <td className="col-1">
+                                                        <td><input type="text" className="form-control" value={data.taux} name="taux" onClick={() => handleActuel(data)}></input></td>
+                                                        <td>{data.abbrv}</td>
+                                                    </td>
+                                                    <td className="col-4"><textarea type="text" className="form-control" value={data.commentaire} name="commentaire" onClick={() => handleActuel(data)}></textarea></td>
                                             
                                                 </>
                                                 :
                                                 <>
                                                     <td>{data.realise+""+data.abbrv}</td>
                                                     <td>{data.taux+""+data.abbrv}</td>
-                                                    <td><td><textarea type="text" className="form-control" value={data.commentaire} name="commentaire" onClick={() => handleActuel(data)}></textarea></td></td>
+                                                    <td className="col-4"><textarea type="text" className="form-control" value={data.commentaire} name="commentaire" onClick={() => handleActuel(data)}></textarea></td>
                                             
                                                 </>
                                                 
@@ -271,14 +288,14 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                                 <>
                                                     <td className="col-1"><input type="text" className="form-control"  name="realise" onChange={() => handleActualise()} ref={realise}></input>{data.abbrv}</td>
                                                     <td className="col-1"><input type="text" className="form-control"  name="taux" onChange={() => handleActualise()} ref={taux}></input>{data.abbrv}</td>
-                                                    <td><td><textarea type="text" className="form-control"  name="commentaire" onChange={() => handleActualise()} ref={commentaire}></textarea></td></td>
+                                                    <td className="col-4"><textarea type="text" className="form-control"  name="commentaire" onChange={() => handleActualise()} ref={commentaire}></textarea></td>
                                             
                                                 </>
                                                 :
                                                 <>
                                                     <td>{data.realise+""+data.abbrv}</td>
                                                     <td>{data.taux+""+data.abbrv}</td>
-                                                    <td><td><textarea type="text" className="form-control"  name="commentaire" onChange={() => handleActualise()} ref={commentaire}></textarea></td></td>
+                                                    <td className="col-4"><textarea type="text" className="form-control"  name="commentaire" onChange={() => handleActualise()} ref={commentaire}></textarea></td>
                                                 </>
                                             )
                                         }

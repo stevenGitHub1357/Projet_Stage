@@ -122,12 +122,13 @@ const getPlanningCategorie = (req,res,next) =>{
 };
 
 const insertDomaine = (req,res,next) =>{
-  const {id_planning, processus} = req.body.item
+  const {id_planning, processus,createdat} = req.body.item
   const item = []
   for(let process of processus){
     const object = {};
     object.id_processus = process.id;
     object.id_planning = id_planning;
+    object.createdat = createdat;
     item.push(object)
   }
   console.log(item)

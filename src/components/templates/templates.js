@@ -9,7 +9,7 @@ import Global_url from "../../global_url"
 export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => {
     var Url = Global_url
     const listProcessusSlice = useSelector((state) => state.processus.processusUser)
-    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus','id_revue_processus', 'id_processus_efficacite'])
+    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus','id_revue_processus', 'id_processus_efficacite', 'id_planning'])
     const [processActuel,setProcessusActuel] = useState([]);
     const [revue,setRevue] = useState([]);
     const [revueActuel,setRevueActuel] = useState({});
@@ -17,27 +17,61 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
     const [currentPlanning, setCurrentPlanning] = useState({})
     const [listeRevue, setListeRevue] = useState([])
 
-     
     useEffect(()=>{
         initialisation();
-    },[])
-
-    useEffect(()=>{
-        
-        // console.log(cookies.id_processus, listProcessusSlice[cookies.id_processus])
-        // if(cookies.id_processus!==undefined){
-        //     changeProcessus(cookies.id_processus)
-        // }
-    })
+    },[cookies.id_revue_processus, cookies.id_planning])
     
     async function initialisation(){
         // console.log("initialisation template data")
-        const processus = await axios.post(Url+"/getProcessusByUser",{id_user:cookies.id_user})
+        // const processus = await axios.post(Url+"/getProcessusByUser",{id_user:cookies.id_user})
         const planning = await axios.get(Url+"/getPlanning")
-        // console.log(planning)
+        console.log(planning)
         setListPlanning(planning.data)
         
-        console.log(processus)
+        if(cookies.id_planning === undefined){
+            console.log("template indefined")
+            let plan = planning.data
+            plan = plan[plan.length-1]
+            console.log(plan)
+            setCookie('id_planning', plan.id)
+            setCookie('id_revue_processus', plan.revue_processus[0].id)
+            setCookie('id_processus',plan.revue_processus[0].processus[0])
+            setCookie('id_processus_efficacite',plan.revue_processus[0].processus[0].num_processus)
+            setCurrentPlanning(plan)
+            setRevueActuel(plan.revue_processus[0])
+            setProcessusActuel(plan.revue_processus[0].processus[0])
+            setListeRevue(plan.revue_processus)
+        }else{
+            console.log("template defined")
+            let plan = planning.data
+            plan = plan.filter(plan=>plan.id === Number(cookies.id_planning))
+            plan = plan[0]
+            console.log(plan)
+            console.log(plan.revue_processus)
+            // console.log(plan.revue_processus[0].processus)
+            console.log(cookies.id_revue_processus)
+            let revue = plan.revue_processus
+            console.log(revue)
+            revue = revue.filter(revue=> revue.id === Number(cookies.id_revue_processus))
+            console.log(revue)
+            revue = revue[0]
+            
+            let process = revue.processus
+            console.log(process)
+            setCookie('id_planning', plan.id)
+            setCookie('id_revue_processus', revue.id)
+            setCookie('id_processus',process.id)
+            setCookie('id_processus_efficacite',process.num_processus)
+            setCurrentPlanning(plan)
+            setRevueActuel(revue)
+            setProcessusActuel(process)
+            setListeRevue(plan.revue_processus)
+        }
+    }
+
+    const initialisationProcess = async  () => {
+        // console.log("initialisation template data")
+        const processus = await axios.post(Url+"/getProcessusByUser",{id_user:cookies.id_user})
         if(cookies.id_processus === undefined){
             setProcessusActuel(processus.data[processus.data.length-1])
             setRevueActuel({})
@@ -56,10 +90,9 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
             });
             // console.log(formattedDate)
             revueInit.dates = formattedDate;
-            console.log(revueInit)
+            // console.log(revueInit)
             setRevueActuel(revueInit)
-        }       
-
+        } 
     }
 
     async function changeProcessus(id, id_efficace){
@@ -112,13 +145,17 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
         setCurrentPlanning(planning[0])
         if(planning[0].revue_processus.length>0){
             setProcessusActuel(planning[0].revue_processus[0].processus)    
+            setCookie('id_planning',planning[0].id)
             setCookie('id_revue_processus',planning[0].revue_processus[0].id)
             setCookie('id_processus',planning[0].revue_processus[0].processus.id)
+            setCookie('id_processus_efficacite',planning[0].revue_processus[0].processus.num_processus)
             setListeRevue(planning[0].revue_processus)
         }else{
             setProcessusActuel({libelle_processus:""})
+            setCookie('id_planning',planning[0].id)
             setCookie('id_revue_processus',planning[0].revue_processus[0].id)
             setCookie('id_processus',0)
+            setCookie('id_processus_efficacite',0)
             setListeRevue([])
         }
         
@@ -127,11 +164,21 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
     async function changeRevue(id){
         // console.log(id)
         
-        let process = listProcessusSlice.filter(process=>process.id===Number(id))
-        console.log(process)
-        setProcessusActuel(process[0])
-        // setCookie('id_revue_processus',rep[0])
-        setCookie('id_processus',id)
+        // let process = listProcessusSlice.filter(process=>process.id===Number(id))
+        // // console.log(process)
+        // setProcessusActuel(process[0])
+        // // setCookie('id_revue_processus',rep[0])
+        // setCookie('id_processus',id)
+
+        let revue = listeRevue;
+        revue = revue.filter(revue=> revue.id === Number(id));
+        revue = revue[0]
+        setRevueActuel(revue)
+        setProcessusActuel(revue.processus)
+        setCookie('id_revue_processus',revue.id)
+        console.log(revue.processus.id)
+        setCookie('id_processus',revue.processus.id)
+        setCookie('id_processus_efficacite',revue.processus.num_processus)
     }
 
     const cardIcon = {
@@ -149,7 +196,7 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
         <div className={!theme ? " titlePage shadow-sm d-flex justify-content-between bg-white " : "bg-dark titlePage shadow-sm text-white d-flex justify-content-between"}>
             <span className="text-center">
                 <div className="row mx-2">{title}</div>
-                <div className="row mx-5">{process && processActuel!==undefined ? `${currentPlanning.titre} - ${processActuel.libelle_processus} (${processActuel.abbrv})` : null}</div>
+                <div className="row mx-5">{process && currentPlanning.titre!==undefined ? `${currentPlanning.titre} - ${processActuel.libelle_processus} (${processActuel.abbrv})` : null}</div>
             </span>
             {/* <img src={logo} alt="" width="40" className=""></img> */}
             
@@ -189,6 +236,7 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
                             <option 
                                 key={index}
                                 value={planning.id}
+                                selected={planning.id === currentPlanning.id}
                             >
                                 {planning.titre} 
                             </option> 
@@ -203,7 +251,8 @@ export const TitlePage = ({title,theme,process,listProcess, revueDirection}) => 
                         listeRevue.map((revue, index) => (
                             <option 
                                 key={index}
-                                value={revue.processus.id}
+                                value={revue.id}
+                                selected={revue.id === revueActuel.id}
                             >
                                 {revue.processus.libelle_processus} 
                             </option> 

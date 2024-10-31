@@ -121,7 +121,7 @@ const PerformanceSynthese =({MenuCollapse,theme,logo,cible,isOpen, current})=>{
                                 syntheseListe.map((synthese, index) => (
                                     <td>
                                             <div className="row mb-4">
-                                                <div className="col-8 mx-3" style={{color:"white"}}>
+                                                <div className="col-11 mx-3" style={{color:"white"}}>
                                                     <textarea className="form-control col-12 mt-4" type="text" name="commentaire" placeholder="Nouveau commentaire"   
                                                     onChange={()=> handleCommentaire()} ref={commentaire}
                                                     defaultValue={synthese.commentaire}></textarea>
