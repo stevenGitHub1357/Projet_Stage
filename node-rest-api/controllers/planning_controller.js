@@ -8,7 +8,8 @@ const Menu = menuModel.Menu;
 const Menu_role_processus = menuModel.Menu_role_processus;
 
 const getPlanning = (req,res,next) =>{
-  Planning.findAll({
+  Planning.findAll(
+      {
       include : 
         [
           
@@ -22,6 +23,10 @@ const getPlanning = (req,res,next) =>{
             ]
           },
           PlanningCategorie
+        ],
+        order :
+        [
+          ['id','DESC']
         ]
       }
   )
@@ -107,7 +112,12 @@ const insertPlanningCategorie = (req,res,next) =>{
 
 
 const getPlanningCategorie = (req,res,next) =>{
-  PlanningCategorie.findAll()
+  PlanningCategorie.findAll({
+        order :
+        [
+          ['id','DESC']
+        ]
+  })
   .then(function(results) {
     if (results.length > 0) {
       res.status(200).json(results);
@@ -148,10 +158,30 @@ const insertDomaine = (req,res,next) =>{
   })
 };
 
+const getPlanningNotCloturer = (req,res,next) =>{
+  Planning.findAll(
+    {where : 
+      {statut : "D"}
+    }
+  )
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
+
 
 module.exports = 
                 {
-                  getPlanning,insertPlanning, updatePlanning,
+                  getPlanning, getPlanningNotCloturer,
+                  insertPlanning, updatePlanning,
                   insertPlanningCategorie, getPlanningCategorie,
                   insertDomaine
                 };

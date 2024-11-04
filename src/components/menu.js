@@ -32,7 +32,7 @@ var Url = Global_url
 const Menu =()=>{
     
 
-    const [cookies, setCookie, removeCookie] = useCookies(['islogged_react','matricule_react','role_react','nom_complet_react',"id_user","id_processus"])
+    const [cookies, setCookie, removeCookie] = useCookies(['islogged_react','matricule_react','role_react','nom_complet_react',"id_user","id_processus", "id_role"])
     const [MenuCollapse, setMenuCollapse] = useState(false)
     const [theme, setTheme] = useState(false);
     const [isOpen, setIsOpen] = useState(0)
@@ -104,7 +104,8 @@ const Menu =()=>{
         
         setCookie("id_user",user.data[0].id_user)
         let role = await axios.post(Url+"/getRoleByUser",{id_user:user.data[0].id_user})
-        // console.log(role)
+        console.log(role.data[0].id_role)
+        setCookie("id_role", role.data[0].id_role)
         
         let processusUser = await axios.post(Url+"/getProcessusByUser",{id_user:user.data[0].id_user})
         // console.log(processusUser)

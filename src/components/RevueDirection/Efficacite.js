@@ -18,7 +18,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
     const [risque, setRisque] = useState([])
     const [opportunite, setOpportunite] = useState([])
     const [enjeux, setEnjeux] = useState([])
-    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus','id_revue_processus','id_processus_efficacite','id_processus'])
+    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus','id_revue_processus','id_processus_efficacite','id_processus', 'statut_revue', "id_role"])
     const [currentType, setCurrentType] = useState(-1)
     const [currentTicket, setCurrentTicket] = useState(-1)
     const [currentEff, setCurrentEff] = useState({})
@@ -63,6 +63,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
 
     async function getData(){
         console.log(id_revue_processus)
+        console.log(cookies.id_role)
         let item = cookies.id_revue_processus
         console.log(item)
         let effi = []
@@ -162,21 +163,25 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
             setRisque(allRisque)
             setCurrentType("")
             setCurrentEff({})
-            let total = allRisque.length;
-            let atteint = allRisque.filter(allRisque=>allRisque.pdca==="A");
-            atteint = atteint.length
-            let taux = (atteint*100)/total
-            setTauxAtteint(taux)
+            if(numPage===1 && tauxAtteint===0){
+                let total = allRisque.length;
+                let atteint = allRisque.filter(allRisque=>allRisque.pdca==="A");
+                atteint = atteint.length
+                let taux = (atteint*100)/total
+                setTauxAtteint(taux.toFixed(2))
+            }
     }
 
     const handleChangeCurrent = (type, data) =>{
         console.log("handleCurrent")
-        console.log(type)
-        console.log(data)
-        setCurrentType(type)
-        setCurrentEff(data)
-        if(data.id===0){
-            setInsert(true)
+        if(cookies.statut_revue!=="A" && cookies.id_role<=4){
+            console.log(type)
+            console.log(data)
+            setCurrentType(type)
+            setCurrentEff(data)
+            if(data.id===0){
+                setInsert(true)
+            }
         }
     }
 
@@ -213,22 +218,26 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
             let atteint = risque.filter(risque=>risque.pdca==="A");
             atteint = atteint.length
             let taux = (atteint*100)/total
-            setTauxAtteint(taux)
+            console.log(taux)
+            setTauxAtteint(taux.toFixed(2))
         }
         if(id===2){
             let total = enjeux.length;
             let atteint = enjeux.filter(enjeux=>enjeux.pdca==="A");
             atteint = atteint.length
             let taux = (atteint*100)/total
-            setTauxAtteint(taux)
+            console.log(taux)
+            setTauxAtteint(taux.toFixed(2))
         }
         if(id===3){
             let total = opportunite.length;
             let atteint = opportunite.filter(opportunite=>opportunite.pdca==="A");
             atteint = atteint.length
             let taux = (atteint*100)/total
-            setTauxAtteint(taux)
+            console.log(taux)
+            setTauxAtteint(taux.toFixed(2))
         }
+        getData()
     }
 
     const border = {
@@ -287,9 +296,9 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                                             <td className="col-1">{data.pilote}</td>
                                             {
                                                 currentEff.id===data.id && currentType === titre.id && currentEff.num_ticket === data.num_ticket ?
-                                                <td><textarea className="form-control col-4" type="texte" name="commentaire" ref={commentaire} onChange={handleChangeComment}></textarea></td>
+                                                <td><textarea className="form-control col-4" type="texte" name="commentaire" ref={commentaire} onChange={handleChangeComment} ></textarea></td>
                                                 :
-                                                <td><textarea className="form-control col-4" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)}></textarea></td>
+                                                <td><textarea className="form-control col-4" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)} readOnly></textarea></td>
                                                 
                                             }
                                             
@@ -314,7 +323,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                                                 currentEff.id===data.id && currentType === titre.id && currentEff.num_ticket === data.num_ticket ?
                                                 <td><textarea className="form-control col-4" type="texte" name="commentaire" ref={commentaire} onChange={handleChangeComment}></textarea></td>
                                                 :
-                                                <td><textarea className="form-control col-4" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)}></textarea></td>
+                                                <td><textarea className="form-control col-4" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)} readOnly></textarea></td>
                                                 
                                             }
                                             
@@ -339,7 +348,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                                                 currentEff.id===data.id && currentType === titre.id && currentEff.num_ticket === data.num_ticket ?
                                                 <td><textarea className="form-control col-4" type="texte" name="commentaire" ref={commentaire} onChange={handleChangeComment}></textarea></td>
                                                 :
-                                                <td><textarea className="form-control col-4" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)}></textarea></td>
+                                                <td><textarea className="form-control col-4" type="texte" value={data.commentaire} onClick={() => handleChangeCurrent(titre.id, data)} readOnly></textarea></td>
                                                 
                                             }
                                             

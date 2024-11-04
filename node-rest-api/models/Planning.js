@@ -53,7 +53,7 @@ const Planning = defautl_db.defaultSequelize.define('planning', {
         },
         statut:{
             type : Sequelize.STRING(200),
-            defaultValue: "B"
+            defaultValue: "D"
         },
         updateat: {
             type: Sequelize.DATE,

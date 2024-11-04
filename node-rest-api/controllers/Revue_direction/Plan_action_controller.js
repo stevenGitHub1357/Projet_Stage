@@ -8,7 +8,8 @@ const { Revue_processus } = require("../../models/Revue_direction/Revue_processu
 const getTicketById = (req,res,next) =>{
     const ticket = req.body.item
     console.log(ticket)
-    if(ticket!==""){
+    console.log("iciiiiii",isNaN(ticket))
+    if(ticket!=="" && ticket !== null){
       kanboard.query(
         `
           SELECT t.id as id,t.title as action,us.name as pilote,c.title as pdca, t.date_due as delai from tasks t 

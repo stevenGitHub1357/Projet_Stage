@@ -52,7 +52,7 @@ const planActionSlice = createSlice({
     },
     reducers:{
         setPlanActionData:(state,{payload})=>{
-            console.log(payload)
+            console.log("plan action data",payload)
             state.planAction = payload
         },
         addPlanAction:(state,{payload})=>{

@@ -8,7 +8,7 @@ import { TitlePage } from "../templates/templates";
 import axios from "axios";
 import { addPlanActionRevue, deletePlanActionRevue, setPlanActionRevueData } from "../feature/revueDirection.slice";
 import { useCookies } from "react-cookie";
-import { Warning,Success } from "../service/service-alert";
+import { Warning,Success, Confirmation } from "../service/service-alert";
 var Url = Global_url
 // import "./homeStyle.scss"
 ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,BarElement,Title,Tooltip,Legend);
@@ -19,7 +19,7 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
     let [listData,setListData] = useState([])
     let [annee,setAnnee] = useState(2023)
     const[afterAddDelete,setAfterAddDelete] = useState(false)
-    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus','id_revue_processus','id_processus_efficacite','id_processus'])
+    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus','id_revue_processus','id_processus_efficacite','id_processus','statut_revue', 'id_planning'])
     const [currentPlan, setCurrentPlan] = useState(-1)
     const [currentPlanId, setCurrentPlanId] = useState(-1)
     const [insert, setInsert] = useState(true)
@@ -37,6 +37,7 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
     const id_processus = cookies.id_processus
     const [planActionInitData, setPlanActionInitData] = useState();
     const [tauxAtteint, setTauxAtteint] = useState(0);
+    const [statut, setStatut] = useState("Q");
 
     const colonneTable = [
         {id:1, nom:"Sujet"},
@@ -53,7 +54,7 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
     useEffect(()=>{
         getData()
         setInUpdate(false)
-    },[cookies.id_revue_processus,cookies.id_processus])
+    },[cookies.id_planning,cookies.id_revue_processus])
 
     const handleAddLine = () =>{
         if(data.length !== planActionInitData.length){
@@ -76,11 +77,15 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
     }
     const handleGetCurrentPlan = (index, id) => {
         console.log("index current :"+index+" "+id)
+        setCurrentPlan(-1)
+        setCurrentPlanId(-1)
         // getDataFromFront(true,-2)
-        setCurrentPlan(Number(index))
-        setCurrentPlanId(Number(id))
-        setAfterAddDelete(false)
-        setInsert(true)
+        if(statut !== "A" && cookies.id_role<=4){
+            setCurrentPlan(Number(index))
+            setCurrentPlanId(Number(id))
+            setAfterAddDelete(false)
+            setInsert(true)
+        }
     }
     const getUpdatePlan = async () => {
         console.log("Update Insert")
@@ -132,6 +137,8 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
     }
     async function getData(){
         console.log(cookies.id_processus)
+        setStatut(cookies.statut_revue)
+        console.log(cookies.statut_revue)
         const item = {}
         item.id_processus = cookies.id_processus;
         item.id_revue_processus = id_revue_processus;
@@ -204,7 +211,7 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
         atteint = atteint.length;
         let total = newData.length;
         const taux = (atteint*100)/total
-        setTauxAtteint(taux)
+        setTauxAtteint(taux.toFixed(2))
 
         dispatch(setPlanActionRevueData(newData))
         setPlanActionInitData(newData)
@@ -216,6 +223,44 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
         return newData 
     }
 
+    const handleReactiveRevue = async () => {
+        
+        Confirmation(theme, "Reactiver cette revue de direction !", "Valider").then(
+            (result) => {
+                if (result.isConfirmed) {
+                    let item = {}
+                    item.id = cookies.id_revue_processus
+                    item.statut = "R"
+                    console.log(item)
+                    axios.post(Url+"/updateRevueProcessus",{item});
+                    setStatut("R")
+                    setCookie('statut_revue',"R")
+                }   
+            }
+        );
+        
+        setCurrentPlan(-1)
+        setCurrentPlanId(-1)
+    }
+
+    const handleDesactiveRevue = async () => {
+        
+        Confirmation(theme, "Desactiver cette revue de direction !", "Valider").then(
+            (result) => {
+                if (result.isConfirmed) {
+                    let item = {}
+                    item.id = cookies.id_revue_processus
+                    item.statut = "A"
+                    console.log(item)
+                    axios.post(Url+"/updateRevueProcessus",{item});
+                    setStatut("A")
+                    setCookie('statut_revue',"A")
+                }   
+            }
+        );
+        setCurrentPlan(-1)
+        setCurrentPlanId(-1)
+    }
     const border = {
         border: !theme ? "": "black 1px solid"
     }
@@ -223,7 +268,26 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
     return(
         <div  className={!MenuCollapse ? "content" : "contentCollapse"}>
             <TitlePage title="Revue du plan d'action" process={true} listProcess={false} theme={theme} revueDirection={true}/>
+                
                 <div className="text-center"><h3>Taux d'atteinte : {tauxAtteint}%</h3></div>
+                <div className="row mb-3">
+                    <div className="col-5"></div>
+                {
+                    cookies.id_role<=2 ? (
+                    statut === "A" ?
+                    <button className="btn btn-warning rounded-3 shadow mx-2 col-2" onClick={handleReactiveRevue}>
+                        Reactivé
+                    </button>  
+                    :
+                    statut === "R" ? 
+                    <button className="btn btn-secondary rounded-3  mx-2 col-2"  onClick={handleDesactiveRevue}>
+                        Desactiver
+                    </button>
+                    :
+                    <></>
+                    ):<></>
+                } 
+                </div>
                 <table className="table table-bordered text-center" style={border} id="table_user">
                     <thead className="text-success">
                         <tr>
@@ -244,12 +308,12 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
 
                                         currentPlan !== index  ? (
                                         <tr>
-                                            <td className="col-4"><textarea className="form-control" type="text" name="sujet" value={item.sujet} onClick={() => handleGetCurrentPlan(index,item.id)}></textarea></td>
-                                            <td><input className="form-control" type="text" name="ticket" value={item.nb_ticket} onClick={() => handleGetCurrentPlan(index,item.id)}></input></td>
+                                            <td className="col-4"><textarea className="form-control" type="text" name="sujet" value={item.sujet} onClick={() => handleGetCurrentPlan(index,item.id)} readOnly></textarea></td>
+                                            <td><input className="form-control" type="text" name="ticket" value={item.nb_ticket} onClick={() => handleGetCurrentPlan(index,item.id)} readOnly></input></td>
                                             <td className="col-3"><textarea className="form-control" type="text" name="action" value={item.action} style={{backgroundColor:"lightgray"}} readOnly></textarea></td>
                                             <td className="col-2"><input className="form-control" type="text" name="pilote" value={item.pilote} style={{backgroundColor:"lightgray"}} readOnly></input></td>
                                             <td><input className="form-control" type="text" name="pdca" value={item.pdca} style={{backgroundColor:"lightgray"}} readOnly></input></td>
-                                            <td className="col-4"><textarea className="form-control" type="text" value={item.commentaire} onClick={() => handleGetCurrentPlan(index,item.id)}></textarea></td>
+                                            <td className="col-4"><textarea className="form-control" type="text" value={item.commentaire} onClick={() => handleGetCurrentPlan(index,item.id)} readOnly></textarea></td>
                                             <td>
                                                 <input className="form-control" type="hidden" name="index" value={index}></input>
                                                 <button className="btn btn-dark rounded-3 shadow" onClick={() => handleDeleteLine(item.id)}>    

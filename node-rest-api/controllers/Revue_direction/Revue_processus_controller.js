@@ -1,7 +1,7 @@
 const bd_pool = require("../../config/default.config")
 const pool = bd_pool.pool
 const {kanboard} = require("../../config/dbRevueDirection.config")
-const { Sequelize } = require("sequelize");
+const { Sequelize, Op } = require("sequelize");
 const { Revue_processus } = require("../../models/Revue_direction/Revue_processus");
 const { Plan_action, Plan_action_commentaire } = require("../../models/Revue_direction/Plan_action");
 
@@ -60,10 +60,11 @@ const { Plan_action, Plan_action_commentaire } = require("../../models/Revue_dir
 
 
   const createRevueProcessus = (req,res,next) =>{
-    const id_processus = req.body.item
+    const {id_processus, id_planning} = req.body.item
     console.log(id_processus)
     Revue_processus.create(
       { 
+        id_planning : id_planning,
         id_processus : id_processus,
       }
     )
@@ -137,10 +138,62 @@ const { Plan_action, Plan_action_commentaire } = require("../../models/Revue_dir
     })
   }
 
-  
+  const updateRevueProcessus = (req,res,next) =>{
+    const body = req.body
+    console.log(body)
+    const {id, statut} = body.item
+    Revue_processus.update(
+      { 
+          statut : statut    
+      },
+      {
+        where : 
+        {
+          id : id
+        }
+      }
+    )
+    .then(function(results) {
+      res.status(200).send(results);
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  }
+
+
+  const updateRevueProcessusByPlanning = (req,res,next) =>{
+    const body = req.body
+    console.log(body)
+    const {id_planning, date_cloture, date_debut, statut} = body.item
+    Revue_processus.update(
+      { 
+          date_cloture : date_cloture,
+          createdat : date_debut,
+          statut : statut 
+      },
+      {
+        where : 
+        {
+          id_planning : id_planning,
+          statut : {[Op.ne] : "R"}
+        }
+      }
+    )
+    .then(function(results) {
+      res.status(200).send(results);
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  }
 
   
 
+  
 
 
-module.exports = {getRevueProcessus, getRevueProcessusById, createRevueProcessus, getLastRevueProcessusById, clotureRevueProcessus}
+
+module.exports = {getRevueProcessus, getRevueProcessusById, createRevueProcessus, getLastRevueProcessusById, clotureRevueProcessus, updateRevueProcessusByPlanning, updateRevueProcessus}

@@ -36,6 +36,10 @@ const Revue_processus = defautl_db.defaultSequelize.define('revue_processus', {
     type: Sequelize.STRING(200),
     defaultValue: 'D',
   },
+  createdat: {
+    type: Sequelize.DATE,
+    allowNull : true
+  },
   
 },{
   tableName:"revue_processus",

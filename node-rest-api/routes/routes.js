@@ -92,6 +92,8 @@ router.get("/getRevueProcessus", revue_processus.getRevueProcessus)
 router.post("/getRevueProcessusById", revue_processus.getRevueProcessusById)
 router.post("/createRevueProcessus", revue_processus.createRevueProcessus)
 router.post("/clotureRevueProcessus", revue_processus.clotureRevueProcessus)
+router.post("/updateRevueProcessusByPlanning", revue_processus.updateRevueProcessusByPlanning)
+router.post("/updateRevueProcessus", revue_processus.updateRevueProcessus)
 router.post("/getLastRevueProcessusById", revue_processus.getLastRevueProcessusById)
 
 //--Plan d'action--//
@@ -142,6 +144,7 @@ const planning = require("../controllers/planning_controller.js");
 router.post("/insertPlanning", planning.insertPlanning)
 router.post("/updatePlanning", planning.updatePlanning)
 router.get("/getPlanning", planning.getPlanning)
+router.get("/getPlanningNotCloturer", planning.getPlanningNotCloturer)
 router.get("/getPlanningCategorie", planning.getPlanningCategorie)
 router.post("/insertPlanningCategorie", planning.insertPlanningCategorie)
 router.post("/insertDomaine", planning.insertDomaine)

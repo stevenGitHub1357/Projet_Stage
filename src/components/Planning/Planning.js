@@ -196,7 +196,10 @@ const Planning =({MenuCollapse,theme,logo})=>{
         item.statut = statut.current.value;
         if(item.statut === "A") item.date_cloture = new Date()
         let planning = await axios.post(Url+"/updatePlanning",{item})
+        item.id_planning = item.id
+        await axios.post(Url+"/updateRevueProcessusByPlanning",{item})
         console.log(item) 
+        // setActuelChange(planning)
     }
 
     const handleSubmit = () => {

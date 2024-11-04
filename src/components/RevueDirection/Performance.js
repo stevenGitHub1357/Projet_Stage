@@ -21,7 +21,7 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
     const dispatch = useDispatch()
     let [data,setData] = useState([])
     let [annee,setAnnee] = useState(2023)
-    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus','id_revue_direction', 'type_demande', 'id_revue_processus'])
+    const [cookies,setCookie,removeCookie] = useCookies(['id_user','id_processus','id_revue_direction', 'type_demande', 'id_revue_processus',"statut_revue", "id_role"])
     const commentaire = useRef();
     const [current, setCurrent] = useState([])
     const[listCommentaire, setListCommentaire] = useState([])
@@ -86,7 +86,8 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
             }
         })  
         let count = all.length;
-        setTauxAtteint(total/count)
+        let taux = total/count
+        setTauxAtteint(taux.toFixed(2))
 
     }
 
@@ -104,7 +105,13 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
 
     const handleActuel = (data) => {
         // setCurrent(data)
-        setActuel(data)
+        console.log(data)
+        if(cookies.statut_revue !== "A" && cookies.id_role<=4){
+            setActuel(data)
+            realise.current.value = data.realise
+            taux.current.value = data.taux
+        }
+        
     }
 
     const handleActualise = async (fichierVer) => {
@@ -265,29 +272,35 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                                 data.id_recuperation !== 2 ?
                                                 <>
                                                     <td className="col-1">
-                                                        <td><input type="text" className="form-control" value={data.realise} name="realise" onClick={() => handleActuel(data)}></input></td>
+                                                        <td><input type="text" className="form-control" value={data.realise} name="realise" onClick={() => handleActuel(data)} readOnly></input></td>
                                                         <td>{data.abbrv}</td>
                                                     </td>
                                                     <td className="col-1">
-                                                        <td><input type="text" className="form-control" value={data.taux} name="taux" onClick={() => handleActuel(data)}></input></td>
+                                                        <td><input type="text" className="form-control" value={data.taux} name="taux" onClick={() => handleActuel(data)} readOnly></input></td>
                                                         <td>{data.abbrv}</td>
                                                     </td>
-                                                    <td className="col-4"><textarea type="text" className="form-control" value={data.commentaire} name="commentaire" onClick={() => handleActuel(data)}></textarea></td>
+                                                    <td className="col-4"><textarea type="text" className="form-control" value={data.commentaire} name="commentaire" onClick={() => handleActuel(data)} readOnly></textarea></td>
                                             
                                                 </>
                                                 :
                                                 <>
                                                     <td>{data.realise+""+data.abbrv}</td>
                                                     <td>{data.taux+""+data.abbrv}</td>
-                                                    <td className="col-4"><textarea type="text" className="form-control" value={data.commentaire} name="commentaire" onClick={() => handleActuel(data)}></textarea></td>
+                                                    <td className="col-4"><textarea type="text" className="form-control" value={data.commentaire} name="commentaire" onClick={() => handleActuel(data)} readOnly></textarea></td>
                                             
                                                 </>
                                                 
                                             ):(
                                                 data.id_recuperation !== 2 ?
                                                 <>
-                                                    <td className="col-1"><input type="text" className="form-control"  name="realise" onChange={() => handleActualise()} ref={realise}></input>{data.abbrv}</td>
-                                                    <td className="col-1"><input type="text" className="form-control"  name="taux" onChange={() => handleActualise()} ref={taux}></input>{data.abbrv}</td>
+                                                    <td className="col-1">
+                                                        <td><input type="text" className="form-control"  name="realise" onChange={() => handleActualise()} ref={realise}></input></td>
+                                                        <td>{data.abbrv}</td>
+                                                    </td>
+                                                    <td className="col-1">
+                                                        <td><input type="text" className="form-control"  name="taux" onChange={() => handleActualise()} ref={taux}></input></td>
+                                                        <td>{data.abbrv}</td>
+                                                    </td>
                                                     <td className="col-4"><textarea type="text" className="form-control"  name="commentaire" onChange={() => handleActualise()} ref={commentaire}></textarea></td>
                                             
                                                 </>
@@ -327,7 +340,7 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                                                 </div>
                                                 <div className="col-3 mx-2">
                                                 <OverlayTrigger placement="top" overlay={<Tooltip>Ajouter une piece jointe {data.type_demande}</Tooltip>}>
-                                                    <button className="btn btn-secondary rounded-3 shadow" onClick={() => handleActuel(data)}
+                                                    <button className="btn btn-secondary rounded-3 shadow" onClick={() => handleActuel(data)} readOnly
                                                     data-bs-target="#upload" data-bs-toggle="modal">
                                                         <i class="bi bi-upload"></i>
                                                     </button>
