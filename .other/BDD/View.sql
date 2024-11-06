@@ -7,6 +7,7 @@ DROP VIEW IF EXISTS revue_direction.perf_declare;
 
 
 DROP VIEW IF EXISTS revue_direction.performance_objectif_processus;
+DROP VIEW IF EXISTS revue_direction.performance_objectif_processus_only;
 DROP VIEW IF EXISTS revue_direction.performance_commentaire_final;
 DROP VIEW IF EXISTS revue_direction.performance_objectif_detail;
 DROP VIEW IF EXISTS revue_direction.performance_cloture;
@@ -111,35 +112,42 @@ JOIN objectif.recuperation as r on r.id = p.recuperation;
 
 	--Performance_objectif_processus
 	CREATE or replace VIEW revue_direction.performance_objectif_processus as
-select 	
-		pod.id as id,
+select param.id as id,
 		rp.id as id_revue_processus,
 		rp.id_processus as id_processus,
 		rp.date_cloture as date_cloture_revue_processus, rp.createdat as date_create_revue_processus,
-		pod.objectifs as objectifs, pod.poids as poids, pod.cible as cible, pod.abbrv as abbrv,
-		pod.type_demande as type_demande, pod.libelle as libelle ,pod.activate as activate,
-		pod.id_recuperation as id_recuperation, pod.type_recuperation as type_recuperation,
+		param.objectifs as objectifs, param.poids as poids, param.cible as cible, u.abbrv as abbrv, param.activate as activate,
+		p.type_demande as type_demande, po.libelle as libelle ,
+		r.id as id_recuperation, r.type_recuperation as type_recuperation,
 		CASE 
-	        WHEN sum(p.realise)/count(p.realise) IS NOT NULL
-	        	THEN sum(p.realise)/count(p.realise)
-	       	 	ELSE pod.realise
+	        WHEN r.id = 2
+	        	THEN COALESCE(sum(p.realise)/count(p.realise),0)
+	       	 	ELSE COALESCE(pop.realise,0)
 	    END AS realise,
 		CASE 
-	        WHEN pod.cible SIMILAR TO '[-+]?[0-9]*\.?[0-9]+' and (cast(pod.cible as decimal(10,2))*(sum(p.realise)/count(p.realise)))/100 is not null
-	        	THEN (cast(pod.cible as decimal(10,2))*(sum(p.realise)/count(p.realise)))/100
-	       	 	ELSE pod.taux 
+	        WHEN r.id = 2
+	        	THEN COALESCE(((cast(param.cible as decimal(10,2))*(sum(p.realise)/count(p.realise)))/100),0)
+	       	 	ELSE COALESCE(pop.taux,0) 
 	    END AS taux,
-		pod.commentaire as commentaire,
-		pod.existe as existe
-    from revue_direction.performance_objectif_detail pod 
-left join revue_direction.revue_processus rp on pod.id_processus = rp.id_processus  
-left join revue_direction.performance p on p.type_demande = pod.type_demande and p.date_demande >= rp.createdat and p.date_demande < COALESCE(rp.date_cloture, CURRENT_DATE)
--- left join revue_direction.performance_objectif_commentaire_final as pcf on pcf.id_revue_processus = rp.id and pcf.id_objectif = pod.id 
-	group by 
-		rp.id,rp.id_processus ,rp.date_cloture ,rp.createdat,
-		pod.id, pod.objectifs ,pod.poids ,pod.cible ,pod.abbrv ,pod.type_demande ,pod.libelle, pod.activate,
-		pod.commentaire, pod.realise, pod.taux, pod.id_recuperation, pod.type_recuperation, pod.existe ;
+		CASE 
+	        WHEN pop.id is null
+	        	THEN 0
+	       	 	ELSE 1
+	    END AS existe,
+		COALESCE(pop.commentaire,'-') as commentaire
+from revue_direction.revue_processus rp 
+join objectif.parametrage param on param.id_processus =  rp.id_processus
+join objectif.unite u on u.id = param.id_unite 
+join objectif.recuperation r on r.id = param.recuperation 
+left join revue_direction.performance_objectif po on po.id_parametrage = param.id
+left join revue_direction.performance_objectif_revue pop on pop.id_revue_processus = rp.id and pop.id_parametrage = param.id 
+left join revue_direction.performance p on p.type_demande = po.type_demande and p.date_demande >= rp.createdat and p.date_demande < COALESCE(rp.date_cloture, CURRENT_DATE)
 
+group by param.id, rp.id, rp.id_processus, rp.date_cloture, rp.createdat, 
+			param.objectifs, param.poids, param.cible, u.abbrv, param.activate,
+			p.type_demande, po.libelle, r.id, r.type_recuperation, 
+			pop.realise, pop.taux, pop.commentaire, pop.id
+;
 	
 	---Performance_declarer
 	CREATE OR replace VIEW revue_direction.perf_declare as

@@ -364,11 +364,32 @@ const { PerformanceObjectifDetail,PerformanceObjectifProcessus,PerformanceCommen
     })
   };
 
+  const getPerformanceObjectifByRevue = (req,res,next) =>{
+    const id_revue_processus = req.body.item
+    PerformanceObjectifRevue.findAll({
+      where : 
+      {
+        id_revue_processus : id_revue_processus,
+      }
+    })
+    .then(function(results) {
+      if (results.length > 0) {
+        res.status(200).json(results);
+      } else {
+        res.status(200).json();
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(400).json({ error });
+    })
+  };
 
 
 
 
-module.exports = {getPerformanceObjectifDetail, getPerformanceObjectifDetailByProcessus, getPerformanceObjectifByRevueProcessus, 
+
+module.exports = {getPerformanceObjectifDetail, getPerformanceObjectifDetailByProcessus, getPerformanceObjectifByRevueProcessus, getPerformanceObjectifByRevue,
                   getPerformanceCommentaireByRevuePerformance, getPerformanceObjectifCommentaireByRevue, 
                   insertPerformanceObjectifCommentaire, getPerformanceByDemande, getPerformanceSyntheseByDemande,
                   insertPerformanceCommentaire, updatePerformanceCommentaire, getPerformanceCommentaire, getPerformanceByDemandeRevue,

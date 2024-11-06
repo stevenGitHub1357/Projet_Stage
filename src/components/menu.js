@@ -418,7 +418,7 @@ const Menu =()=>{
                                                         </div>
                                                     </NavLink>
                                                     <div className="collapse" id={"collapseMenu2"+index}>
-                                                        {listMenuSlice.filter(subMenu2 => subMenu2.base=== menu.id_menu).length > 0 &&  (
+                                                        {listMenuSlice.filter(subMenu2 => subMenu2.base=== menu.id_menu && subMenu2.etat===10).length > 0 &&  (
                                                             <div className={background + " card card-body "}>
                                                                 {listMenuSlice.filter(subMenu2=> subMenu2.base === menu.id_menu).map((subMenu2, subIndex2) => (
                                                                     <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu2.labelle_menu} key={subIndex2}>
@@ -432,7 +432,7 @@ const Menu =()=>{
                                                                             </div>
                                                                         </NavLink>
                                                                         <div className="collapse" id={"collapseMenu3"+subIndex2}>
-                                                                            {listMenuSlice.filter(subMenu3 => subMenu3.base=== subMenu2.id_menu).length > 0 &&  (
+                                                                            {listMenuSlice.filter(subMenu3 => subMenu3.base=== subMenu2.id_menu && subMenu3.etat===10).length > 0 &&  (
                                                                                 <div className={background + " card card-body "}>
                                                                                     {listMenuSlice.filter(subMenu3=> subMenu3.base === subMenu2.id_menu).map((subMenu3, subIndex3) => (
                                                                                         <span className="nav-item nav-sousmenu" data-bs-toggle="tooltip" data-bs-placement="right" title={subMenu3.labelle_menu} key={subIndex3}>

@@ -52,7 +52,7 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
 
     // console.log(data)
     useEffect(()=>{
-        getData()
+        getData(true)
         setInUpdate(false)
     },[cookies.id_planning,cookies.id_revue_processus])
 
@@ -135,13 +135,14 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
         setInUpdate(true)
         
     }
-    async function getData(){
+    async function getData(initialise){
         console.log(cookies.id_processus)
         setStatut(cookies.statut_revue)
         console.log(cookies.statut_revue)
         const item = {}
         item.id_processus = cookies.id_processus;
-        item.id_revue_processus = id_revue_processus;
+        item.id_revue_processus = cookies.id_revue_processus;
+        console.log(item)
         let revueProcessus = await axios.post(Url+"/getPlanActionByRevueProcessus",{item});
         let planAction = []
         let newData = []
@@ -216,6 +217,10 @@ const Revue = ({MenuCollapse,theme,logo,cible})=>{
         dispatch(setPlanActionRevueData(newData))
         setPlanActionInitData(newData)
         if(!inUpdate){
+            setCurrentPlan(-1)
+            setCurrentPlanId(-1)
+        }
+        if(initialise){
             setCurrentPlan(-1)
             setCurrentPlanId(-1)
         }

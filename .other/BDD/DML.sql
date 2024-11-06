@@ -171,16 +171,13 @@ INSERT INTO planning.planning_categorie VALUES
 INSERT INTO planning.planning VALUES
 	(1, 1,'planning test','2024-04-28 11:37:45.946',null,'2024-04-28 11:37:45.946','2024-12-28 11:37:45.946',now(),'B')
 ;
-INSERT INTO planning.planning_domaine(id_planning, id_processus) VALUES
-	(1, 2),
-	(1, 3)
-;
+
 
 ---Revue_processus
 INSERT INTO revue_direction.revue_processus VALUES
 	(1,2,1,null,'2024-04-28 11:37:45.946',1);
 
----Performance
+-- ---Performance
 INSERT INTO revue_direction.performance_objectif (id_parametrage,type_demande, libelle) VALUES
 	(39, 'FAC', 'Fiche d''amelioration continue'),
 	(40, 'FNC', 'Fiche non conformitée')

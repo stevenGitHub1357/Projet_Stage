@@ -323,6 +323,29 @@ const getAllRevueDirection = (req,res,next) =>{
 };
 
 
+async function getParametrageObjectifByProcessus(req,res,next){
+  const processus = req.body.item;
+  console.log(processus)
+  ParametrageObjectif.findAll({
+    where: {
+      id_processus : processus,
+      actiavte : 1
+    },
+  })
+  .then(function(results) {
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(200).json();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+    res.status(400).json({ error });
+  })
+};
 
-module.exports = {getUnite, insertUnite, getRecuperation, insertRecuperation, getSynthese, getAllParametrageObjectif, getParametrageObjectifUser, getAllRevueDirection,
+
+
+module.exports = {getUnite, insertUnite, getRecuperation, insertRecuperation, getSynthese, getAllParametrageObjectif, getParametrageObjectifUser, getAllRevueDirection, getParametrageObjectifByProcessus,
                   getParametrageObjectif,insertParametrageObjectif,deleteParametrageObjectif,updateParametrageObjectif,insertManyParametrageObjectif, desactiveParametrageObjectif};

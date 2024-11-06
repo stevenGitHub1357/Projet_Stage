@@ -8,7 +8,7 @@ const { Revue_processus } = require("../../models/Revue_direction/Revue_processu
 const getTicketById = (req,res,next) =>{
     const ticket = req.body.item
     console.log(ticket)
-    console.log("iciiiiii",isNaN(ticket))
+    // console.log("iciiiiii",isNaN(ticket))
     if(ticket!=="" && ticket !== null){
       kanboard.query(
         `

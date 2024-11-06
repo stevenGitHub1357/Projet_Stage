@@ -58,10 +58,10 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
     
 
     useEffect(()=>{
-        getData()
-    },[cookies.id_revue_processus, cookies.id_processus])
+        getData(true)
+    },[cookies.id_revue_processus, cookies.id_planning])
 
-    async function getData(){
+    async function getData(initialise){
         console.log(id_revue_processus)
         console.log(cookies.id_role)
         let item = cookies.id_revue_processus
@@ -161,8 +161,10 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
             setOpportunite(allOppo)
             setEnjeux(allEnjeux)
             setRisque(allRisque)
-            setCurrentType("")
-            setCurrentEff({})
+            if(initialise===true){
+                setCurrentType("")
+                setCurrentEff({})
+            }
             if(numPage===1 && tauxAtteint===0){
                 let total = allRisque.length;
                 let atteint = allRisque.filter(allRisque=>allRisque.pdca==="A");
@@ -174,6 +176,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
 
     const handleChangeCurrent = (type, data) =>{
         console.log("handleCurrent")
+        getData()
         if(cookies.statut_revue!=="A" && cookies.id_role<=4){
             console.log(type)
             console.log(data)
@@ -183,6 +186,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
                 setInsert(true)
             }
         }
+        
     }
 
     const handleChangeComment = async () => {
@@ -213,6 +217,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
 
     const handleChangePage = (id) => {
         setNumPage(id)
+        getData(true)
         if(id===1){
             let total = risque.length;
             let atteint = risque.filter(risque=>risque.pdca==="A");
@@ -237,7 +242,7 @@ const Efficacite = ({MenuCollapse,theme,logo,cible})=>{
             console.log(taux)
             setTauxAtteint(taux.toFixed(2))
         }
-        getData()
+        
     }
 
     const border = {

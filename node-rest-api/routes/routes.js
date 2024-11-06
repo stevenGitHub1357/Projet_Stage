@@ -67,6 +67,7 @@ const parametrageObjectif = require("../controllers/objectif_controller.js")
 router.get("/getParametrageObjectif", parametrageObjectif.getParametrageObjectif)
 router.get("/getAllParametrageObjectif", parametrageObjectif.getParametrageObjectif)
 router.post("/getParametrageObjectifUser", parametrageObjectif.getParametrageObjectifUser)
+router.post("/getParametrageObjectifByProcessus", parametrageObjectif.getParametrageObjectifByProcessus)
 
 router.post("/insertParametrageObjectif", parametrageObjectif.insertParametrageObjectif)
 router.post("/deleteParametrageObjectif",parametrageObjectif.deleteParametrageObjectif)
@@ -127,6 +128,7 @@ router.post("/insertPerformanceObjectifRevue", performance.insertPerformanceObje
 router.post("/updatePerformanceObjectifRevue", performance.updatePerformanceObjectifRevue)
 router.post("/insertPerformanceObjectifRevueFichier", performance.insertPerformanceObjectifRevueFichier)
 router.post("/getPerformanceObjectifRevueFichierByObjectif", performance.getPerformanceObjectifRevueFichierByObjectif)
+router.post("/getPerformanceObjectifByRevue", performance.getPerformanceObjectifByRevue)
 
 
 //--Efficaciter--//

@@ -12,6 +12,7 @@ DROP VIEW IF EXISTS revue_direction.perf_declare;
 
 
 DROP VIEW IF EXISTS revue_direction.performance_objectif_processus;
+DROP VIEW IF EXISTS revue_direction.performance_objectif_processus_only;
 DROP VIEW IF EXISTS revue_direction.performance_commentaire_final;
 DROP VIEW IF EXISTS revue_direction.performance_objectif_detail;
 DROP VIEW IF EXISTS revue_direction.performance_cloture;

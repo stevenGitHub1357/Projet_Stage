@@ -59,17 +59,18 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
 
     useEffect(()=>{
         console.log('Cookie a changé:', cookies.id_processus);
-        getData()
-    },[cookies.id_revue_processus,, cookies.id_processus])
+        getData(true)
+    },[cookies.id_revue_processus,, cookies.id_planning])
 
     useEffect(()=>{
         setIsModalOpen(false)
     })
 
-    async function getData(){
-        const item = {}
-        item.id_processus = cookies.id_processus
-        item.id_revue_processus = id_revue_processus
+    async function getData(change){
+        let item = {}
+        item.id_processus = Number(cookies.id_processus)
+        item.id_revue_processus = Number(cookies.id_revue_processus)
+        console.log(item)
         let all = []
         let total = 0;
         await axios.post(Url+"/getPerformanceObjectifByRevueProcessus",{item}).then(res=>{
@@ -85,6 +86,10 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
                 setData([])
             }
         })  
+        if(change){
+            setCurrent({})
+            setActuel({})
+        }
         let count = all.length;
         let taux = total/count
         setTauxAtteint(taux.toFixed(2))
@@ -97,19 +102,19 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
 
     
 
-    const handleDetail  = async (data) => {
-        setCurrent(data)
+    const handleDetail  = async (dataActu) => {
+        setCurrent(dataActu)
         setIsModalOpen(true)
 
     }
 
-    const handleActuel = (data) => {
-        // setCurrent(data)
-        console.log(data)
+    const handleActuel = (dataActu) => {
+        // setCurrent(dataActu)
+        console.log(dataActu)
         if(cookies.statut_revue !== "A" && cookies.id_role<=4){
-            setActuel(data)
-            realise.current.value = data.realise
-            taux.current.value = data.taux
+            setActuel(dataActu)
+            // realise.current.value = dataActu.realise
+            // taux.current.value = dataActu.taux
         }
         
     }
@@ -177,12 +182,12 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
         const item = {}
         let currentProcess = listProcessusSlice.filter(process=> process.id === Number(cookies.id_processus));
         currentProcess = currentProcess[0]
-        item.folderPath = currentProcess.abbrv+"/"+id_revue_processus+"/"+current.id
+        item.folderPath = currentProcess.abbrv+"/"+id_revue_processus+"/"+actuel.id
         item.fileName = res.data.file.filename
         console.log("item",item)
-            await axios.post(Url+'/moveFile', {item})
+            // await axios.post(Url+'/moveFile', {item})
         item.id_revue_processus = id_revue_processus;
-        item.id_parametrage = current.id;
+        item.id_parametrage = actuel.id;
         item.file_name = res.data.file.originalname;
         item.file_save = res.data.file.filename;
         item.folder_path = item.folderPath;
@@ -194,37 +199,26 @@ const Performance = ({MenuCollapse,theme,logo,cible})=>{
     };
 
     const handleDownload= async (file) => {
-        
+        let currentProcess = listProcessusSlice.filter(process=> process.id === Number(cookies.id_processus));
+        currentProcess = currentProcess[0]
+        let fileSave = file.file_save
+        let fileName = file.file_name
+        const url = 'http://192.168.12.236/NODEJS-SERVER-API/uploadsKPI/default/'+fileSave;
+        console.log(url)
         try {
-            let currentProcess = listProcessusSlice.filter(process=> process.id === Number(cookies.id_processus));
-            currentProcess = currentProcess[0]
-            let folderPath = currentProcess.abbrv+"/"+id_revue_processus+"/"+current.id
-            let fileName = file.file_save
-            let downloadUrl = Url+"/"+folderPath+"/"+fileName
-            console.log(downloadUrl)
-            // downloadUrl = 'http://192.168.12.236/NODEJS-SERVER-API/uploads/SOCIETE LUMINESS02052023.xlsx'
-            console.log(downloadUrl)
-            let newFileName = file.file_name
-
-            const response = await axios.get(
-                downloadUrl,
-                {
-                  responseType: 'blob', // Important pour récupérer le fichier sous forme de binaire
-                }
-              );
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', fileName); // Nom du fichier pour le téléchargement
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Erreur lors du téléchargement:', error);
+        }
+    }
         
-              // Crée un lien de téléchargement à partir du fichier téléchargé
-              const url = window.URL.createObjectURL(new Blob([response.data]));
-              const link = document.createElement('a');
-              link.href = url;
-              link.setAttribute('download', newFileName);
-              document.body.appendChild(link);
-              link.click();
-              link.remove();
-            } catch (error) {
-            setMessage('Échec de l\'upload.');
-            }
-        };
 
         const handleTableDownload = async (data) => {
             setCurrent(data)
